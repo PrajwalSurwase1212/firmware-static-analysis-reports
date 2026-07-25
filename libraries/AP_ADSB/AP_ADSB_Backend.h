@@ -38,7 +38,7 @@ protected:
 
     uint8_t _instance;
 
-    AP_HAL::UARTDriver *_port;
+    AP_HAL::UARTDriver *_port = nullptr;
 
     // references
     AP_ADSB &_frontend;

@@ -75,7 +75,7 @@ private:
            float  airpressure;              // Pa        Local air pressure at aircraft altitude)
            float  density;                  // Air density at aircraft altitude
            float  temperature;              // Degrees Celcius   Air temperature at aircraft altitude
-    } pkt;
+    } pkt {};
 
     struct {
         uint32_t last_report_ms{0};

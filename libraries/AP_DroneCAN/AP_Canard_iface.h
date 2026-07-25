@@ -69,7 +69,7 @@ public:
     HAL_Semaphore &get_sem_rx(void) { return _sem_rx; }
 
 private:
-    CanardInstance canard;
+    CanardInstance canard {};
     AP_HAL::CANIface* ifaces[HAL_NUM_CAN_IFACES]{};
 #if AP_TEST_DRONECAN_DRIVERS
     static CanardInterface* canard_ifaces[3];

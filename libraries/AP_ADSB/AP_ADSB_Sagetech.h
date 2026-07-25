@@ -134,7 +134,7 @@ private:
     void request_packet(const MsgType_XP type);
 
     // timers for each out-bound packet
-    uint32_t        last_packet_initialize_ms;
+    uint32_t        last_packet_initialize_ms {};
     uint32_t        last_packet_PreFlight_ms;
     uint32_t        last_packet_GPS_ms;
     uint32_t        last_packet_Operating_ms;

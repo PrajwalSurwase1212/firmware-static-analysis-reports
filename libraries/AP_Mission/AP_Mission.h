@@ -791,7 +791,7 @@ private:
     struct {
         uint16_t age;   // a value of 0 means we have never seen a tag. Once a tag is seen, age will increment every time the mission index changes.
         uint16_t tag;   // most recent tag that was successfully jumped to. Only valid if age > 0
-    } _jump_tag;
+    } _jump_tag {};
 
     struct Mission_Flags {
         mission_state state;

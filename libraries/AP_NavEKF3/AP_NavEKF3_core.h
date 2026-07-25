@@ -1389,7 +1389,7 @@ private:
 
         EKF_obs_buffer_t<rng_bcn_elements> storedRange; // Beacon range buffer
         rng_bcn_elements dataDelayed; // Range beacon data at the fusion time horizon
-        uint32_t lastPassTime_ms;     // time stamp when the range beacon measurement last passed innovation consistency checks (msec)
+        uint32_t lastPassTime_ms {};  // time stamp when the range beacon measurement last passed innovation consistency checks (msec)
         ftype testRatio;              // Innovation test ratio for range beacon measurements
         bool health;                  // boolean true if range beacon measurements have passed innovation consistency check
         ftype varInnov;               // range beacon observation innovation variance (m^2)

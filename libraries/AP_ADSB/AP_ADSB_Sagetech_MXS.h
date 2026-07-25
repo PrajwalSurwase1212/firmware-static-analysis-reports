@@ -229,7 +229,7 @@ private:
 
     struct {
         // timers for each out-bound packet
-        uint32_t        packet_initialize_ms;
+        uint32_t        packet_initialize_ms {};
         uint32_t        packet_PreFlight_ms;
         uint32_t        packet_GPS_ms;
         uint32_t        packet_Operating_ms;

@@ -264,7 +264,7 @@ private:
 
     AP_Int8 _type[ADSB_MAX_INSTANCES];
 
-    bool _init_failed;
+    bool _init_failed = false;
 
     // ADSB-IN state. Maintains list of external vehicles
     struct {
@@ -332,7 +332,7 @@ private:
         mavlink_uavionix_adsb_out_status_t tx_status;
     } out_state;
 
-    uint8_t detected_num_instances;
+    uint8_t detected_num_instances = 0;
 
     // special ICAO of interest that ignored filters when != 0
     AP_Int32 _special_ICAO_target;
@@ -354,7 +354,7 @@ private:
     AP_Enum<Logging> _log;
 
     // reference to backend
-    AP_ADSB_Backend *_backend[ADSB_MAX_INSTANCES];
+    AP_ADSB_Backend *_backend[ADSB_MAX_INSTANCES] {};
 };
 
 namespace AP {

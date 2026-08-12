@@ -1583,7 +1583,7 @@ MAV_RESULT AP_InertialSensor::calibrate_trim()
     AP_AHRS &ahrs = AP::ahrs();
     Vector3f trim_rad = ahrs.get_trim();
 
-    const uint8_t update_dt_milliseconds = (uint8_t)(1000.0f/get_loop_rate_hz()+0.5f);
+    const uint8_t update_dt_milliseconds = MAX((uint8_t)(1000.0f/get_loop_rate_hz()+0.5f), (uint8_t)1);
     Vector3f level_sample;
     uint32_t num_samples = 0;
 

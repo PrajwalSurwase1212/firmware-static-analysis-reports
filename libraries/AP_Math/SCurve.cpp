@@ -276,7 +276,7 @@ void SCurve::set_speed_max(float speed_xy, float speed_up, float speed_down)
         float t2 = 0;
         float t4 = 0;
         float t6 = 0;
-        float jerk_time = MIN(powf((fabsf(vel_max - segment[SEG_ACCEL_END].end_vel) * M_PI) / (4 * snap_max), 1/3), jerk_max * M_PI / (2 * snap_max));
+        float jerk_time = MIN(powf((fabsf(vel_max - segment[SEG_ACCEL_END].end_vel) * M_PI) / (4 * snap_max), 1.0f/3.0f), jerk_max * M_PI / (2 * snap_max));
         if ((vel_max < segment[SEG_ACCEL_END].end_vel) && (jerk_time*12.0f < L/segment[SEG_ACCEL_END].end_vel)) {
             // we have a problem here with small segments.
             calculate_path(snap_max, jerk_max, vel_max, accel_max, segment[SEG_ACCEL_END].end_vel, L * 0.5f, Jm, tj, t6, t4, t2);

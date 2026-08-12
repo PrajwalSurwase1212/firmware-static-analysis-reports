@@ -371,12 +371,12 @@ private:
     struct log_RTER _RTER;
 
     // cached variables for speed:
-    uint32_t _micros;
-    uint32_t _millis;
+    uint32_t _micros = 0;
+    uint32_t _millis = 0;
 
     Matrix3f _rotation_vehicle_body_to_autopilot_body;
     Location _home;
-    uint32_t _last_imu_time_us;
+    uint32_t _last_imu_time_us = 0;
 
     AP_DAL_InertialSensor _ins;
     AP_DAL_Baro _baro;
@@ -396,11 +396,11 @@ private:
     static bool logging_started;
     static bool force_write;
 
-    bool ekf2_init_done;
-    bool ekf3_init_done;
+    bool ekf2_init_done = false;
+    bool ekf3_init_done = false;
 
     void init_sensors(void);
-    bool init_done;
+    bool init_done = false;
 };
 
 #if HAL_LOGGING_ENABLED

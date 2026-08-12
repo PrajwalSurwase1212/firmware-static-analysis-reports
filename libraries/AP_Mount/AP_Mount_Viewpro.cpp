@@ -232,6 +232,11 @@ void AP_Mount_Viewpro::read_incoming_packets()
             // length held in bits 0 ~ 5.  length includes this length byte, frame id and final crc
             // ignore frame counter held in bits 6~7
             _parsed_msg.data_len = b & 0x3F;
+            if (_parsed_msg.data_len < 3) {
+                // too short to hold length byte, frame id and final crc; resync
+                reset_parser = true;
+                break;
+            }
             _parsed_msg.state = ParseState::WAITING_FOR_FRAMEID;
             break;
 

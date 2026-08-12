@@ -1344,9 +1344,9 @@ private:
     uint32_t lastRngMeasTime_ms{};            // Timestamp of last range measurement
     bool terrainHgtStable{};                  // true when the terrain height is stable enough to be used as a height reference
 #if EK3_FEATURE_RANGEFINDER_MEASUREMENTS
-    ftype storedRngMeas[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3];              // Ringbuffer of stored range measurements for dual range sensors
-    uint32_t storedRngMeasTime_ms[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3];    // Ringbuffers of stored range measurement times for dual range sensors
-    uint8_t rngMeasIndex[DOWNWARD_RANGEFINDER_MAX_INSTANCES];                // Current range measurement ringbuffer index for dual range sensors
+    ftype storedRngMeas[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3] {};              // Ringbuffer of stored range measurements for dual range sensors
+    uint32_t storedRngMeasTime_ms[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3] {};    // Ringbuffers of stored range measurement times for dual range sensors
+    uint8_t rngMeasIndex[DOWNWARD_RANGEFINDER_MAX_INSTANCES] {};                // Current range measurement ringbuffer index for dual range sensors
 #endif
 
     // body frame odometry fusion
@@ -1554,7 +1554,7 @@ private:
     } gpsCheckStatus;
 
     // string representing last reason for prearm failure
-    char prearm_fail_string[40];
+    char prearm_fail_string[40] {};
 
     // earth field from WMM tables
     bool have_table_earth_field{};   // true when we have initialised table_earth_field_ga

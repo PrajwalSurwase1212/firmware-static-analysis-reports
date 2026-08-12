@@ -1020,9 +1020,9 @@ private:
     uint32_t lastRngMeasTime_ms{};            // Timestamp of last range measurement
     bool terrainHgtStable{};                  // true when the terrain height is stable enough to be used as a height reference
 #if AP_RANGEFINDER_ENABLED
-    ftype storedRngMeas[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3];              // Ringbuffer of stored range measurements for dual range sensors
-    uint32_t storedRngMeasTime_ms[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3];    // Ringbuffers of stored range measurement times for dual range sensors
-    uint8_t rngMeasIndex[DOWNWARD_RANGEFINDER_MAX_INSTANCES];                // Current range measurement ringbuffer index for dual range sensors
+    ftype storedRngMeas[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3] {};              // Ringbuffer of stored range measurements for dual range sensors
+    uint32_t storedRngMeasTime_ms[DOWNWARD_RANGEFINDER_MAX_INSTANCES][3] {};    // Ringbuffers of stored range measurement times for dual range sensors
+    uint8_t rngMeasIndex[DOWNWARD_RANGEFINDER_MAX_INSTANCES] {};                // Current range measurement ringbuffer index for dual range sensors
 #endif
 
     // Range Beacon Sensor Fusion
@@ -1035,7 +1035,7 @@ private:
     bool rngBcnTimeout{};                 // boolean true if range beacon measurements have faled innovation consistency checks for too long
     ftype varInnovRngBcn{};               // range beacon observation innovation variance (m^2)
     ftype innovRngBcn{};                  // range beacon observation innovation (m)
-    uint32_t lastTimeRngBcn_ms[10];     // last time we received a range beacon measurement (msec)
+    uint32_t lastTimeRngBcn_ms[10] {};     // last time we received a range beacon measurement (msec)
 #if AP_BEACON_ENABLED
     bool rngBcnDataToFuse{};              // true when there is new range beacon data to fuse
 #else
@@ -1174,7 +1174,7 @@ private:
     } mag_state;
 
     // string representing last reason for prearm failure
-    char prearm_fail_string[41];
+    char prearm_fail_string[41] {};
 
     // earth field from WMM tables
     bool have_table_earth_field{};   // true when we have initialised table_earth_field_ga

@@ -163,7 +163,7 @@ public:
 
 private:
     // serial interface
-    AP_HAL::UARTDriver *_port;                  // UART used to send data to SmartAudio VTX
+    AP_HAL::UARTDriver *_port = nullptr;        // UART used to send data to SmartAudio VTX
 
     //Pointer to singleton
     static AP_SmartAudio* _singleton;

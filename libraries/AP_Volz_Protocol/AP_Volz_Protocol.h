@@ -98,7 +98,7 @@ private:
     void send_command(CMD &cmd);
 
     // Incoming PWM commands from the servo lib
-    uint16_t servo_pwm[NUM_SERVO_CHANNELS];
+    uint16_t servo_pwm[NUM_SERVO_CHANNELS] {};
 
     // Send postion commands from PWM, cycle through each servo
     void send_position_cmd();

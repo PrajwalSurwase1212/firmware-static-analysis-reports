@@ -82,7 +82,7 @@ private:
     void update_baud_rate();
 
     // serial interface
-    AP_HAL::UARTDriver *port;                  // UART used to send data to Tramp VTX
+    AP_HAL::UARTDriver *port = nullptr;        // UART used to send data to Tramp VTX
 
     //Pointer to singleton
     static AP_Tramp* singleton;
@@ -90,7 +90,7 @@ private:
     const static uint16_t TRAMP_BUF_SIZE = 16;
 
     // Serial transmit and receive buffers
-    uint8_t request_buffer[TRAMP_BUF_SIZE];
+    uint8_t request_buffer[TRAMP_BUF_SIZE] {};
     uint8_t response_buffer[TRAMP_BUF_SIZE];
 
     // Module state machine

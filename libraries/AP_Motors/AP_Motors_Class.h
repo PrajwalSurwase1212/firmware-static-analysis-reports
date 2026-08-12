@@ -308,20 +308,20 @@ protected:
     virtual void save_params_on_disarm() {}
 
     // internal variables
-    float               _dt_s;                      // time difference (in seconds) since the last loop time
+    float               _dt_s = 0.0f;               // time difference (in seconds) since the last loop time
     uint16_t            _speed_hz;                  // speed in hz to send updates to motors
-    float               _roll_in;                   // desired roll control from attitude controllers, -1 ~ +1
-    float               _roll_in_ff;                // desired roll feed forward control from attitude controllers, -1 ~ +1
-    float               _pitch_in;                  // desired pitch control from attitude controller, -1 ~ +1
-    float               _pitch_in_ff;               // desired pitch feed forward control from attitude controller, -1 ~ +1
-    float               _yaw_in;                    // desired yaw control from attitude controller, -1 ~ +1
-    float               _yaw_in_ff;                 // desired yaw feed forward control from attitude controller, -1 ~ +1
-    float               _throttle_in;               // last throttle input from set_throttle caller
-    float               _throttle_out;              // throttle after mixing is complete
-    float               _throttle_slew_rate;        // throttle slew rate from input
-    float               _forward_in;                // last forward input from set_forward caller
-    float               _lateral_in;                // last lateral input from set_lateral caller
-    float               _throttle_avg_max;          // last throttle input from set_throttle_avg_max
+    float               _roll_in = 0.0f;            // desired roll control from attitude controllers, -1 ~ +1
+    float               _roll_in_ff = 0.0f;         // desired roll feed forward control from attitude controllers, -1 ~ +1
+    float               _pitch_in = 0.0f;           // desired pitch control from attitude controller, -1 ~ +1
+    float               _pitch_in_ff = 0.0f;        // desired pitch feed forward control from attitude controller, -1 ~ +1
+    float               _yaw_in = 0.0f;             // desired yaw control from attitude controller, -1 ~ +1
+    float               _yaw_in_ff = 0.0f;          // desired yaw feed forward control from attitude controller, -1 ~ +1
+    float               _throttle_in = 0.0f;        // last throttle input from set_throttle caller
+    float               _throttle_out = 0.0f;       // throttle after mixing is complete
+    float               _throttle_slew_rate = 0.0f; // throttle slew rate from input
+    float               _forward_in = 0.0f;         // last forward input from set_forward caller
+    float               _lateral_in = 0.0f;         // last lateral input from set_lateral caller
+    float               _throttle_avg_max = 0.0f;   // last throttle input from set_throttle_avg_max
     LowPassFilterFloat  _throttle_filter;           // pilot throttle input filter
     DerivativeFilterFloat_Size7  _throttle_slew;    // throttle output slew detector
     LowPassFilterFloat  _throttle_slew_filter;      // filter for the output of the throttle slew
@@ -329,7 +329,7 @@ protected:
     SpoolState          _spool_state;               // current spool mode
 
     // mask of what channels need fast output
-    uint32_t            _motor_fast_mask;
+    uint32_t            _motor_fast_mask = 0;
 
     // Used with PWMType::PWM_RANGE and PWMType::PWM_ANGLE
     struct {
@@ -342,10 +342,10 @@ protected:
 
     
     // pass through variables
-    float _roll_radio_passthrough;     // roll input from pilot in -1 ~ +1 range.  used for setup and providing servo feedback while landed
-    float _pitch_radio_passthrough;    // pitch input from pilot in -1 ~ +1 range.  used for setup and providing servo feedback while landed
-    float _throttle_radio_passthrough; // throttle/collective input from pilot in 0 ~ 1 range.  used for setup and providing servo feedback while landed
-    float _yaw_radio_passthrough;      // yaw input from pilot in -1 ~ +1 range.  used for setup and providing servo feedback while landed
+    float _roll_radio_passthrough = 0.0f;     // roll input from pilot in -1 ~ +1 range.  used for setup and providing servo feedback while landed
+    float _pitch_radio_passthrough = 0.0f;    // pitch input from pilot in -1 ~ +1 range.  used for setup and providing servo feedback while landed
+    float _throttle_radio_passthrough = 0.0f; // throttle/collective input from pilot in 0 ~ 1 range.  used for setup and providing servo feedback while landed
+    float _yaw_radio_passthrough = 0.0f;      // yaw input from pilot in -1 ~ +1 range.  used for setup and providing servo feedback while landed
 
     enum class PWMType : uint8_t {
         NORMAL     = 0,
@@ -365,7 +365,7 @@ protected:
     // motor failure handling
     bool                _thrust_boost;          // true if thrust boost is enabled to handle motor failure
     bool                _thrust_balanced;       // true when output thrust is well balanced
-    float               _thrust_boost_ratio;    // choice between highest and second highest motor output for output mixing (0 ~ 1). Zero is normal operation
+    float               _thrust_boost_ratio = 0.0f;    // choice between highest and second highest motor output for output mixing (0 ~ 1). Zero is normal operation
 
     // motor options
     AP_Int16            _options;

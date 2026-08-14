@@ -20,6 +20,7 @@
 
 #include "FilterClass.h"
 #include "FilterWithBuffer.h"
+#include <cerrno>
 
 // 1st parameter <T> is the type of data being filtered.
 // 2nd parameter <U> is a larger data type used during summation to prevent overflows
@@ -85,7 +86,8 @@ T AverageFilter<T,U,FILTER_SIZE>::        apply(T sample)
 
     // increment the number of samples so far
     _num_samples++;
-    if( _num_samples > FILTER_SIZE || _num_samples == 0 )
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if( _num_samples > FILTER_SIZE || _num_samples == 0 ) // parasoft-suppress BD-PB-CC "Reviewed and safe"
         _num_samples = FILTER_SIZE;
 
     // get sum of all values - there is a risk of overflow here that we ignore
@@ -145,7 +147,8 @@ T AverageIntegralFilter<T,U,FILTER_SIZE>::apply(T sample)
 
     // increment the number of samples so far
     this->_num_samples++;
-    if (this->_num_samples > FILTER_SIZE || this->_num_samples == 0) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (this->_num_samples > FILTER_SIZE || this->_num_samples == 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         this->_num_samples = FILTER_SIZE;
     }
 

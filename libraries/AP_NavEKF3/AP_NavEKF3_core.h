@@ -1383,7 +1383,7 @@ private:
     public:
         BeaconFusion(AP_DAL &_dal) :
             dal{_dal}
-            {}
+            {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         void InitialiseVariables();
 

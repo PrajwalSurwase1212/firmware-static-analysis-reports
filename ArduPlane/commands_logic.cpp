@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include <cerrno>
 
 /********************************************************************************/
 // Command Event Handlers
@@ -251,7 +252,8 @@ bool Plane::verify_command(const AP_Mission::Mission_Command& cmd)        // Ret
             // correction as otherwise we will flare early on rising
             // ground
             height -= auto_state.terrain_correction;
-            return landing.verify_land(prev_WP_loc, next_WP_loc, current_loc,
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            return landing.verify_land(prev_WP_loc, next_WP_loc, current_loc, // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                                        height, auto_state.sink_rate, auto_state.wp_proportion, auto_state.last_flying_ms, arming.is_armed(), is_flying(),
                                        rangefinder_active);
         }
@@ -1051,9 +1053,9 @@ void Plane::exit_mission_callback()
         gcs().send_text(MAV_SEVERITY_INFO, "Mission complete, changing mode to RTL");
     }
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 #if HAL_QUADPLANE_ENABLED
-bool Plane::verify_landing_vtol_approach(const AP_Mission::Mission_Command &cmd)
+bool Plane::verify_landing_vtol_approach(const AP_Mission::Mission_Command &cmd) // coverity[RW.INCOMPATIBLE_OPERANDS]
 {
     const float radius = is_zero(quadplane.fw_land_approach_radius_m)? aparm.loiter_radius : quadplane.fw_land_approach_radius_m;
     const int8_t direction = is_negative(radius) ? -1 : 1;

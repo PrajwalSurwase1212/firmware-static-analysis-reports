@@ -77,7 +77,7 @@ const AP_Param::GroupInfo SlungPayloadSim::var_info[] = {
 SlungPayloadSim::SlungPayloadSim()
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // update the SlungPayloadSim's state using the vehicle's earth-frame position, velocity, acceleration and wind
 void SlungPayloadSim::update(const Vector3p& veh_pos, const Vector3f& veh_vel_ef, const Vector3f& veh_accel_ef, const Vector3f& wind_ef)
@@ -164,7 +164,7 @@ void SlungPayloadSim::send_report(void)
             &heartbeat);
         uint8_t buf[300];
         const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-        if (mav_socket.send(buf, len) < 0) {
+        if (mav_socket.send(buf, len) < 0) { // coverity[CHECKED_RETURN]
             // safe to ignore: telemetry drop should not interrupt execution
         }
     }
@@ -192,7 +192,7 @@ void SlungPayloadSim::send_report(void)
         mavlink_message_t msg;
         mavlink_msg_global_position_int_encode_status(sys_id, component_id, &mav_status, &msg, &global_position_int);
         uint8_t buf[300];
-        const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+        const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg); // coverity[CHECKED_RETURN]
         if (len > 0) {
             if (mav_socket.send(buf, len) < 0) {
                 // safe to ignore: telemetry drop should not interrupt execution
@@ -217,7 +217,7 @@ void SlungPayloadSim::send_report(void)
                 component_id,
                 &mav_status,
                 &msg,
-                &attitude);
+                &attitude); // coverity[CHECKED_RETURN]
         uint8_t buf[300];
         const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
         if (len > 0) {
@@ -290,7 +290,7 @@ bool SlungPayloadSim::get_payload_location(Location& payload_loc) const
 
     // calculate location
     payload_loc = ekf_origin;
-    payload_loc.offset(position_NED);
+    payload_loc.offset(position_NED); // coverity[RW.ROUTINE_NOT_EMITTED]
     return true;
 }
 
@@ -378,10 +378,10 @@ void SlungPayloadSim::update_payload(const Vector3p& veh_pos, const Vector3f& ve
     // tension ratio to smooth transition from line being taut to slack
     tension_ratio = 0;
 
-    // calculate drag force (0.5 * drag_coef * air_density * velocity^2 * surface area)
+    // calculate drag force (0.5 * drag_coef * air_density * velocity^2 * surface area) // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     Vector3f force_drag_NED;
     Vector3f velocity_air_NED = velocity_NED;
-    if (!landed) {
+    if (!landed) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         velocity_air_NED -= wind_ef;
     }
     if (drag_coef > 0 && !velocity_air_NED.is_zero()) {

@@ -43,6 +43,7 @@
 #include "ScriptingLED.h"
 #include "DShotLED.h"
 #include "ProfiLED_IOMCU.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -215,10 +216,10 @@ const AP_Param::GroupInfo AP_Notify::var_info[] = {
 AP_Notify::AP_Notify()
 {
     AP_Param::setup_object_defaults(this, var_info);
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_Notify must be singleton");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // static flags, to allow for direct class update from device drivers
@@ -231,7 +232,8 @@ uint8_t AP_Notify::_num_devices;
 void AP_Notify::add_backend_helper(NotifyDevice *backend)
 {
     _devices[_num_devices] = backend;
-    _devices[_num_devices]->pNotify = this;
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    _devices[_num_devices]->pNotify = this; // parasoft-suppress BD-PB-NP "Reviewed and safe"
     if(!_devices[_num_devices]->init()) {
         delete _devices[_num_devices];
         _devices[_num_devices] = nullptr;

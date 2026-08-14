@@ -7,6 +7,7 @@
 
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 // Write ACC data packet: raw accel data
 void AP_InertialSensor_Backend::Write_ACC(const uint8_t instance, const uint64_t sample_us, const Vector3f &accel) const
@@ -71,7 +72,8 @@ void AP_InertialSensor::Write_IMU() const
 {
     const uint64_t time_us = AP_HAL::micros64();
 
-    uint8_t n = MAX(get_accel_count(), get_gyro_count());
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    uint8_t n = MAX(get_accel_count(), get_gyro_count()); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     for (uint8_t i=0; i<n; i++) {
         Write_IMU_instance(time_us, i);
     }

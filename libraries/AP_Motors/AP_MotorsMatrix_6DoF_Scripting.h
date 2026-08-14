@@ -13,11 +13,11 @@ public:
     AP_MotorsMatrix_6DoF_Scripting(uint16_t speed_hz = AP_MOTORS_SPEED_DEFAULT) :
         AP_MotorsMatrix(speed_hz)
     {
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("AP_MotorsMatrix 6DoF must be singleton");
         }
         _singleton = this;
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // get singleton instance
     static AP_MotorsMatrix_6DoF_Scripting *get_singleton() {

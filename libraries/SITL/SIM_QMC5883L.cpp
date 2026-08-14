@@ -33,7 +33,7 @@ SITL::QMC5883L::QMC5883L()
     writable_registers.set(QMC5883L_REG_CONF1);
     writable_registers.set(QMC5883L_REG_CONF2);
 
-    reset();
+    reset(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void SITL::QMC5883L::reset()

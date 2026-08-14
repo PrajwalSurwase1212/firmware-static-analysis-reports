@@ -3,6 +3,7 @@
 //
 
 #include "Copter.h"
+#include <cerrno>
 
 #if AC_PRECLAND_ENABLED
 
@@ -16,6 +17,7 @@ void Copter::init_precland()
 void Copter::update_precland()
 {
     // alt will be unused if we pass false through as the second parameter:
-    return precland.update(rangefinder_state.alt_glitch_protected_m * 100.0, rangefinder_alt_ok());
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    return precland.update(rangefinder_state.alt_glitch_protected_m * 100.0, rangefinder_alt_ok()); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 #endif

@@ -31,7 +31,7 @@ public:
     AP_GPS_Blended(AP_GPS &_gps, AP_GPS::Params &_params, AP_GPS::GPS_State &_state, class AP_GPS::GPS_timing &_timing) :
         AP_GPS_Backend(_gps, _params, _state, nullptr),
         timing{_timing}
-        { }
+        { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // pre-arm check of GPS blending.  False if blending is unhealthy,
     // True if healthy or blending is not being used

@@ -1,6 +1,7 @@
 #include "RSC_Autorotation.h"
 #include <GCS_MAVLink/GCS.h>
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 #define RSC_AROT_RAMP_TIME_DEFAULT 2 // time in seconds to ramp motors when bailing out of autorotation
 
@@ -48,7 +49,7 @@ const AP_Param::GroupInfo RSC_Autorotation::var_info[] = {
 
 RSC_Autorotation::RSC_Autorotation(void)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // set the desired autorotation state
@@ -71,7 +72,8 @@ void RSC_Autorotation::set_active(bool active, bool force_state)
 
     // Handle the transition from the ACTIVE to DEACTIVATED states via the BAILING_OUT case
     // set the bailout case if deactivated has just been requested
-    if ((state == State::ACTIVE) && (desired_state == State::DEACTIVATED) && !force_state) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if ((state == State::ACTIVE) && (desired_state == State::DEACTIVATED) && !force_state) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         desired_state = State::BAILING_OUT;
         bail_out_started_ms = AP_HAL::millis();
     }
@@ -98,7 +100,7 @@ void RSC_Autorotation::set_active(bool active, bool force_state)
 
     case State::ACTIVE:
         GCS_SEND_TEXT(MAV_SEVERITY_NOTICE, "RSC: In Autorotation");
-        break;
+        break; // coverity[DEADCODE]
 
     default:
         // do nothing

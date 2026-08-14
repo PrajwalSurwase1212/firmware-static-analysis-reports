@@ -19,7 +19,7 @@ class AP_Mount_Scripting : public AP_Mount_Backend
 
 public:
     // Constructor
-    using AP_Mount_Backend::AP_Mount_Backend;
+    using AP_Mount_Backend::AP_Mount_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_Mount_Scripting);

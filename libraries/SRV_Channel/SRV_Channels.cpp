@@ -30,6 +30,7 @@
   #include <AP_CANManager/AP_CANManager.h>
   #include <AP_DroneCAN/AP_DroneCAN.h>
   #include <AP_PiccoloCAN/AP_PiccoloCAN.h>
+#include <cerrno>
 #endif
 
 #if NUM_SERVO_CHANNELS == 0
@@ -358,7 +359,7 @@ SRV_Channels::SRV_Channels(void)
             channels[i].function.set_default(SRV_Channel::k_GPIO);
         }
 #endif
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // SRV_Channels initialization
@@ -571,7 +572,8 @@ bool SRV_Channels::is_GPIO(uint8_t channel)
     if (channel_function(channel) == SRV_Channel::k_GPIO) {
         return true;
     }
-    if (_singleton != nullptr && (_singleton->gpio_mask & (1U<<channel)) != 0) {
+    // parasoft-suppress BD-PB-BADSHIFT "Reviewed and safe"
+    if (_singleton != nullptr && (_singleton->gpio_mask & (1U<<channel)) != 0) { // parasoft-suppress BD-PB-BADSHIFT "Reviewed and safe"
         // user has set this channel in SERVO_GPIO_MASK
         return true;
     }

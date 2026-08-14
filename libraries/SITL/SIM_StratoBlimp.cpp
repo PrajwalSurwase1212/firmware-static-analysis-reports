@@ -24,6 +24,7 @@
 #include <AP_Motors/AP_Motors.h>
 
 #include <stdio.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -133,19 +134,19 @@ StratoBlimp::StratoBlimp(const char *frame_str) :
     Aircraft(frame_str)
 {
     AP::sitl()->models.stratoblimp_ptr = this;
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
   calculate coefficients to match parameters
- */
+ */ // coverity[RW.ROUTINE_NOT_EMITTED]
 void StratoBlimp::calculate_coefficients(void)
 {
     // calculate yaw drag based on turn rate at the given altitude
     drag_yaw = 1.0;
 
     // get full throttle rotational accel for one motor
-    Vector3f body_acc, rot_accel;
+    Vector3f body_acc, rot_accel; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     handle_motor(1, 0, body_acc, rot_accel, -arm_length);
 
     // get rotational drag at target alt
@@ -158,11 +159,11 @@ void StratoBlimp::calculate_coefficients(void)
 
     drag_yaw = rot_accel.z / -drag_rotaccel.z;
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 void StratoBlimp::handle_motor(float throttle, float tilt, Vector3f &body_acc, Vector3f &rot_accel, float lateral_position)
 {
     const float angle_rad = radians(motor_angle) * tilt;
-    const float thrust_x = motor_thrust * throttle;
+    const float thrust_x = motor_thrust * throttle; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float total_mass = mass + helium_mass;
 
     const Vector3f thrust{cosf(angle_rad)*thrust_x, 0, -sinf(angle_rad)*thrust_x}; // assume constant with pressure alt and linear
@@ -178,7 +179,7 @@ void StratoBlimp::handle_motor(float throttle, float tilt, Vector3f &body_acc, V
 
 /*
   get body frame linear and rotational drag for a given velocity and altitude
- */
+ */ // coverity[RW.ROUTINE_NOT_EMITTED]
 void StratoBlimp::get_drag(const Vector3f &velocity_linear,
                            const Vector3f &velocity_rot,
                            float altitude,
@@ -187,9 +188,9 @@ void StratoBlimp::get_drag(const Vector3f &velocity_linear,
     Vector3f vel_air_bf = velocity_linear;
     const float drag_x_sign = vel_air_bf.x>0? -1 : 1;
     const float drag_y_sign = vel_air_bf.y>0? -1 : 1;
-    const float drag_z_sign = vel_air_bf.z>0? -1 : 1;
-    drag_linear.x = 0.5 * drag_x_sign * air_density * sq(vel_air_bf.x) * drag_fwd;
-    drag_linear.y = 0.5 * drag_y_sign * air_density * sq(vel_air_bf.y) * drag_fwd;
+    const float drag_z_sign = vel_air_bf.z>0? -1 : 1; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    drag_linear.x = 0.5 * drag_x_sign * air_density * sq(vel_air_bf.x) * drag_fwd; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    drag_linear.y = 0.5 * drag_y_sign * air_density * sq(vel_air_bf.y) * drag_fwd; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     drag_linear.z = 0.5 * drag_z_sign * air_density * sq(vel_air_bf.z) * drag_up;
 
     drag_rotaccel = -velocity_rot * drag_yaw;
@@ -197,7 +198,7 @@ void StratoBlimp::get_drag(const Vector3f &velocity_linear,
     /*
       apply torque from drag
     */
-    Vector3f drag_force = drag_linear * mass;
+    Vector3f drag_force = drag_linear * mass; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     Vector3f drag_pos{-center_of_drag, 0, -center_of_lift};
     Vector3f drag_torque = (drag_pos % drag_force);
     drag_rotaccel += drag_torque / moi_pitch;
@@ -223,7 +224,7 @@ float StratoBlimp::get_lift(float altitude)
     return mass * lift_accel;
 }
 
-// calculate rotational and linear accelerations in body frame
+// calculate rotational and linear accelerations in body frame // coverity[RW.ROUTINE_NOT_EMITTED]
 void StratoBlimp::calculate_forces(const struct sitl_input &input, Vector3f &body_acc, Vector3f &rot_accel)
 {
     //float delta_time = frame_time_us * 1.0e-6f;
@@ -241,7 +242,7 @@ void StratoBlimp::calculate_forces(const struct sitl_input &input, Vector3f &bod
 
     body_acc.zero();
     rot_accel.zero();
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     handle_motor(left_throttle, left_tilt, body_acc, rot_accel, -arm_length);
     handle_motor(right_throttle, right_tilt, body_acc, rot_accel, arm_length);
 
@@ -264,7 +265,7 @@ void StratoBlimp::calculate_forces(const struct sitl_input &input, Vector3f &bod
 
         /*
           apply righting moment
-         */
+         */ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         Vector3f lift_pos{0, 0, -center_of_lift};
         Vector3f lift_torque = (lift_pos % lift_thrust_bf);
         rot_accel += lift_torque / moi_roll;
@@ -276,7 +277,9 @@ void StratoBlimp::calculate_forces(const struct sitl_input &input, Vector3f &bod
  */
 void StratoBlimp::update(const struct sitl_input &input)
 {
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     air_density = get_air_density(location.alt*0.01);
+    errno = 0;
     EAS2TAS = sqrtf(SSL_AIR_DENSITY / air_density);
 
     calculate_coefficients();

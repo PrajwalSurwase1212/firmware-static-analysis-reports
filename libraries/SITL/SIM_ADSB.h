@@ -58,7 +58,7 @@ private:
 
 class ADSB : public SerialDevice {
 public:
-    ADSB() {};
+    ADSB() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     void update(const class Aircraft &aircraft);
 
     uint8_t num_vehicles = 0;

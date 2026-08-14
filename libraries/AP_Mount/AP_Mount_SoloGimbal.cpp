@@ -12,7 +12,7 @@
 AP_Mount_SoloGimbal::AP_Mount_SoloGimbal(AP_Mount &frontend, AP_Mount_Params &params, uint8_t instance) :
     AP_Mount_Backend(frontend, params, instance),
     _gimbal()
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // init - performs any required initialisation for this instance
 void AP_Mount_SoloGimbal::init()

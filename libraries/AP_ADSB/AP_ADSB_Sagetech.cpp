@@ -377,7 +377,7 @@ void AP_ADSB_Sagetech::send_msg(Packet_XP &msg)
             0x5A    // end
     };
 
-    if (_port != nullptr) {
+    if (_port) {
         _port->write(message_format_header, sizeof(message_format_header));
         _port->write(msg.payload, msg.payload_length);
         _port->write(message_format_tail, sizeof(message_format_tail));

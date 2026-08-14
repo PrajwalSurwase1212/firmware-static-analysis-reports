@@ -62,7 +62,7 @@ void print_profile()
         //snprintf(fname, sizeof(fname), "/SDCARD/APM/PROF%03d.TXT", counter);
         ++counter;
         //FILE *f = fopen(fname, "w");
-        // if (f != nullptr) {
+        // if (f) {
         for (size_t i=0; i < ARRAY_SIZE(ht); i++) {
             for (FI *current = ht[i]; current != nullptr; current = current->next) {
                 if (current->count != 0) {

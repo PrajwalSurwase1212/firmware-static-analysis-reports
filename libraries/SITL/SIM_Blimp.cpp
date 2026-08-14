@@ -39,7 +39,7 @@ Blimp::Blimp(const char *frame_str) :
 
     lock_step_scheduled = true;
     ::printf("Starting Blimp model\n");
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // calculate rotational and linear accelerations
 void Blimp::calculate_forces(const struct sitl_input &input, Vector3f &body_acc, Vector3f &rot_accel)

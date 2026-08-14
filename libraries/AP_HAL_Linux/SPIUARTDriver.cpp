@@ -27,7 +27,7 @@ SPIUARTDriver::SPIUARTDriver()
 
 void SPIUARTDriver::_begin(uint32_t b, uint16_t rxS, uint16_t txS)
 {
-    if (device_path != nullptr) {
+    if (device_path) {
         UARTDriver::begin(b, rxS, txS);
         if (is_initialized()) {
             _external = true;

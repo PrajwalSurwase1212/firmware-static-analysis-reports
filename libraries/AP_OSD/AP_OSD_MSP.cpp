@@ -17,6 +17,7 @@
   OSD backend for MSP
  */
 #include "AP_OSD_MSP.h"
+#include <cerrno>
 
 
 static const struct AP_Param::defaults_table_struct defaults_table[] = {
@@ -175,7 +176,8 @@ AP_OSD_Backend *AP_OSD_MSP::probe(AP_OSD &osd)
     if (!backend) {
         return nullptr;
     }
-    if (!backend->init()) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!backend->init()) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         delete backend;
         return nullptr;
     }

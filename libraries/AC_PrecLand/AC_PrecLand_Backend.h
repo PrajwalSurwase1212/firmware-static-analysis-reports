@@ -15,7 +15,7 @@ public:
     // Constructor
     AC_PrecLand_Backend(const AC_PrecLand& frontend, AC_PrecLand::precland_state& state) :
         _frontend(frontend),
-        _state(state) {}
+        _state(state) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // destructor
     virtual ~AC_PrecLand_Backend() {}

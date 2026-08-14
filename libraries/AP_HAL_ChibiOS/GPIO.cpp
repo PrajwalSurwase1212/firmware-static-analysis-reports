@@ -284,7 +284,7 @@ void GPIO::toggle(uint8_t pin)
 AP_HAL::DigitalSource* GPIO::channel(uint16_t pin)
 {
     struct gpio_entry *g = gpio_by_pin_num(pin);
-    if (g != nullptr) {
+    if (g) {
         return NEW_NOTHROW DigitalSource(g->pal_line);
     }
 #if HAL_WITH_IO_MCU
@@ -444,7 +444,7 @@ void IOMCU_DigitalSource::toggle()
 
 static void pal_interrupt_cb(void *arg)
 {
-    if (arg != nullptr) {
+    if (arg) {
         ((AP_HAL::Proc)arg)();
     }
 }

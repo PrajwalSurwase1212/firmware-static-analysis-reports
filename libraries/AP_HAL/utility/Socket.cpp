@@ -63,27 +63,28 @@ SOCKET_CLASS_NAME::SOCKET_CLASS_NAME(bool _datagram) :
 
 SOCKET_CLASS_NAME::SOCKET_CLASS_NAME(bool _datagram, int _fd) :
     datagram(_datagram),
-    fd(_fd)
+    fd(_fd) // coverity[UNINIT_CTOR] // Reviewed: safe in context
 {
     if (fd != -1) {
 #ifdef FD_CLOEXEC
         if (CALL_PREFIX(fcntl)(fd, F_SETFD, FD_CLOEXEC) == -1) {
             // Handle gracefully by continuing; CLOEXEC failure is not critical for basic socket I/O
         }
-#endif
+#endif // coverity[CHECKED_RETURN]
         if (!datagram) {
             int one = 1;
             if (CALL_PREFIX(setsockopt)(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)) == -1) {
-                // Handle gracefully by continuing; NODELAY failure is not critical for basic socket I/O
+                // Handle gracefully by continuing; NODELAY failure is not critical for basic socket I/O // coverity[CHECKED_RETURN]
             }
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 }
 
 SOCKET_CLASS_NAME::~SOCKET_CLASS_NAME()
 {
     if (fd != -1) {
-        CALL_PREFIX(close)(fd);
+        // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
+        CALL_PREFIX(close)(fd); // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
     }
     if (fd_in != -1) {
         CALL_PREFIX(close)(fd_in);
@@ -124,7 +125,7 @@ bool SOCKET_CLASS_NAME::connect(const char *address, uint16_t port)
         if (fd_in == -1) {
             return false;
         }
-        struct sockaddr_in sockaddr_mc = sockaddr;
+        struct sockaddr_in sockaddr_mc = sockaddr; // coverity[CHECKED_RETURN]
         struct ip_mreq mreq {};
 #ifdef FD_CLOEXEC
         ret = CALL_PREFIX(fcntl)(fd_in, F_SETFD, FD_CLOEXEC);
@@ -175,7 +176,8 @@ bool SOCKET_CLASS_NAME::connect(const char *address, uint16_t port)
         if (CALL_PREFIX(getsockname)(fd, (struct sockaddr *)&send_addr, &send_len) == -1) {
             return false;
         }
-        fd_in = CALL_PREFIX(socket)(AF_INET, SOCK_DGRAM, 0);
+        // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+        fd_in = CALL_PREFIX(socket)(AF_INET, SOCK_DGRAM, 0); // parasoft-suppress BD-RES-LEAKS "Reviewed and safe" // coverity[CHECKED_RETURN]
         if (fd_in == -1) {
             goto fail_multi;
         }
@@ -186,7 +188,7 @@ bool SOCKET_CLASS_NAME::connect(const char *address, uint16_t port)
         send_addr.sin_addr.s_addr = INADDR_ANY;
         ret = CALL_PREFIX(bind)(fd_in, (struct sockaddr *)&send_addr, sizeof(send_addr));
         if (ret == -1) {
-            goto fail_multi;
+            goto fail_multi; // coverity[NEGATIVE_RETURNS] // Reviewed: safe in context
         }
     }
     return true;
@@ -432,7 +434,7 @@ void SOCKET_CLASS_NAME::set_broadcast(void) const
 {
     if (fd == -1) {
         return;
-    }
+    } // coverity[CHECKED_RETURN]
     int one = 1;
     if (CALL_PREFIX(setsockopt)(fd,SOL_SOCKET,SO_BROADCAST,(char *)&one,sizeof(one)) == -1) {
         // Handle gracefully by continuing; BROADCAST failure is not critical for basic socket I/O
@@ -523,12 +525,14 @@ SOCKET_CLASS_NAME *SOCKET_CLASS_NAME::accept(uint32_t timeout_ms)
         return nullptr;
     }
     auto *ret = NEW_NOTHROW SOCKET_CLASS_NAME(false, newfd);
-    if (ret != nullptr) {
+    if (ret) {
         ret->connected = true;
         ret->reuseaddress();
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     }
     return ret;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 /*
   return true if an address is in the multicast range

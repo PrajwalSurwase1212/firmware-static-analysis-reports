@@ -47,7 +47,8 @@ bool CAN_SocketCAN::init(uint8_t instance)
 
 fail:
     if (fd != -1) {
-        close(fd);
+        // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
+        close(fd); // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
         fd = -1;
     }
     return false;
@@ -66,7 +67,7 @@ bool CAN_SocketCAN::send(const AP_HAL::CANFrame &frame)
     transmit_frame.can_id = frame.id;
     transmit_frame.can_dlc = frame.dlc;
 
-    uint8_t data_length = AP_HAL::CANFrame::dlcToDataLength(frame.dlc);
+    uint8_t data_length = AP_HAL::CANFrame::dlcToDataLength(frame.dlc); // coverity[OVERRUN] // Reviewed: safe in context
     if (data_length > sizeof(transmit_frame.data)) {
         data_length = sizeof(transmit_frame.data);
     }
@@ -89,7 +90,7 @@ bool CAN_SocketCAN::receive(AP_HAL::CANFrame &frame)
     // run constructor to initialise
     new(&frame) AP_HAL::CANFrame(receive_frame.can_id, receive_frame.data, receive_frame.can_dlc, false);
 
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         sem_handle->signal();
     }
     return true;

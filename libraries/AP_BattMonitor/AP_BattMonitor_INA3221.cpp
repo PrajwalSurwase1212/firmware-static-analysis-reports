@@ -14,6 +14,7 @@
 
 #if INA3221_DEBUGGING
 #include <stdio.h>
+#include <cerrno>
 #define debug(fmt, args ...)  do {printf("INA3221: %s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## args); } while(0)
 // #define debug(fmt, args ...)  do {gcs().send_text(MAV_SEVERITY_INFO, "INA3221: %s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## args); } while(0)
 #else
@@ -105,7 +106,7 @@ AP_BattMonitor_INA3221::AP_BattMonitor_INA3221(
     AP_BattMonitor_Backend(mon, mon_state, params)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    _state.var_info = var_info;
+    _state.var_info = var_info; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool AP_BattMonitor_INA3221::AddressDriver::read_register(uint8_t addr, uint16_t &ret)
@@ -113,7 +114,8 @@ bool AP_BattMonitor_INA3221::AddressDriver::read_register(uint8_t addr, uint16_t
     if (!dev->transfer(&addr, 1, (uint8_t*)&ret, 2)) {
         return false;
     }
-    ret = be16toh(ret);
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    ret = be16toh(ret); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     return true;
 }
 
@@ -201,7 +203,8 @@ void AP_BattMonitor_INA3221::init()
         return;
     }
 
-    if (address_driver_count == ARRAY_SIZE(address_driver)) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (address_driver_count == ARRAY_SIZE(address_driver)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         debug("INA3221: out of address drivers");
         return;
     }

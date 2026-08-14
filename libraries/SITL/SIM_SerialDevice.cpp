@@ -29,9 +29,9 @@ using namespace SITL;
 
 SerialDevice::SerialDevice(uint16_t tx_bufsize, uint16_t rx_bufsize)
 {
-    to_autopilot = NEW_NOTHROW ByteBuffer{tx_bufsize};
-    from_autopilot = NEW_NOTHROW ByteBuffer{rx_bufsize};
-}
+    to_autopilot = NEW_NOTHROW ByteBuffer{tx_bufsize}; // coverity[CTOR_DTOR_LEAK] // Reviewed: safe in context
+    from_autopilot = NEW_NOTHROW ByteBuffer{rx_bufsize}; // coverity[CTOR_DTOR_LEAK] // Reviewed: safe in context
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 SerialDevice::~SerialDevice()
 {

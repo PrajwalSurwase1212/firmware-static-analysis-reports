@@ -1,5 +1,6 @@
 #include "Sub.h"
 #include "actuators.h"
+#include <cerrno>
 
 
  
@@ -63,13 +64,15 @@ void Actuators::initialize_actuators() {
             continue;
         }
         SRV_Channel* chan = SRV_Channels::srv_channel(channel_number);
-        uint16_t servo_min = chan->get_output_min();
-        uint16_t servo_max = chan->get_output_max();
-        uint16_t servo_range = servo_max - servo_min;
+        if (chan != nullptr) {
+            uint16_t servo_min = chan->get_output_min();
+            uint16_t servo_max = chan->get_output_max();
+            uint16_t servo_range = servo_max - servo_min;
 
-        uint16_t servo_trim = chan->get_trim();
-        // set current value to trim
-        aux_actuator_value[i] = (servo_trim - servo_min) / static_cast<float>(servo_range);
+            uint16_t servo_trim = chan->get_trim();
+            // set current value to trim
+            aux_actuator_value[i] = (servo_trim - servo_min) / static_cast<float>(servo_range);
+        }
     }
     update_actuators();
 }
@@ -82,10 +85,12 @@ void Actuators::update_actuators() {
             continue;
         }
         SRV_Channel* chan = SRV_Channels::srv_channel(channel_number);
-        uint16_t servo_min = chan->get_output_min();
-        uint16_t servo_max = chan->get_output_max();
-        uint16_t servo_range = servo_max - servo_min;
-        chan->set_output_pwm(servo_min + servo_range * aux_actuator_value[i]);
+        if (chan != nullptr) {
+            uint16_t servo_min = chan->get_output_min();
+            uint16_t servo_max = chan->get_output_max();
+            uint16_t servo_range = servo_max - servo_min;
+            chan->set_output_pwm(servo_min + servo_range * aux_actuator_value[i]);
+        }
     }
 }
 

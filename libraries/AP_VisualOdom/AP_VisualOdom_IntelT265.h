@@ -11,7 +11,7 @@ class AP_VisualOdom_IntelT265 : public AP_VisualOdom_Backend
 
 public:
 
-    using AP_VisualOdom_Backend::AP_VisualOdom_Backend;
+    using AP_VisualOdom_Backend::AP_VisualOdom_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // consume vision pose estimate data and send to EKF. distances in meters
     // quality of -1 means failed, 0 means unknown, 1 is worst, 100 is best

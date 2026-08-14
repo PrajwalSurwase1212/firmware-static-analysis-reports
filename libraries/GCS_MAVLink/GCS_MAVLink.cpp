@@ -38,6 +38,7 @@ extern const AP_HAL::HAL& hal;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #include "include/mavlink/v2.0/mavlink_helpers.h"
+#include <cerrno>
 #pragma GCC diagnostic pop
 #endif
 
@@ -138,7 +139,8 @@ void comm_send_buffer(mavlink_channel_t chan, const uint8_t *buf, uint8_t len)
 #if HAL_HIGH_LATENCY2_ENABLED
     // if it's a disabled high latency channel, don't send
     GCS_MAVLINK *link = gcs().chan(chan);
-    if (link->is_high_latency_link && !gcs().get_high_latency_status()) {
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (link->is_high_latency_link && !gcs().get_high_latency_status()) { // parasoft-suppress BD-PB-NP "Reviewed and safe"
         return;
     }
 #endif

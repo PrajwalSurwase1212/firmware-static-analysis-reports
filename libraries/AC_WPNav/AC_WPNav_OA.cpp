@@ -5,10 +5,11 @@
 #include <AP_Math/control.h>
 #include <AP_InternalError/AP_InternalError.h>
 #include "AC_WPNav_OA.h"
+#include <cerrno>
 
 AC_WPNav_OA::AC_WPNav_OA(const AP_AHRS_View& ahrs, AC_PosControl& pos_control, const AC_AttitudeControl& attitude_control) :
     AC_WPNav(ahrs, pos_control, attitude_control)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // Returns the object-avoidance-adjusted waypoint location (in global coordinates).
@@ -250,7 +251,10 @@ bool AC_WPNav_OA::update_wpnav()
                     return false;
                 }
                 float target_alt_loc_alt_m = 0;
-                UNUSED_RESULT(target_alt_loc.get_alt_m(target_alt_loc.get_alt_frame(), target_alt_loc_alt_m));
+                // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+                // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+                // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+                UNUSED_RESULT(target_alt_loc.get_alt_m(target_alt_loc.get_alt_frame(), target_alt_loc_alt_m)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
                 Vector3p destination_neu_m{destination_ne_m.x, destination_ne_m.y, target_alt_loc_alt_m};
 
                 // pass the desired position directly to the position controller

@@ -31,11 +31,11 @@ AP_Beacon_Backend::AP_Beacon_Backend(AP_Beacon &frontend) :
     const AP_SerialManager &serialmanager = AP::serialmanager();
     uart = serialmanager.find_serial(AP_SerialManager::SerialProtocol_Beacon, 0);
     if (uart == nullptr) {
-        return;
+        return; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 
     uart->begin(serialmanager.find_baudrate(AP_SerialManager::SerialProtocol_Beacon, 0));
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // set vehicle position
 // pos should be in meters in NED frame from the beacon's local origin

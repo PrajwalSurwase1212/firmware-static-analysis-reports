@@ -128,7 +128,7 @@ const AP_Param::GroupInfo SIM_Precland::var_info[] = {
     AP_GROUPEND
 };
 
-void SIM_Precland::update(const Location &loc)
+void SIM_Precland::update(const Location &loc) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!_enable) {
         _healthy = false;
@@ -141,7 +141,7 @@ void SIM_Precland::update(const Location &loc)
 
     Location device_center(static_cast<int32_t>(_device_lat * 1.0e7f),
                            static_cast<int32_t>(_device_lon * 1.0e7f),
-                           static_cast<int32_t>(_device_height*100),
+                           static_cast<int32_t>(_device_height*100), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                            Location::AltFrame::ABOVE_ORIGIN);
 
     if (device_center.lat == 0 && device_center.lng == 0 && device_center.alt == 0) {
@@ -212,7 +212,7 @@ void SIM_Precland::update(const Location &loc)
             break;
         }
         case PRECLAND_TYPE_SPHERE: {
-            if (position_wrt_device.length() > _dist_limit) {
+            if (position_wrt_device.length() > _dist_limit) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 _healthy = false;
                 return;
             }

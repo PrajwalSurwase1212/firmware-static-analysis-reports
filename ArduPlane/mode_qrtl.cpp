@@ -185,7 +185,7 @@ void ModeQRTL::run()
 /*
   update target altitude for QRTL profile
  */
-void ModeQRTL::update_target_altitude()
+void ModeQRTL::update_target_altitude() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     /*
       update height target in approach
@@ -200,7 +200,7 @@ void ModeQRTL::update_target_altitude()
       giving time to lose speed before we transition
      */
     const float radius = MAX(fabsf(float(plane.aparm.loiter_radius)), fabsf(float(plane.g.rtl_radius)));
-    const float rtl_alt_delta = MAX(0, plane.g.RTL_altitude - plane.quadplane.qrtl_alt_m);
+    const float rtl_alt_delta = MAX(0, plane.g.RTL_altitude - plane.quadplane.qrtl_alt_m); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float sink_time = rtl_alt_delta / MAX(0.6*plane.TECS_controller.get_max_sinkrate(), 1);
     const float sink_dist = plane.aparm.airspeed_cruise * sink_time;
     const float dist = plane.auto_state.wp_distance;
@@ -208,7 +208,7 @@ void ModeQRTL::update_target_altitude()
     const float rad_max = 20*radius;
     float alt = linear_interpolate(0, rtl_alt_delta,
                                    dist,
-                                   rad_min, MAX(rad_min, MIN(rad_max, rad_min+sink_dist)));
+                                   rad_min, MAX(rad_min, MIN(rad_max, rad_min+sink_dist))); // coverity[RW.NO_MATCHING_FUNCTION]
     Location loc = plane.next_WP_loc;
     loc.offset_up_m(alt);
     plane.set_target_altitude_location(loc);

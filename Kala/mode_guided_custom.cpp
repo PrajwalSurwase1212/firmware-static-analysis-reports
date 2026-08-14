@@ -7,7 +7,7 @@ ModeGuidedCustom::ModeGuidedCustom(const Number _number, const char* _full_name,
     full_name(_full_name),
     short_name(_short_name)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool ModeGuidedCustom::init(bool ignore_checks)
 {

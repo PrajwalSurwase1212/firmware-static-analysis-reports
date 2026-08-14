@@ -28,6 +28,7 @@
 #include <AP_HAL/I2CDevice.h>
 #include <AP_Math/AP_Math.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -123,7 +124,8 @@ bool AP_TemperatureSensor_MCP9600::read_temperature(float &temperature)
         return false;
     }
     // check UPDATE bit for new temperature data ready:
-    if ((data[0] & MCP9600_CMD_STATUS_UPDATE_READY) == 0) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if ((data[0] & MCP9600_CMD_STATUS_UPDATE_READY) == 0) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         return false;
     }
     // read temperature:

@@ -25,7 +25,7 @@
 
 AC_AutoTune::AC_AutoTune()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // autotune_init - should be called when autotune mode is selected
 bool AC_AutoTune::init_internals(bool _use_poshold,

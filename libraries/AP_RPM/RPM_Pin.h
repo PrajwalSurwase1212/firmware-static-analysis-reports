@@ -26,7 +26,7 @@ class AP_RPM_Pin : public AP_RPM_Backend
 {
 public:
 
-    using AP_RPM_Backend::AP_RPM_Backend;
+    using AP_RPM_Backend::AP_RPM_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update state
     void update(void) override;

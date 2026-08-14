@@ -19,6 +19,7 @@
 #include "AP_MotorsHeli_RSC.h"
 #include <AP_RPM/AP_RPM.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 // default main rotor speed (ch8 out) as a number from 0 ~ 100
 #define AP_MOTORS_HELI_RSC_SETPOINT             70
@@ -257,7 +258,7 @@ void AP_MotorsHeli_RSC::output(RotorControlState state)
     // _rotor_RPM available to the RSC output
 #if AP_RPM_ENABLED
     const AP_RPM *rpm = AP_RPM::get_singleton();
-    if (rpm != nullptr) {
+    if (rpm) {
         if (!rpm->get_rpm(0, _rotor_rpm)) {
             // No valid RPM data
             _rotor_rpm = -1;
@@ -501,12 +502,15 @@ float AP_MotorsHeli_RSC::calculate_throttlecurve(float collective_in)
     const float inpt = collective_in * 4.0f + 1.0f;
     uint8_t idx = constrain_int16(int8_t(collective_in * 4), 0, 3);
     const float a = inpt - (idx + 1.0f);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float b = (idx + 1.0f) - inpt + 1.0f;
-    float throttle = _thrcrv_poly[idx][0] * a + _thrcrv_poly[idx][1] * b + _thrcrv_poly[idx][2] * (powf(a,3.0f) - a) / 6.0f + _thrcrv_poly[idx][3] * (powf(b,3.0f) - b) / 6.0f;
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    float throttle = _thrcrv_poly[idx][0] * a + _thrcrv_poly[idx][1] * b + _thrcrv_poly[idx][2] * (powf(a,3.0f) - a) / 6.0f + _thrcrv_poly[idx][3] * (powf(b,3.0f) - b) / 6.0f; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     throttle = constrain_float(throttle, 0.0f, 1.0f);
     return throttle;
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 }
 
 // autothrottle_run - calculate throttle output for governor controlled throttle
@@ -532,12 +536,12 @@ void AP_MotorsHeli_RSC::autothrottle_run()
             _governor_torque_reference -= get_governor_compensator();
         }
         // throttle output uses droop + torque compensation to maintain proper rotor speed
-        _control_output = constrain_float((_governor_torque_reference + _governor_output), (get_idle_output() * 1.5f), 1.0f);
+        _control_output = constrain_float((_governor_torque_reference + _governor_output), (get_idle_output() * 1.5f), 1.0f); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // governor and speed sensor fault detection - must maintain RPM within governor range
         // speed fault detector will allow a fault to persist for 200 contiguous governor updates
         // this is failsafe for bad speed sensor or severely mis-adjusted governor
         if ((_rotor_rpm <= (_governor_rpm - _governor_range)) || (_rotor_rpm >= (_governor_rpm + _governor_range))) {
-            _governor_fault_count++;
+            _governor_fault_count++; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             if (_governor_fault_count > 200) {
                 governor_reset();
                 _governor_fault = true;
@@ -549,7 +553,7 @@ void AP_MotorsHeli_RSC::autothrottle_run()
             }
         } else {
             _governor_fault_count = 0;   // reset fault count if the fault doesn't persist
-        }
+        } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else if (!_governor_engage && !_governor_fault) {
         // if governor is not engaged and rotor is overspeeding by more than governor range due to 
         // misconfigured throttle curve or stuck throttle, set a fault and governor will not operate

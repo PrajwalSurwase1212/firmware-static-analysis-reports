@@ -122,7 +122,7 @@ bool AP_Networking_ChibiOS::init()
     }
 
 #if LWIP_IGMP
-    if (ETH != nullptr) {
+    if (ETH) {
         // enbale "permit multicast" so we can receive multicast packets
         ETH->MACPFR |= ETH_MACPFR_PM;
     }

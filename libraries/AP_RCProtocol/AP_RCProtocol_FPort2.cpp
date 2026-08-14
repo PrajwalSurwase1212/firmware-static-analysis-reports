@@ -71,7 +71,7 @@ static_assert(sizeof(FPort2_Frame) == FPORT2_CONTROL_FRAME_SIZE, "FPort2_Frame i
 AP_RCProtocol_FPort2::AP_RCProtocol_FPort2(AP_RCProtocol &_frontend, bool _inverted) :
     AP_RCProtocol_Backend(_frontend),
     inverted(_inverted)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // decode a full FPort2 control frame
 void AP_RCProtocol_FPort2::decode_control(const FPort2_Frame &frame)

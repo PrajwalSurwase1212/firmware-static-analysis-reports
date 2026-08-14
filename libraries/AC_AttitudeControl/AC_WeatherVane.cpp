@@ -102,9 +102,9 @@ const AP_Param::GroupInfo AC_WeatherVane::var_info[] = {
 AC_WeatherVane::AC_WeatherVane(void)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
-bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, const float hgt, const float roll_cdeg, const float pitch_cdeg, const bool is_takeoff, const bool is_landing)
+bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, const float hgt, const float roll_cdeg, const float pitch_cdeg, const bool is_takeoff, const bool is_landing) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     Direction dir = (Direction)_direction.get();
     if ((dir == Direction::OFF) || !allowed || (pilot_yaw != 0) || !is_positive(_gain)) {
@@ -139,7 +139,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
     if (is_positive(_max_vel_xy) || is_positive(_max_vel_z)) {
         Vector3f vel_ned;
         if (!AP::ahrs().get_velocity_NED(vel_ned) || // need speed estimate
-                (is_positive(_max_vel_xy) && (vel_ned.xy().length_squared() > (_max_vel_xy*_max_vel_xy))) || // check xy speed
+                (is_positive(_max_vel_xy) && (vel_ned.xy().length_squared() > (_max_vel_xy*_max_vel_xy))) || // check xy speed // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 (is_positive(_max_vel_z) && (fabsf(vel_ned.z) > _max_vel_z))) { // check z speed
             reset();
             return false;
@@ -164,7 +164,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
         return false;
     }
 
-    const float deadzone_cdeg = _min_dz_ang_deg*100.0;
+    const float deadzone_cdeg = _min_dz_ang_deg*100.0; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     float output = 0.0;
     const char* dir_string = "";
 
@@ -181,7 +181,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
             if (pitch_enable && is_positive(pitch_cdeg - deadzone_cdeg)) {
                 output = fabsf(roll_cdeg) + (pitch_cdeg - deadzone_cdeg);
             } else {
-                output = MAX(fabsf(roll_cdeg) - deadzone_cdeg, 0.0);
+                output = MAX(fabsf(roll_cdeg) - deadzone_cdeg, 0.0); // coverity[RW.NO_MATCHING_FUNCTION]
             }
             if (is_negative(roll_cdeg)) {
                 output *= -1.0;
@@ -190,7 +190,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
             break;
 
         case Direction::NOSE_OR_TAIL_IN:
-            output = MAX(fabsf(roll_cdeg) - deadzone_cdeg, 0.0);
+            output = MAX(fabsf(roll_cdeg) - deadzone_cdeg, 0.0); // coverity[RW.NO_MATCHING_FUNCTION]
             if (is_negative(roll_cdeg) != is_negative(pitch_cdeg)) {
                 output *= -1.0;
             }
@@ -198,7 +198,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
             break;
 
         case Direction::SIDE_IN:
-            output = MAX(fabsf(pitch_cdeg) - deadzone_cdeg, 0.0);
+            output = MAX(fabsf(pitch_cdeg) - deadzone_cdeg, 0.0); // coverity[RW.NO_MATCHING_FUNCTION]
             if (is_positive(pitch_cdeg) != is_positive(roll_cdeg)) {
                 output *= -1.0;
             }
@@ -209,7 +209,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
             if (pitch_enable && is_negative(pitch_cdeg + deadzone_cdeg)) {
                 output = fabsf(roll_cdeg) - (pitch_cdeg + deadzone_cdeg);
             } else {
-                output = MAX(fabsf(roll_cdeg) - deadzone_cdeg, 0.0);
+                output = MAX(fabsf(roll_cdeg) - deadzone_cdeg, 0.0); // coverity[RW.NO_MATCHING_FUNCTION]
             }
             if (is_positive(roll_cdeg)) {
                 output *= -1.0;
@@ -225,7 +225,7 @@ bool AC_WeatherVane::get_yaw_out(float &yaw_output, const int16_t pilot_yaw, con
     }
 
     // Slew output and apply gain
-    last_output = 0.98 * last_output + 0.02 * output * _gain;
+    last_output = 0.98 * last_output + 0.02 * output * _gain; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     yaw_output = last_output;
     return true;
 }

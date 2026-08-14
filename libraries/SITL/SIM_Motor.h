@@ -58,7 +58,7 @@ public:
         thrust_vector.x = 0;
         thrust_vector.y = 0;
         thrust_vector.z = -1;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /*
       alternative constructor for tiltable motors
@@ -84,7 +84,7 @@ public:
         thrust_vector.x = 0;
         thrust_vector.y = 0;
         thrust_vector.z = -1;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void calculate_forces(const struct sitl_input &input,
                           uint8_t motor_offset,

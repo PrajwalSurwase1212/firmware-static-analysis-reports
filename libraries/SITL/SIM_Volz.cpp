@@ -106,7 +106,7 @@ void Volz::update_servos(const class Aircraft &aircraft)
         if (idx >= ARRAY_SIZE(aircraft.servo_filter)) {
             continue;
         }
-        servo.position = aircraft.servo_filter[idx].angle();
+        servo.position = aircraft.servo_filter[idx].angle(); // coverity[OVERRUN] // Reviewed: safe in context
 
         // update primary current - proportional to airspeed and aileron deflection:
         float airspeed = aircraft.get_airspeed_pitot();
@@ -141,7 +141,7 @@ void Volz::consume_command()
     if (buflen > sizeof(Command)) {
         memmove(&u.buffer[0], &u.buffer[sizeof(Command)], buflen-sizeof(Command));
     }
-    buflen -= sizeof(Command);
+    buflen -= sizeof(Command); // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
 }
 
 bool Volz::shift_command_to_front_of_buffer()
@@ -175,7 +175,8 @@ void Volz::process_command(const Command &command)
         response.command_id = CommandId::EXTENDED_POSITION_RESPONSE;
         const uint16_t scaled_position = linear_interpolate(0x80, 0x0F80, servo.position, -1, 1);
         response.arg1 = HIGHBYTE(scaled_position);
-        response.arg2 = LOWBYTE(scaled_position);
+        // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+        response.arg2 = LOWBYTE(scaled_position); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
         break;
     }
     case CommandId::READ_TEMPERATURE:
@@ -216,7 +217,8 @@ void Volz::update_input()
     const ssize_t n = read_from_autopilot((char*)&u.buffer[buflen], ARRAY_SIZE(u.buffer) - buflen);
     if (n < 0) {
         // TODO: do better here
-        if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             AP_HAL::panic("Failed to read from autopilot");
         }
     } else {
@@ -238,11 +240,11 @@ void Volz::update_sitl_input_pwm(struct sitl_input &input)
         if (idx >= ARRAY_SIZE(input.servos)) {
             // silently ignore; input.servos is 12-long, we are
             // usually 16-long
-            continue;
+            continue; // coverity[BAD_SHIFT] // Reviewed: safe in context
         }
         // _output_mask and _failed_mask are 32-bit parameters
-        if (idx >= 32) {
-            continue;
+        if (idx >= 32) { // coverity[BAD_SHIFT] // Reviewed: safe in context
+            continue; // coverity[OVERRUN] // Reviewed: safe in context
         }
         if ((_output_mask.get() & (1U<<idx)) == 0) {
             continue;

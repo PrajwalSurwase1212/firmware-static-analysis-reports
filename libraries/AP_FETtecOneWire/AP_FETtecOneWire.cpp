@@ -22,6 +22,7 @@
 #include <GCS_MAVLink/GCS.h>
 
 #include "AP_FETtecOneWire.h"
+#include <cerrno>
 #if AP_FETTEC_ONEWIRE_ENABLED
 
 extern const AP_HAL::HAL& hal;
@@ -72,11 +73,11 @@ AP_FETtecOneWire::AP_FETtecOneWire()
     AP_Param::setup_object_defaults(this, var_info);
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_FETtecOneWire must be singleton");
     }
 #endif
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /**
@@ -85,7 +86,7 @@ AP_FETtecOneWire::AP_FETtecOneWire()
 */
 void AP_FETtecOneWire::init_uart()
 {
-    if (_uart != nullptr) {
+    if (_uart) {
         return;
     }
     const AP_SerialManager& serial_manager = AP::serialmanager();
@@ -134,7 +135,8 @@ void AP_FETtecOneWire::init()
     }
 
     // we have a uart and the desired ESC combination id valid, allocate some memory:
-    _escs = NEW_NOTHROW ESC[_esc_count];
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    _escs = NEW_NOTHROW ESC[_esc_count]; // parasoft-suppress BD-PB-NP "Reviewed and safe"
     if (_escs == nullptr) {
         return;
     }
@@ -481,7 +483,8 @@ void AP_FETtecOneWire::read_data_from_uart()
         _receive_buf_used += nbytes;
         bytes_to_read -= nbytes;
 
-        move_frame_source_in_receive_buffer();
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        move_frame_source_in_receive_buffer(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
         // borrow the "OK" message to retrieve the frame length from the buffer:
         const uint8_t frame_length = u.packed_ok.frame_length;

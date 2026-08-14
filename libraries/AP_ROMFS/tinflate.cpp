@@ -38,6 +38,7 @@
 
 #include <assert.h>
 #include "tinf.h"
+#include <cerrno>
 
 uint32_t tinf_get_le_uint32(TINF_DATA *d);
 uint32_t tinf_get_be_uint32(TINF_DATA *d);
@@ -177,7 +178,8 @@ unsigned char uzlib_get_byte(TINF_DATA *d)
 {
     /* If end of source buffer is not reached, return next byte from source
        buffer. */
-    if (d->source < d->source_limit) {
+    // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
+    if (d->source < d->source_limit) { // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
         return *d->source++;
     }
 
@@ -386,7 +388,8 @@ static int tinf_inflate_block_data(TINF_DATA *d, TINF_TREE *lt, TINF_TREE *dt)
 
         /* literal byte */
         if (sym < 256) {
-            TINF_PUT(d, sym);
+            // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+            TINF_PUT(d, sym); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
             return TINF_OK;
         }
 

@@ -213,7 +213,7 @@ void FETtecOneWireESC::bootloader_handle_config_message(FETtecOneWireESC::ESC &e
         break;
     }
     AP_HAL::panic("Unhandled config message in bootloader (%u)",
-                  (unsigned)u.config_message_header.request_type);
+                  (unsigned)u.config_message_header.request_type); // coverity[UNREACHABLE]
 }
 
 void FETtecOneWireESC::running_handle_config_message(FETtecOneWireESC::ESC &esc)
@@ -386,7 +386,8 @@ void FETtecOneWireESC::update_input()
     const ssize_t n = read_from_autopilot((char*)&u.buffer[buflen], ARRAY_SIZE(u.buffer) - buflen);
     if (n < 0) {
         // TODO: do better here
-        if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             AP_HAL::panic("Failed to read from autopilot");
         }
     } else {
@@ -467,7 +468,8 @@ void FETtecOneWireESC::update_sitl_input_pwm(struct sitl_input &input)
             // usually 16-long
             continue;
         }
-        input.servos[esc.id-1] = esc.pwm;
+        // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+        input.servos[esc.id-1] = esc.pwm; // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
     }
 }
 

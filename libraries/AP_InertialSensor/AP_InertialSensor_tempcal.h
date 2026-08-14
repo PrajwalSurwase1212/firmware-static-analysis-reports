@@ -71,7 +71,7 @@ private:
     AP_Vector3f gyro_coeff[3];
     Vector3f accel_tref;
     Vector3f gyro_tref;
-    Learn *learn{nullptr};
+    Learn *learn{nullptr}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void correct_sensor(float temperature, float cal_temp, const AP_Vector3f coeff[3], Vector3f &v) const;
     Vector3f polynomial_eval(float temperature, const AP_Vector3f coeff[3]) const;

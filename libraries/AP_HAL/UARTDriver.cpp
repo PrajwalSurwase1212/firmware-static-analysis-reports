@@ -218,9 +218,9 @@ void AP_HAL::UARTDriver::log_stats(const uint8_t inst, StatsTracker &stats, cons
     float rx_drop_rate_val = 0.0f;
     if (dt_ms > 0) {
         tx_rate_val = (tx_bytes * 1000.0f) / dt_ms;
-        rx_rate_val = (rx_bytes * 1000.0f) / dt_ms;
-        rx_drop_rate_val = (rx_dropped_bytes * 1000.0f) / dt_ms;
-    }
+        rx_rate_val = (rx_bytes * 1000.0f) / dt_ms; // coverity[UNINTENDED_INTEGER_DIVISION]
+        rx_drop_rate_val = (rx_dropped_bytes * 1000.0f) / dt_ms; // coverity[UNINTENDED_INTEGER_DIVISION]
+    } // coverity[UNINTENDED_INTEGER_DIVISION]
 
     // Assemble struct and log
     struct log_UART pkt {

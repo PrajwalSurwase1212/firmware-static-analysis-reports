@@ -34,7 +34,7 @@ using namespace SITL;
 
 Loweheiser::Loweheiser() : SerialDevice::SerialDevice()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void Loweheiser::update()
 {

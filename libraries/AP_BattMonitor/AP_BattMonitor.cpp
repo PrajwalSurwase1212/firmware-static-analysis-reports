@@ -39,6 +39,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
 #include <AP_Notify/AP_Notify.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -550,9 +551,9 @@ AP_BattMonitor::AP_BattMonitor(uint32_t log_battery_bit, battery_failsafe_handle
     _highest_failsafe_priority(INT8_MAX),
     _has_triggered_failsafe(false)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_BattMonitor must be singleton");
     }
     _singleton = this;
@@ -720,7 +721,8 @@ AP_BattMonitor::init()
             state[instance].type = allocation_type;
         }
     // if the backend has some local parameters then make those available in the tree
-    if (drivers[instance] && state[instance].var_info) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if (drivers[instance] && state[instance].var_info) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         backend_var_info[instance] = state[instance].var_info;
         AP_Param::load_object_from_eeprom(drivers[instance], backend_var_info[instance]);
 
@@ -940,7 +942,7 @@ void AP_BattMonitor::check_failsafes(void)
 
             // map the desired failsafe action to a priority level
             int8_t priority = 0;
-            if (_failsafe_priorities != nullptr) {
+            if (_failsafe_priorities) {
                 while (_failsafe_priorities[priority] != -1) {
                     if (_failsafe_priorities[priority] == action) {
                         break;

@@ -70,7 +70,7 @@ SITL::SIM_BattMonitor_SMBus::SIM_BattMonitor_SMBus() :
     set_register(SMBusBattDevReg::MANUFACTURE_DATE, manufacturer_date);
 
     // TODO: manufacturer data
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void SITL::SIM_BattMonitor_SMBus::update(const class Aircraft &aircraft)
 {

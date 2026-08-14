@@ -11,27 +11,27 @@ const AP_Param::Info Rover::var_info[] = {
     // @DisplayName: Eeprom format version number
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
-    GSCALAR(format_version,         "FORMAT_VERSION",   1),
+    GSCALAR(format_version,         "FORMAT_VERSION",   1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
     // @Description: Bitmap of what log types to enable in on-board logger. This value is made up of the sum of each of the log types you want to be saved. On boards supporting microSD cards or other large block-storage devices it is usually best just to enable all basic log types by setting this to 65535.
     // @Bitmask: 0:Fast Attitude,1:Medium Attitude,2:GPS,3:System Performance,4:Throttle,5:Navigation Tuning,7:IMU,8:Mission Commands,9:Battery Monitor,10:Rangefinder,11:Compass,12:Camera,13:Steering,14:RC Input-Output,19:Raw IMU,20:Video Stabilization,21:Optical Flow
     // @User: Advanced
-    GSCALAR(log_bitmask,            "LOG_BITMASK",      DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask,            "LOG_BITMASK",      DEFAULT_LOG_BITMASK), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RST_SWITCH_CH
     // @DisplayName: Reset Switch Channel
     // @Description: RC channel to use to reset to last flight mode after geofence takeover.
     // @User: Advanced
-    GSCALAR(reset_switch_chan,      "RST_SWITCH_CH",    0),
+    GSCALAR(reset_switch_chan,      "RST_SWITCH_CH",    0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: INITIAL_MODE
     // @DisplayName: Initial driving mode
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver. Usually used in combination with when AUTO_TRIGGER_PIN or AUTO_KICKSTART.
     // @CopyValuesFrom: MODE1
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     (int8_t)Mode::Number::MANUAL),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // SYSID_THISMAV was here
 
@@ -44,14 +44,14 @@ const AP_Param::Info Rover::var_info[] = {
     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for
     // @User: Advanced
     // @Bitmask: 0:Steering,1:Throttle,2:Pitch,3:Left Wheel,4:Right Wheel,5:Sailboat Heel,6:Velocity North,7:Velocity East
-    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AUTO_TRIGGER_PIN
     // @DisplayName: Auto mode trigger pin
     // @Description: pin number to use to enable the throttle in auto mode. If set to -1 then don't use a trigger, otherwise this is a pin number which if held low in auto mode will enable the motor to run. If the switch is released while in AUTO then the motor will stop again. This can be used in combination with INITIAL_MODE to give a 'press button to start' rover with no receiver.
     // @Values: -1:Disabled,0:APM TriggerPin0,1:APM TriggerPin1,2:APM TriggerPin2,3:APM TriggerPin3,4:APM TriggerPin4,5:APM TriggerPin5,6:APM TriggerPin6,7:APM TriggerPin7,8:APM TriggerPin8,50:AUX1,51:AUX2,52:AUX3,53:AUX4,54:AUX5,55:AUX6
     // @User: Standard
-    GSCALAR(auto_trigger_pin,        "AUTO_TRIGGER_PIN", -1),
+    GSCALAR(auto_trigger_pin,        "AUTO_TRIGGER_PIN", -1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AUTO_KICKSTART
     // @DisplayName: Auto mode trigger kickstart acceleration
@@ -60,7 +60,7 @@ const AP_Param::Info Rover::var_info[] = {
     // @Range: 0 20
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(auto_kickstart,          "AUTO_KICKSTART", 0.0f),
+    GSCALAR(auto_kickstart,          "AUTO_KICKSTART", 0.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: CRUISE_SPEED
     // @DisplayName: Target cruise speed in auto modes
@@ -69,7 +69,7 @@ const AP_Param::Info Rover::var_info[] = {
     // @Range: 0 100
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(speed_cruise,        "CRUISE_SPEED",    CRUISE_SPEED),
+    GSCALAR(speed_cruise,        "CRUISE_SPEED",    CRUISE_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
 
     // @Param: CRUISE_THROTTLE
@@ -79,21 +79,21 @@ const AP_Param::Info Rover::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-    GSCALAR(throttle_cruise,        "CRUISE_THROTTLE",    50),
+    GSCALAR(throttle_cruise,        "CRUISE_THROTTLE",    50), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_STEER_TYPE
     // @DisplayName: Pilot input steering type
     // @Description: Pilot RC input interpretation
     // @Values: 0:Default,1:Two Paddles Input,2:Direction reversed when backing up,3:Direction unchanged when backing up
     // @User: Standard
-    GSCALAR(pilot_steer_type, "PILOT_STEER_TYPE", 0),
+    GSCALAR(pilot_steer_type, "PILOT_STEER_TYPE", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_ACTION
     // @DisplayName: Failsafe Action
     // @Description: What to do on a failsafe event
     // @Values: 0:Nothing,1:RTL,2:Hold,3:SmartRTL or RTL,4:SmartRTL or Hold,5:Terminate,6:Loiter or Hold
     // @User: Standard
-    GSCALAR(fs_action,    "FS_ACTION",     (int8_t)FailsafeAction::Hold),
+    GSCALAR(fs_action,    "FS_ACTION",     (int8_t)FailsafeAction::Hold), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_TIMEOUT
     // @DisplayName: Failsafe timeout
@@ -102,14 +102,14 @@ const AP_Param::Info Rover::var_info[] = {
     // @Range: 1 100
     // @Increment: 0.5
     // @User: Standard
-    GSCALAR(fs_timeout,    "FS_TIMEOUT",     1.5),
+    GSCALAR(fs_timeout,    "FS_TIMEOUT",     1.5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_ENABLE
     // @DisplayName: Throttle Failsafe Enable
     // @Description: The throttle failsafe allows you to configure a software failsafe activated by a setting on the throttle input channel to a low value. This can be used to detect the RC transmitter going out of range. Failsafe will be triggered when the throttle channel goes below the FS_THR_VALUE for FS_TIMEOUT seconds.
     // @Values: 0:Disabled,1:Enabled,2:Enabled Continue with Mission in Auto
     // @User: Standard
-    GSCALAR(fs_throttle_enabled,    "FS_THR_ENABLE",     FS_THR_ENABLED),
+    GSCALAR(fs_throttle_enabled,    "FS_THR_ENABLE",     FS_THR_ENABLED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_VALUE
     // @DisplayName: Throttle Failsafe Value
@@ -117,79 +117,79 @@ const AP_Param::Info Rover::var_info[] = {
     // @Range: 910 1100
     // @Increment: 1
     // @User: Standard
-    GSCALAR(fs_throttle_value,      "FS_THR_VALUE",     910),
+    GSCALAR(fs_throttle_value,      "FS_THR_VALUE",     910), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_GCS_ENABLE
     // @DisplayName: GCS failsafe enable
     // @Description: Enable ground control station telemetry failsafe. When enabled the Rover will execute the FS_ACTION when it fails to receive MAVLink heartbeat packets for FS_TIMEOUT seconds.
     // @Values: 0:Disabled,1:Enabled,2:Enabled Continue with Mission in Auto
     // @User: Standard
-    GSCALAR(fs_gcs_enabled, "FS_GCS_ENABLE",   FS_GCS_DISABLED),
+    GSCALAR(fs_gcs_enabled, "FS_GCS_ENABLE",   FS_GCS_DISABLED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_CRASH_CHECK
     // @DisplayName: Crash check action
     // @Description: What to do on a crash event. When enabled the rover will go to hold if a crash is detected.
     // @Values: 0:Disabled,1:Hold,2:HoldAndDisarm
     // @User: Standard
-    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    FS_CRASH_DISABLE),
+    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    FS_CRASH_DISABLE), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_ACTION
     // @DisplayName: EKF Failsafe Action
     // @Description: Controls the action that will be taken when an EKF failsafe is invoked
     // @Values: 0:Disabled,1:Hold,2:ReportOnly
     // @User: Advanced
-    GSCALAR(fs_ekf_action, "FS_EKF_ACTION", FS_EKF_HOLD),
+    GSCALAR(fs_ekf_action, "FS_EKF_ACTION", FS_EKF_HOLD), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass and velocity variance
     // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed
     // @User: Advanced
-    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH", 0.8f),
+    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH", 0.8f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE_CH
     // @DisplayName: Mode channel
     // @Description: RC Channel to use for driving mode control
     // @User: Advanced
-    GSCALAR(mode_channel,    "MODE_CH",       MODE_CHANNEL),
+    GSCALAR(mode_channel,    "MODE_CH",       MODE_CHANNEL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE1
     // @DisplayName: Mode1
     // @Values: 0:Manual,1:Acro,3:Steering,4:Hold,5:Loiter,6:Follow,7:Simple,8:Dock,9:Circle,10:Auto,11:RTL,12:SmartRTL,15:Guided
     // @User: Standard
     // @Description: Driving mode for switch position 1 (910 to 1230 and above 2049)
-    GSCALAR(mode1,           "MODE1",         (int8_t)Mode::Number::MANUAL),
+    GSCALAR(mode1,           "MODE1",         (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE2
     // @DisplayName: Mode2
     // @Description: Driving mode for switch position 2 (1231 to 1360)
     // @CopyValuesFrom: MODE1
     // @User: Standard
-    GSCALAR(mode2,           "MODE2",         (int8_t)Mode::Number::MANUAL),
+    GSCALAR(mode2,           "MODE2",         (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE3
     // @CopyFieldsFrom: MODE1
     // @DisplayName: Mode3
     // @Description: Driving mode for switch position 3 (1361 to 1490)
-    GSCALAR(mode3,           "MODE3",         (int8_t)Mode::Number::MANUAL),
+    GSCALAR(mode3,           "MODE3",         (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE4
     // @CopyFieldsFrom: MODE1
     // @DisplayName: Mode4
     // @Description: Driving mode for switch position 4 (1491 to 1620)
-    GSCALAR(mode4,           "MODE4",         (int8_t)Mode::Number::MANUAL),
+    GSCALAR(mode4,           "MODE4",         (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE5
     // @CopyFieldsFrom: MODE1
     // @DisplayName: Mode5
     // @Description: Driving mode for switch position 5 (1621 to 1749)
-    GSCALAR(mode5,           "MODE5",         (int8_t)Mode::Number::MANUAL),
+    GSCALAR(mode5,           "MODE5",         (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MODE6
     // @CopyFieldsFrom: MODE1
     // @DisplayName: Mode6
     // @Description: Driving mode for switch position 6 (1750 to 2049)
-    GSCALAR(mode6,           "MODE6",         (int8_t)Mode::Number::MANUAL),
+    GSCALAR(mode6,           "MODE6",         (int8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // variables not in the g class which contain EEPROM saved variables
 

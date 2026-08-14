@@ -44,7 +44,7 @@ AP_RCProtocol_SRXL2* AP_RCProtocol_SRXL2::_singleton;
 AP_RCProtocol_SRXL2::AP_RCProtocol_SRXL2(AP_RCProtocol &_frontend) : AP_RCProtocol_Backend(_frontend)
 {
 #if !APM_BUILD_TYPE(APM_BUILD_UNKNOWN)
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("Duplicate SRXL2 handler");
     }
 
@@ -54,7 +54,7 @@ AP_RCProtocol_SRXL2::AP_RCProtocol_SRXL2(AP_RCProtocol &_frontend) : AP_RCProtoc
         _singleton = this;
     }
 #endif
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_RCProtocol_SRXL2::_bootstrap(uint8_t device_id)
 {
@@ -314,7 +314,7 @@ void AP_RCProtocol_SRXL2::send_on_uart(uint8_t* pBuffer, uint8_t length)
 void AP_RCProtocol_SRXL2::change_baud_rate(uint32_t baudrate)
 {
     AP_HAL::UARTDriver* uart = get_available_UART();
-    if (uart != nullptr) {
+    if (uart) {
         uart->begin(baudrate);
         uart->set_flow_control(AP_HAL::UARTDriver::FLOW_CONTROL_DISABLE);
         uart->set_unbuffered_writes(true);
@@ -330,7 +330,7 @@ void srxlChangeBaudRate(uint8_t uart, uint32_t baudRate)
 {
     AP_RCProtocol_SRXL2* srxl2 = AP_RCProtocol_SRXL2::get_singleton();
 
-    if (srxl2 != nullptr) {
+    if (srxl2) {
         srxl2->change_baud_rate(baudRate);
     }
 }
@@ -343,7 +343,7 @@ void srxlSendOnUart(uint8_t uart, uint8_t* pBuffer, uint8_t length)
 {
     AP_RCProtocol_SRXL2* srxl2 = AP_RCProtocol_SRXL2::get_singleton();
 
-    if (srxl2 != nullptr) {
+    if (srxl2) {
         srxl2->send_on_uart(pBuffer, length);
     }
 }

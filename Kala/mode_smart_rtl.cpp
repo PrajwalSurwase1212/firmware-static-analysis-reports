@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 #if MODE_SMARTRTL_ENABLED
 
@@ -176,7 +177,8 @@ void ModeSmartRTL::save_position()
 {
     const bool should_save_position = motors->armed() && (copter.flightmode->mode_number() != Mode::Number::SMART_RTL);
 
-    copter.g2.smart_rtl.update(copter.position_ok(), should_save_position);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    copter.g2.smart_rtl.update(copter.position_ok(), should_save_position); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 bool ModeSmartRTL::get_wp(Location& destination) const

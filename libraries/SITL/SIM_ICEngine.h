@@ -37,7 +37,7 @@ public:
         starter_servo(_starter),
         slew_rate(_slew_rate),
         throttle_reversed(_throttle_reversed)
-    {
+    { // coverity[UNINIT_CTOR] // Reviewed: safe in context
         overheat = false;
     }
 

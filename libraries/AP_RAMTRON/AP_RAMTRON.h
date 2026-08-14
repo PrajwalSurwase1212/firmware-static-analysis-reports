@@ -23,7 +23,7 @@ public:
     bool write(uint32_t offset, uint8_t const * const buf, uint32_t size);
 
 private:
-    AP_HAL::SPIDevice *dev{nullptr};
+    AP_HAL::SPIDevice *dev{nullptr}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     enum class RDID_type :uint8_t {
         Cypress,

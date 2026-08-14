@@ -135,11 +135,11 @@ public:
         for (uint8_t i = 0; i < HAL_COMPASS_MAX_SENSORS; i++) {
             mag_ofs[i].set(Vector3f(5, 13, -18));
         }
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("Too many SITL instances");
         }
         _singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(SIM);

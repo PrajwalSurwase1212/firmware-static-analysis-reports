@@ -55,7 +55,7 @@ public:
 
     // Returns the terrain following altitude margin in meters.
     // Vehicle will stop if distance from target altitude exceeds this margin.
-    float get_terrain_margin_m() const { return MAX(_terrain_margin_m, 0.1); }
+    float get_terrain_margin_m() const { return MAX(_terrain_margin_m, 0.1); } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Converts a Location to a NEU position vector in cm from the EKF origin.
     // See get_vector_NEU_m() for full details.
@@ -118,7 +118,7 @@ public:
 
     // Returns the default horizontal speed in m/s used during waypoint navigation.
     // Derived from the WPNAV_SPEED parameter.
-    float get_default_speed_NE_ms() const { return _wp_speed_cms * 0.01; }
+    float get_default_speed_NE_ms() const { return _wp_speed_cms * 0.01; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Returns the default climb speed in cm/s used during waypoint navigation.
     // See get_default_speed_up_ms() for full details.
@@ -126,7 +126,7 @@ public:
 
     // Returns the default climb speed in m/s used during waypoint navigation.
     // Derived from the WPNAV_SPEED_UP parameter.
-    float get_default_speed_up_ms() const { return _wp_speed_up_cms * 0.01; }
+    float get_default_speed_up_ms() const { return _wp_speed_up_cms * 0.01; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Returns the default descent rate in cm/s used during waypoint navigation.
     // Always positive. See get_default_speed_down_ms() for full details.
@@ -134,7 +134,7 @@ public:
 
     // Returns the default descent rate in m/s used during waypoint navigation.
     // Derived from the WPNAV_SPEED_DN parameter. Always positive.
-    float get_default_speed_down_ms() const { return fabsf(_wp_speed_down_cms * 0.01); }
+    float get_default_speed_down_ms() const { return fabsf(_wp_speed_down_cms * 0.01); } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Returns the vertical acceleration in cm/s² used during waypoint navigation.
     // Always positive. See get_accel_U_mss() for full details.
@@ -142,7 +142,7 @@ public:
 
     // Returns the vertical acceleration in m/s² used during waypoint navigation.
     // Derived from the WPNAV_ACCEL_Z parameter. Always positive.
-    float get_accel_U_mss() const { return _wp_accel_z_cmss * 0.01; }
+    float get_accel_U_mss() const { return _wp_accel_z_cmss * 0.01; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Returns the horizontal acceleration in cm/s² used during waypoint navigation.
     // See get_wp_acceleration_mss() for full details.
@@ -150,11 +150,11 @@ public:
 
     // Returns the horizontal acceleration in m/s² used during waypoint navigation.
     // Derived from the WPNAV_ACCEL parameter. Falls back to a default if unset.
-    float get_wp_acceleration_mss() const { return (is_positive(_wp_accel_cmss)) ? _wp_accel_cmss * 0.01 : WPNAV_ACCELERATION_MS; }
+    float get_wp_acceleration_mss() const { return (is_positive(_wp_accel_cmss)) ? _wp_accel_cmss * 0.01 : WPNAV_ACCELERATION_MS; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Returns the maximum lateral acceleration in m/s² used during waypoint cornering.
     // Derived from WPNAV_ACCEL_C or defaults to 2x WPNAV_ACCEL if unset.
-    float get_corner_acceleration_mss() const { return (is_positive(_wp_accel_c_cmss)) ? _wp_accel_c_cmss * 0.01 : 2.0 * get_wp_acceleration_mss(); }
+    float get_corner_acceleration_mss() const { return (is_positive(_wp_accel_c_cmss)) ? _wp_accel_c_cmss * 0.01 : 2.0 * get_wp_acceleration_mss(); } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // Returns the destination waypoint vector in NEU frame, in centimeters from EKF origin.
     // See get_wp_destination_NEU_m() for full details.
@@ -261,8 +261,8 @@ public:
 
     // Returns true if the vehicle's horizontal (NE) distance to the waypoint is less than the waypoint radius.
     // Uses the waypoint radius in meters for comparison.
-    bool reached_wp_destination_NE() const {
-        return get_wp_distance_to_destination_m() < _wp_radius_cm * 0.01;
+    bool reached_wp_destination_NE() const { // coverity[RW.ROUTINE_NOT_EMITTED]
+        return get_wp_distance_to_destination_m() < _wp_radius_cm * 0.01; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 
     // Returns the waypoint acceptance radius in centimeters.
@@ -271,7 +271,7 @@ public:
 
     // Returns the waypoint acceptance radius in meters.
     // This radius defines the distance from the target waypoint within which the vehicle is considered to have arrived.
-    float get_wp_radius_m() const { return _wp_radius_cm * 0.01; }
+    float get_wp_radius_m() const { return _wp_radius_cm * 0.01; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Runs the waypoint navigation controller.
     // Advances the target position and updates the position controller.

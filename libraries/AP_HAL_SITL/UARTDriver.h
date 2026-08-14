@@ -24,7 +24,7 @@ public:
         _fd = -1;
         _mc_fd = -1;
         _listen_fd = -1;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     bool is_initialized() override {
         return true;

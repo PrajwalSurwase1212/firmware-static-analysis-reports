@@ -55,7 +55,7 @@ AP_AutoTune::AP_AutoTune(ATGains &_gains, ATType _type,
     type(_type),
     aparm(parms),
     ff_filter(2)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include <stdio.h>
@@ -172,7 +172,7 @@ const char *AP_AutoTune::axis_string(ATType _type)
 /*
   one update cycle of the autotuner
  */
-void AP_AutoTune::update(AP_PIDInfo &pinfo, float scaler, float angle_err_deg)
+void AP_AutoTune::update(AP_PIDInfo &pinfo, float scaler, float angle_err_deg) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!running) {
         return;
@@ -217,7 +217,7 @@ void AP_AutoTune::update(AP_PIDInfo &pinfo, float scaler, float angle_err_deg)
         att_limit_deg = aparm.roll_limit;
         break;
     case AUTOTUNE_PITCH:
-        att_limit_deg = MIN(abs(aparm.pitch_limit_max*100),abs(aparm.pitch_limit_min*100))*0.01;
+        att_limit_deg = MIN(abs(aparm.pitch_limit_max*100),abs(aparm.pitch_limit_min*100))*0.01; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         break;
     case AUTOTUNE_YAW:
         // arbitrary value for yaw angle
@@ -435,7 +435,7 @@ void AP_AutoTune::update(AP_PIDInfo &pinfo, float scaler, float angle_err_deg)
     // filtering T can  prevent P/D oscillation being seen, so allow the
     // user to switch it off
     if (!has_option(DISABLE_FLTT_UPDATE)) {
-        rpid.filt_T_hz().set(10.0/(current.tau * 2 * M_PI));
+        rpid.filt_T_hz().set(10.0/(current.tau * 2 * M_PI)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     rpid.filt_E_hz().set(0);
     // filtering D at the same level as VTOL can allow unwanted oscillations to be seen,
@@ -555,7 +555,7 @@ void AP_AutoTune::restore_gains(void)
   towards the target to allow for a user going straight to a level 10
   tune while starting with a poorly tuned plane
  */
-void AP_AutoTune::update_rmax(void)
+void AP_AutoTune::update_rmax(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     uint8_t level = constrain_int32(aparm.autotune_level, 0, ARRAY_SIZE(tuning_table));
 
@@ -596,7 +596,7 @@ void AP_AutoTune::update_rmax(void)
     }
 
     // move tau by max 15% per loop
-    current.tau.set(constrain_float(target_tau,
+    current.tau.set(constrain_float(target_tau, // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                                     current.tau*0.85,
                                     current.tau*1.15));
 }

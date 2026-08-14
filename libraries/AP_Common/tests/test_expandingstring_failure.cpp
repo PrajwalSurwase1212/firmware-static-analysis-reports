@@ -27,7 +27,7 @@ void * WEAK mem_realloc(void *ptr, size_t old_size, size_t new_size)
     }
 
     void *new_ptr = malloc(new_size);
-    if (new_ptr != nullptr) {
+    if (new_ptr) {
         size_t copy_size = new_size > old_size ? old_size : new_size;
         memcpy(new_ptr, ptr, copy_size);
         free(ptr);

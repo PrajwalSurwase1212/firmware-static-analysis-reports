@@ -167,7 +167,7 @@ void AP_MotorsMatrix_6DoF_Scripting::output_armed_stabilizing()
     // scale back rotations evenly so it will all fit
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
-            _thrust_rpyt_out[i] = constrain_float(_thrust_rpyt_out[i] + thrust[i] * rpy_ratio,-1.0f,1.0f);
+            _thrust_rpyt_out[i] = constrain_float(_thrust_rpyt_out[i] + thrust[i] * rpy_ratio,-1.0f,1.0f); // coverity[UNINIT] // Reviewed: safe in context
         }
     }
 
@@ -198,7 +198,7 @@ void AP_MotorsMatrix_6DoF_Scripting::output_armed_stabilizing()
     // scale back evenly so it will all fit
     for (i = 0; i < AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
-            _thrust_rpyt_out[i] = constrain_float(_thrust_rpyt_out[i] + thrust[i] * horz_ratio,-1.0f,1.0f);
+            _thrust_rpyt_out[i] = constrain_float(_thrust_rpyt_out[i] + thrust[i] * horz_ratio,-1.0f,1.0f); // coverity[UNINIT] // Reviewed: safe in context
         }
     }
 

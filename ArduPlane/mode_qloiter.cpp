@@ -133,7 +133,7 @@ void ModeQLoiter::run()
     // Pilot input, use yaw rate time constant
     quadplane.set_pilot_yaw_rate_time_constant();
 
-    Vector3f target { plane.nav_roll_cd*0.01, plane.nav_pitch_cd*0.01, quadplane.get_desired_yaw_rate_cds() * 0.01 };
+    Vector3f target { plane.nav_roll_cd*0.01, plane.nav_pitch_cd*0.01, quadplane.get_desired_yaw_rate_cds() * 0.01 }; // coverity[PW.NARROWING_CONVERSION]
 
 #if AP_PLANE_SYSTEMID_ENABLED
     auto &systemid = plane.g2.systemid;

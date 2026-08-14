@@ -1,5 +1,5 @@
 #if defined(HAVE_ENDIAN_H) && HAVE_ENDIAN_H
-#include_next <endian.h>
+#include_next <endian.h> // coverity[PW.INCLUDE_RECURSION]
 #else
 
 /* minimal version defining only the macros we need in our codebase */

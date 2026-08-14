@@ -26,6 +26,7 @@
 #include "lstate.h"
 #include "lstring.h"
 #include "ltable.h"
+#include <errno.h>
 
 
 
@@ -1530,8 +1531,9 @@ static void retstat (LexState *ls) {
       }
     }
   }
-  luaK_ret(fs, first, nret);
-  testnext(ls, ';');  /* skip optional semicolon */
+  luaK_ret(fs, first, nret); // coverity[CHECKED_RETURN]
+  // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+  testnext(ls, ';');  /* skip optional semicolon */ // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 

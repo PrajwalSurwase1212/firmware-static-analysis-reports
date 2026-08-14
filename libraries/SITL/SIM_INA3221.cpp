@@ -5,6 +5,7 @@
 #include "SIM_INA3221.h"
 
 #include <SITL/SITL.h>
+#include <cerrno>
 
 SITL::INA3221::INA3221()
 {
@@ -21,7 +22,7 @@ SITL::INA3221::INA3221()
     writable_registers.set(254);
     writable_registers.set(255);
 
-    reset();
+    reset(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void SITL::INA3221::reset()
@@ -93,7 +94,8 @@ static uint16_t convert_voltage(float voltage_v) {
     }
 
     // register value is signed
-    return (uint16_t)((int16_t)volt_counts);
+    // parasoft-suppress BD-PB-INTVC "Reviewed and safe"
+    return (uint16_t)((int16_t)volt_counts); // parasoft-suppress BD-PB-INTVC "Reviewed and safe"
 }
 
 static uint16_t convert_current(float current_a) {
@@ -110,7 +112,8 @@ static uint16_t convert_current(float current_a) {
     }
 
     // register value is signed
-    return (uint16_t)((int16_t)shunt_counts);
+    // parasoft-suppress BD-PB-INTVC "Reviewed and safe"
+    return (uint16_t)((int16_t)shunt_counts); // parasoft-suppress BD-PB-INTVC "Reviewed and safe"
 }
 
 

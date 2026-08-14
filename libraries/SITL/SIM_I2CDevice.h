@@ -36,7 +36,7 @@ protected:
     bool get_debug() const { return debug; }
 
 private:
-    bool debug = false;
+    bool debug = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class I2CRegisters_ConfigurableLength : public I2CRegisters {

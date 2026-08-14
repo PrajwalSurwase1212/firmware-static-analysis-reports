@@ -14,7 +14,7 @@ public:
     /* Do not allow copies */
     CLASS_NO_COPY(AP_DroneCAN_Serial);
 
-    AP_DroneCAN_Serial() {}
+    AP_DroneCAN_Serial() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     AP_Int8 enable;
 

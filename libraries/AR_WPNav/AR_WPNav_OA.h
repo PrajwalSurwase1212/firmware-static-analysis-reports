@@ -6,7 +6,7 @@ class AR_WPNav_OA : public AR_WPNav {
 public:
 
     // re-use parent's constructor
-    using AR_WPNav::AR_WPNav;
+    using AR_WPNav::AR_WPNav; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update navigation
     void update(float dt) override;

@@ -25,6 +25,7 @@
 
 #include <AP_Common/Location.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -84,18 +85,18 @@ const AP_Param::GroupInfo AP_Beacon::var_info[] = {
 AP_Beacon::AP_Beacon()
 {
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("Fence must be singleton");
     }
 #endif
     _singleton = this;
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // initialise the AP_Beacon class
 void AP_Beacon::init(void)
 {
-    if (_driver != nullptr) {
+    if (_driver) {
         // init called a 2nd time?
         return;
     }
@@ -148,7 +149,7 @@ void AP_Beacon::update(void)
     update_boundary_points();
 }
 
-// return origin of position estimate system
+// return origin of position estimate system // coverity[RW.ROUTINE_NOT_EMITTED]
 bool AP_Beacon::get_origin(Location &origin_loc) const
 {
     if (!device_ready()) {
@@ -163,7 +164,7 @@ bool AP_Beacon::get_origin(Location &origin_loc) const
     // return origin
     origin_loc = Location{
         int32_t(origin_lat * 1.0e7f),
-        int32_t(origin_lon * 1.0e7f),
+        int32_t(origin_lon * 1.0e7f), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         int32_t(origin_alt * 100),
         Location::AltFrame::ABSOLUTE
     };
@@ -364,8 +365,11 @@ bool AP_Beacon::get_next_boundary_point(const Vector2f* boundary_pts, uint8_t nu
     for (uint8_t i=0; i < num_points; i++) {
         if (i != current_index) {
             Vector2f vec = boundary_pts[i] - curr_point;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             if (!vec.is_zero()) {
-                float angle = wrap_2PI(atan2f(vec.y, vec.x));
+                errno = 0;
+                // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+                float angle = wrap_2PI(atan2f(vec.y, vec.x)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                 float angle_relative = wrap_2PI(angle - start_angle);
                 if ((angle_relative < lowest_angle_relative) || !lowest_found) {
                     lowest_angle = angle;

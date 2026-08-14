@@ -790,7 +790,7 @@ public:
 
 private:
 
-    float _desired_lat_accel = 0.0f;   // desired lateral acceleration calculated from pilot steering input
+    float _desired_lat_accel = 0.0f;   // desired lateral acceleration calculated from pilot steering input // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class ModeInitializing : public Mode
@@ -870,7 +870,7 @@ public:
 private:
 
     float _initial_heading_cd = 0.0f;  // vehicle heading (in centi-degrees) at moment vehicle was armed
-    float _desired_heading_cd = 0.0f;  // latest desired heading (in centi-degrees) from pilot
+    float _desired_heading_cd = 0.0f;  // latest desired heading (in centi-degrees) from pilot // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 #if MODE_DOCK_ENABLED

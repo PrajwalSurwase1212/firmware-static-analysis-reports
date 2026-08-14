@@ -171,7 +171,7 @@ AP_HAL::OwnPtr<SerialDevice> UARTDriver::_parseDevicePath(const char *arg)
     _ip = strdup(ip);
 
     /* Optional flag for TCP */
-    if (flag != nullptr) {
+    if (flag) {
         _flag = strdup(flag);
     }
 

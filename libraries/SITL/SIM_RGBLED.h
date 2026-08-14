@@ -14,7 +14,7 @@ class SIM_RGBLED
 public:
     SIM_RGBLED(const char *_name) :
         name{_name}
-        { }
+        { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void init();
 

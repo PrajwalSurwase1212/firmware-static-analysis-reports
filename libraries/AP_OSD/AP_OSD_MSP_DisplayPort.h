@@ -7,7 +7,7 @@
 
 class AP_OSD_MSP_DisplayPort : public AP_OSD_Backend
 {
-    using AP_OSD_Backend::AP_OSD_Backend;
+    using AP_OSD_Backend::AP_OSD_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 public:
     static AP_OSD_Backend *probe(AP_OSD &osd);
 

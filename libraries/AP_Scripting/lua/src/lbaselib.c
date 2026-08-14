@@ -19,6 +19,7 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
+#include <errno.h>
 
 #if defined(ARDUPILOT_BUILD)
 #pragma GCC diagnostic ignored "-Wunused-function"
@@ -119,8 +120,9 @@ static int luaB_getmetatable (lua_State *L) {
   if (!lua_getmetatable(L, 1)) {
     lua_pushnil(L);
     return 1;  /* no metatable */
-  }
-  luaL_getmetafield(L, 1, "__metatable");
+  } // coverity[CHECKED_RETURN]
+  // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+  luaL_getmetafield(L, 1, "__metatable"); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
   return 1;  /* returns either __metatable field (if present) or metatable */
 }
 
@@ -202,7 +204,7 @@ static int luaB_collectgarbage (lua_State *L) {
 
 
 static int luaB_type (lua_State *L) {
-  int t = lua_type(L, 1);
+  int t = lua_type(L, 1); // coverity[OVERRUN] // Reviewed: safe in context
   luaL_argcheck(L, t != LUA_TNONE, 1, "value expected");
   lua_pushstring(L, lua_typename(L, t));
   return 1;

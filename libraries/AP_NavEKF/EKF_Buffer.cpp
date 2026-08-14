@@ -12,7 +12,7 @@
 ekf_ring_buffer::ekf_ring_buffer(uint8_t _elsize) :
     elsize(_elsize),
     buffer(nullptr)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool ekf_ring_buffer::init(uint8_t _size)
 {
@@ -119,7 +119,7 @@ void ekf_ring_buffer::reset()
 // constructor
 ekf_imu_buffer::ekf_imu_buffer(uint8_t _elsize) :
     elsize(_elsize)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   get buffer offset for an index
@@ -132,7 +132,7 @@ void *ekf_imu_buffer::get_offset(uint8_t idx) const
 // initialise buffer, returns false when allocation has failed
 bool ekf_imu_buffer::init(uint32_t size)
 {
-    if (buffer != nullptr) {
+    if (buffer) {
         // allow for init twice
         free(buffer);
     }

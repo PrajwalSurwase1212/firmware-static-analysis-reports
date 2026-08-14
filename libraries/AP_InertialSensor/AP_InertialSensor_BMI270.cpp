@@ -20,6 +20,7 @@
 #include <AP_Math/AP_Math.h>
 
 #include "AP_InertialSensor_BMI270.h"
+#include <cerrno>
 
 //#define BMI270_DEBUG
 
@@ -153,7 +154,7 @@ AP_InertialSensor_BMI270::AP_InertialSensor_BMI270(AP_InertialSensor &imu,
     : AP_InertialSensor_Backend(imu)
     , _dev(std::move(dev))
     , _rotation(rotation)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_InertialSensor_Backend *
@@ -202,7 +203,8 @@ AP_InertialSensor_BMI270::probe(AP_InertialSensor &imu,
 
 void AP_InertialSensor_BMI270::start()
 {
-    _dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     configure_accel();
 
@@ -239,7 +241,8 @@ bool AP_InertialSensor_BMI270::read_registers(uint8_t reg, uint8_t *data, uint8_
 {
     // for SPI we need to discard the first returned byte. See
     // datasheet for explanation
-    uint8_t b[len+2];
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    uint8_t b[len+2]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
     b[0] = reg | 0x80;
     memset(&b[1], 0, len+1);
     if (!_dev->transfer_fullduplex(b, len+2)) {

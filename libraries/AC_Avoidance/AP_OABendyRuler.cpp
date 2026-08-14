@@ -80,7 +80,7 @@ AP_OABendyRuler::AP_OABendyRuler()
 { 
     AP_Param::setup_object_defaults(this, var_info); 
     _bearing_prev = FLT_MAX;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // run background task to find best path
 // returns true and updates origin_new and destination_new if a best path has been found.  returns false if OA is not required

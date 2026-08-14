@@ -27,6 +27,7 @@
 #include <AP_Parachute/AP_Parachute.h>
 #include <AP_Relay/AP_Relay.h>
 #include "AP_ICEngine.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -195,14 +196,14 @@ AP_ICEngine::AP_ICEngine() :
 {
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_ICEngine must be singleton");
     }
     _singleton = this;
 
 #if AP_RPM_ENABLED
     // ICEngine runs at 10Hz
-    _rpm_filter.set_cutoff_frequency(10, 0.5f);
+    _rpm_filter.set_cutoff_frequency(10, 0.5f); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 #endif
 }
 
@@ -275,7 +276,7 @@ void AP_ICEngine::param_conversion()
     info.old_group_element = 66;
     if (AP_Param::find_old_parameter(&info, &start_chan) && (start_chan > 0)) {
         RC_Channel *chan = rc().channel(start_chan-1);
-        if (chan != nullptr) {
+        if (chan) {
             chan->option.set_and_save((int16_t)RC_Channel::AUX_FUNC::ICE_START_STOP);
         }
     }
@@ -296,7 +297,7 @@ void AP_ICEngine::do_aux_function(const RC_Channel::AuxFuncTrigger &trigger)
 }
 
 /*
-  update engine state
+  update engine state // coverity[RW.ROUTINE_NOT_EMITTED]
  */
 void AP_ICEngine::update(void)
 {
@@ -392,7 +393,7 @@ void AP_ICEngine::update(void)
     }
 
     case ICE_START_DELAY:
-        if (!should_run) {
+        if (!should_run) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             state = ICE_OFF;
         } else if (now - starter_last_run_ms >= starter_delay*1000) {
             // check if we should retry starting the engine
@@ -409,7 +410,7 @@ void AP_ICEngine::update(void)
         break;
 
     case ICE_STARTING:
-        if (!should_run) {
+        if (!should_run) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             state = ICE_OFF;
         } else if (now - starter_start_time_ms >= starter_time*1000) {
             GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Engine running");
@@ -426,10 +427,11 @@ void AP_ICEngine::update(void)
         else if (rpm_instance > 0) {
             // check RPM to see if still running
             float rpm_value;
-            if (!AP::rpm()->get_rpm(rpm_instance-1, rpm_value) ||
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            if (!AP::rpm()->get_rpm(rpm_instance-1, rpm_value) || // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                 rpm_value < rpm_threshold) {
                 // engine has stopped when it should be running
-                state = ICE_START_DELAY;
+                state = ICE_START_DELAY; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Uncommanded engine stop");
                 if (last_uncommanded_stop_ms != 0 &&
                         now - last_uncommanded_stop_ms > 3*(starter_time + starter_delay)*1000) {
@@ -461,7 +463,8 @@ void AP_ICEngine::update(void)
 #if AP_RPM_ENABLED
     // check against redline RPM
     float rpm_value;
-    if (rpm_instance > 0 && redline_rpm > 0 && AP::rpm()->get_rpm(rpm_instance-1, rpm_value)) {
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    if (rpm_instance > 0 && redline_rpm > 0 && AP::rpm()->get_rpm(rpm_instance-1, rpm_value)) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         // update the filtered RPM value
         filtered_rpm_value =  _rpm_filter.apply(rpm_value);
         if (!redline.flag && filtered_rpm_value > redline_rpm) {
@@ -706,7 +709,7 @@ void AP_ICEngine::set_ignition(bool on)
 
 #if AP_RELAY_ENABLED
     AP_Relay *relay = AP::relay();
-    if (relay != nullptr) {
+    if (relay) {
         relay->set(AP_Relay_Params::FUNCTION::IGNITION, on);
     }
 #endif // AP_RELAY_ENABLED
@@ -726,7 +729,7 @@ void AP_ICEngine::set_starter(bool on)
 
 #if AP_RELAY_ENABLED
     AP_Relay *relay = AP::relay();
-    if (relay != nullptr) {
+    if (relay) {
         relay->set(AP_Relay_Params::FUNCTION::ICE_STARTER, on);
     }
 #endif // AP_RELAY_ENABLED

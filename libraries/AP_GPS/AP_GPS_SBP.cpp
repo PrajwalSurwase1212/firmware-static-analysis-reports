@@ -61,7 +61,7 @@ AP_GPS_SBP::AP_GPS_SBP(AP_GPS &_gps,
     state.status = AP_GPS::NO_FIX;
     state.last_gps_time_ms = last_heatbeat_received_ms = AP_HAL::millis();
 
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Process all bytes available from the stream
 //

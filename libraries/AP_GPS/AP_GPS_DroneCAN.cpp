@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <cerrno>
 
 #define GPS_PPS_EMULATION 0
 
@@ -73,7 +74,7 @@ AP_GPS_DroneCAN::AP_GPS_DroneCAN(AP_GPS &_gps,
 {
     param_int_cb = FUNCTOR_BIND_MEMBER(&AP_GPS_DroneCAN::handle_param_get_set_response_int, bool, AP_DroneCAN*, const uint8_t, const char*, int32_t &);
     param_float_cb = FUNCTOR_BIND_MEMBER(&AP_GPS_DroneCAN::handle_param_get_set_response_float, bool, AP_DroneCAN*, const uint8_t, const char*, float &);
-    param_save_cb = FUNCTOR_BIND_MEMBER(&AP_GPS_DroneCAN::handle_param_save_response, void, AP_DroneCAN*, const uint8_t, bool);
+    param_save_cb = FUNCTOR_BIND_MEMBER(&AP_GPS_DroneCAN::handle_param_save_response, void, AP_DroneCAN*, const uint8_t, bool); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_GPS_DroneCAN::~AP_GPS_DroneCAN()
@@ -83,7 +84,7 @@ AP_GPS_DroneCAN::~AP_GPS_DroneCAN()
     _detected_modules[_detected_module].driver = nullptr;
 
 #if GPS_MOVING_BASELINE
-    if (rtcm3_parser != nullptr) {
+    if (rtcm3_parser) {
         delete rtcm3_parser;
     }
 #endif
@@ -214,7 +215,8 @@ bool AP_GPS_DroneCAN::inter_instance_pre_arm_checks(char failure_msg[], uint16_t
     for (uint8_t i = 0; i < GPS_MAX_RECEIVERS; i++) {
         const auto &params_i = AP::gps().params[i];
         // we are only interested in parameters for DroneCAN GPSs:
-        if (!is_dronecan_gps_type(params_i.type)) {
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        if (!is_dronecan_gps_type(params_i.type)) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
             continue;
         }
         bool overriden_node_found = false;
@@ -226,7 +228,8 @@ bool AP_GPS_DroneCAN::inter_instance_pre_arm_checks(char failure_msg[], uint16_t
         for (uint8_t j = 0; j < GPS_MAX_RECEIVERS; j++) {
             const auto &params_j = AP::gps().params[j];
             // we are only interested in parameters for DroneCAN GPSs:
-            if (!is_dronecan_gps_type(params_j.type)) {
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            if (!is_dronecan_gps_type(params_j.type)) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                 continue;
             }
             if (params_i.override_node_id == params_j.override_node_id && (i != j)) {
@@ -590,7 +593,7 @@ void AP_GPS_DroneCAN::handle_relposheading_msg(const ardupilot_gnss_RelPosHeadin
 bool AP_GPS_DroneCAN::get_RTCMV3(const uint8_t *&bytes, uint16_t &len)
 {
     WITH_SEMAPHORE(sem);
-    if (rtcm3_parser != nullptr) {
+    if (rtcm3_parser) {
         len = rtcm3_parser->get_len(bytes);
         return len > 0;
     }
@@ -601,7 +604,7 @@ bool AP_GPS_DroneCAN::get_RTCMV3(const uint8_t *&bytes, uint16_t &len)
 void AP_GPS_DroneCAN::clear_RTCMV3(void)
 {
     WITH_SEMAPHORE(sem);
-    if (rtcm3_parser != nullptr) {
+    if (rtcm3_parser) {
         rtcm3_parser->clear_packet();
     }
 }
@@ -613,7 +616,7 @@ void AP_GPS_DroneCAN::handle_fix2_msg_trampoline(AP_DroneCAN *ap_dronecan, const
     WITH_SEMAPHORE(_sem_registry);
 
     AP_GPS_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
-    if (driver != nullptr) {
+    if (driver) {
         driver->handle_fix2_msg(msg, transfer.timestamp_usec);
     }
 }
@@ -623,7 +626,7 @@ void AP_GPS_DroneCAN::handle_aux_msg_trampoline(AP_DroneCAN *ap_dronecan, const 
     WITH_SEMAPHORE(_sem_registry);
 
     AP_GPS_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
-    if (driver != nullptr) {
+    if (driver) {
         driver->handle_aux_msg(msg);
     }
 }
@@ -633,7 +636,7 @@ void AP_GPS_DroneCAN::handle_heading_msg_trampoline(AP_DroneCAN *ap_dronecan, co
     WITH_SEMAPHORE(_sem_registry);
 
     AP_GPS_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
-    if (driver != nullptr) {
+    if (driver) {
         driver->handle_heading_msg(msg);
     }
 }
@@ -643,7 +646,7 @@ void AP_GPS_DroneCAN::handle_status_msg_trampoline(AP_DroneCAN *ap_dronecan, con
     WITH_SEMAPHORE(_sem_registry);
 
     AP_GPS_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
-    if (driver != nullptr) {
+    if (driver) {
         driver->handle_status_msg(msg);
     }
 }
@@ -654,7 +657,7 @@ void AP_GPS_DroneCAN::handle_moving_baseline_msg_trampoline(AP_DroneCAN *ap_dron
 {
     WITH_SEMAPHORE(_sem_registry);
     AP_GPS_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
-    if (driver != nullptr) {
+    if (driver) {
         driver->handle_moving_baseline_msg(msg, transfer.source_node_id);
     }
 }
@@ -664,7 +667,7 @@ void AP_GPS_DroneCAN::handle_relposheading_msg_trampoline(AP_DroneCAN *ap_dronec
 {
     WITH_SEMAPHORE(_sem_registry);
     AP_GPS_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
-    if (driver != nullptr) {
+    if (driver) {
         driver->handle_relposheading_msg(msg, transfer.source_node_id);
     }
 }

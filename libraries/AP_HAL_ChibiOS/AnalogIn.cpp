@@ -692,7 +692,7 @@ void AnalogIn::timer_tick_adc(uint8_t index)
               (float)buf_adc[i] * ADC_BOARD_SCALING * VOLTAGE_SCALING);
         for (uint8_t j=0; j < ANALOG_MAX_CHANNELS; j++) {
             ChibiOS::AnalogSource *c = _channels[j];
-            if (c != nullptr) {
+            if (c) {
                 if ((get_analog_pin(index, i) == c->_pin) && (c->_pin != ANALOG_INPUT_NONE)) {
                     // add a value
                     c->_add_value(buf_adc[i] * ADC_BOARD_SCALING, _board_voltage);

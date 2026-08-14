@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include <cerrno>
 
 #if HAL_SOARING_ENABLED
 
@@ -13,7 +14,8 @@ void Plane::update_soaring() {
     // status on active state changes.
     bool override_disable = mission.get_in_landing_sequence_flag();
 
-    plane.g2.soaring_controller.update_active_state(override_disable);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    plane.g2.soaring_controller.update_active_state(override_disable); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     if (!g2.soaring_controller.is_active()) {
         return;

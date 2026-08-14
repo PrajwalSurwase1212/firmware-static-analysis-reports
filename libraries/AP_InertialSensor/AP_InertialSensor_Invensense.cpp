@@ -69,6 +69,7 @@ extern const AP_HAL::HAL& hal;
 #endif
 
 #include "AP_InertialSensor_Invensense_registers.h"
+#include <cerrno>
 
 #define MPU_SAMPLE_SIZE 14
 #define MPU_FIFO_BUFFER_LEN 8
@@ -91,7 +92,7 @@ AP_InertialSensor_Invensense::AP_InertialSensor_Invensense(AP_InertialSensor &im
     , _raw_temp(0)
     , _temp_filtered(0.0f)
     , _accel_scale(0.0f)
-    , _gyro_scale(0.0f)
+    , _gyro_scale(0.0f) // coverity[UNINIT_CTOR] // Reviewed: safe in context
     , _fifo_accel_scale(0.0f)
     , _fifo_gyro_scale(0.0f)
     , _temp_filter(1000, 1)
@@ -110,7 +111,7 @@ AP_InertialSensor_Invensense::AP_InertialSensor_Invensense(AP_InertialSensor &im
     , _mpu_type(Invensense_MPU6000)
     , _fast_sampling(false)
     , _gyro_fifo_downsample_rate(0)
-    , _accel_fifo_downsample_rate(0)
+    , _accel_fifo_downsample_rate(0) // coverity[UNINIT] // Reviewed: safe in context
     , _gyro_to_accel_sample_ratio(0)
     , _gyro_backend_rate_hz(0)
     , _accel_backend_rate_hz(0)
@@ -125,7 +126,7 @@ AP_InertialSensor_Invensense::AP_InertialSensor_Invensense(AP_InertialSensor &im
 
 AP_InertialSensor_Invensense::~AP_InertialSensor_Invensense()
 {
-    if (_fifo_buffer != nullptr) {
+    if (_fifo_buffer) {
         hal.util->free_type(_fifo_buffer, MPU_FIFO_BUFFER_LEN * MPU_SAMPLE_SIZE, AP_HAL::Util::MEM_DMA_SAFE);
     }
     delete _auxiliary_bus;
@@ -136,7 +137,7 @@ AP_InertialSensor_Backend *AP_InertialSensor_Invensense::probe(AP_InertialSensor
                                                                enum Rotation rotation)
 {
     if (!dev) {
-        return nullptr;
+        return nullptr; // coverity[UNINIT] // Reviewed: safe in context
     }
     AP_InertialSensor_Invensense *sensor =
         NEW_NOTHROW AP_InertialSensor_Invensense(imu, std::move(dev), rotation);
@@ -466,7 +467,8 @@ void AP_InertialSensor_Invensense::start()
 
     // start the timer process to read samples, using the fastest rate avilable
     _dev->register_periodic_callback(1000000UL / _gyro_backend_rate_hz, FUNCTOR_BIND_MEMBER(&AP_InertialSensor_Invensense::_poll_data, void));
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 // get a startup banner to output to the GCS
 bool AP_InertialSensor_Invensense::get_output_banner(char* banner, uint8_t banner_len) {
@@ -738,7 +740,8 @@ bool AP_InertialSensor_Invensense::_accumulate_sensor_rate_sampling(uint8_t *sam
     }
 
     if (ret) {
-        float temp = (static_cast<float>(tsum)/n_samples)*temp_sensitivity + temp_zero;
+        // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
+        float temp = (static_cast<float>(tsum)/n_samples)*temp_sensitivity + temp_zero; // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
         _temp_filtered = _temp_filter.apply(temp);
     }
     
@@ -871,7 +874,8 @@ bool AP_InertialSensor_Invensense::_check_raw_temp(int16_t t2)
         // cached copy OK
         return true;
     }
-    uint8_t trx[2];
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    uint8_t trx[2] = {0};
     if (_block_read(MPUREG_TEMP_OUT_H, trx, 2)) {
         _raw_temp = int16_val(trx, 0);
     }

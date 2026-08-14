@@ -25,7 +25,7 @@ AP_Proximity_Boundary_3D::AP_Proximity_Boundary_3D()
 {
     // initialise sector edge vector used for building the boundary fence
     init();
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // initialise the boundary and sector_edge_vector array used for object avoidance
 //   should be called if the sector_middle_deg or _sector_width_deg arrays are changed

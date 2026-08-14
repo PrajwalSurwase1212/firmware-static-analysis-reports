@@ -76,7 +76,7 @@ AC_Sprayer::AC_Sprayer()
     }
 
     // To-Do: ensure that the pump and spinner servo channels are enabled
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
  * Get the AP_Sprayer singleton

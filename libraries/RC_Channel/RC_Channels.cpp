@@ -35,6 +35,7 @@ extern const AP_HAL::HAL& hal;
 #include "RC_Channel.h"
 
 #include <AP_Arming/AP_Arming.h>
+#include <cerrno>
 
 /*
   channels group object constructor
@@ -44,10 +45,10 @@ RC_Channels::RC_Channels(void)
     // set defaults from the parameter table
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("RC_Channels must be singleton");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void RC_Channels::init(void)
@@ -69,11 +70,12 @@ uint8_t RC_Channels::get_radio_in(uint16_t *chans, const uint8_t num_channels)
 
     const uint8_t read_channels = MIN(num_channels, NUM_RC_CHANNELS);
     for (uint8_t i = 0; i < read_channels; i++) {
-        if (i >= num_channels) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (i >= num_channels) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             break;
         }
         const auto *chan = channel(i);
-        if (chan != nullptr) {
+        if (chan) {
             chans[i] = chan->get_radio_in();
         }
     }
@@ -328,7 +330,7 @@ static RC_Channel dummy_rcchannel;
 RC_Channel &RC_Channels::get_rcmap_channel_nonnull(uint8_t rcmap_number) const
 {
     RC_Channel *ret = RC_Channels::rc_channel(rcmap_number-1);
-    if (ret != nullptr) {
+    if (ret) {
         return *ret;
     }
     return dummy_rcchannel;

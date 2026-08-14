@@ -17,6 +17,7 @@
 */
 
 #include "SIM_RF_Ainstein_LR_D1.h"
+#include <cerrno>
 
 using namespace SITL;
 
@@ -39,7 +40,8 @@ uint32_t RF_Ainstein_LR_D1::packet_for_alt(uint16_t alt_cm, uint8_t *buffer, uin
     buffer[4] = malfunction_alert;
     buffer[5] = 1;  // object count
     buffer[6] = HIGHBYTE(alt_cm);
-    buffer[7] = LOWBYTE(alt_cm);
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+    buffer[7] = LOWBYTE(alt_cm); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
     buffer[8] = snr;
     buffer[9] = 0;  // speed high
     buffer[10] = 0;  // speed low

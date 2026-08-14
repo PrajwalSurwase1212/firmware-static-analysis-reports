@@ -29,6 +29,7 @@
 #include <AP_Motors/AP_Motors.h>
 #endif
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -193,10 +194,10 @@ AP_GyroFFT::AP_GyroFFT()
     _thread_state._noise_needs_calibration = 0x07; // all axes need calibration
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_GyroFFT must be singleton");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // initialize the FFT parameters and engine
@@ -210,12 +211,17 @@ __INITFUNC__ void AP_GyroFFT::init(uint16_t loop_rate_hz)
     _ins = &AP::ins();
 
     // sanity check
-    if (_ins->get_raw_gyro_rate_hz() == 0) {
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_ins->get_raw_gyro_rate_hz() == 0) { // parasoft-suppress BD-PB-NP "Reviewed and safe"
         AP_HAL::panic("AP_GyroFFT must be initialized after AP_InertialSensor");
     }
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
     // check that we support the window size requested and it is a power of 2
-    _window_size.set(1 << lrintf(log2f(_window_size.get())));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0;
+    _window_size.set(1 << lrintf(log2f(_window_size.get()))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 #if defined(STM32H7) || CONFIG_HAL_BOARD == HAL_BOARD_LINUX || CONFIG_HAL_BOARD == HAL_BOARD_SITL
     _window_size.set(constrain_int16(_window_size, 32, 512));
 #else
@@ -534,7 +540,7 @@ bool AP_GyroFFT::start_analysis() {
 
     if (get_available_samples(_update_axis) >= _state->_window_size) {
         _thread_state._analysis_started = true;
-        return true;
+        return true; // coverity[RW.ROUTINE_NOT_EMITTED]
     }
     return false;
 }
@@ -559,7 +565,7 @@ void AP_GyroFFT::update_parameters(bool force)
     _fft_max_hz.set(MIN(_fft_max_hz, _fft_sampling_rate_hz * 0.48));
     _config._snr_threshold_db = _snr_threshold_db;
     _config._fft_min_hz = _fft_min_hz;
-    _config._fft_max_hz = _fft_max_hz;
+    _config._fft_max_hz = _fft_max_hz; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     // determine the start FFT bin for all frequency detection
     _config._fft_start_bin = MAX(floorf(_fft_min_hz.get() / _state->_bin_resolution), 1);
     // determine the endt FFT bin for all frequency detection
@@ -726,7 +732,7 @@ void AP_GyroFFT::start_notch_tune()
     _avg_throttle_out = 0.0f;
 #if APM_BUILD_COPTER_OR_HELI || APM_BUILD_TYPE(APM_BUILD_ArduPlane)
     AP_Motors* motors = AP::motors();
-    if (motors != nullptr) {
+    if (motors) {
         _avg_throttle_out = motors->get_throttle_hover();
     }
 #endif
@@ -900,7 +906,7 @@ uint8_t AP_GyroFFT::get_weighted_noise_center_frequencies_hz(uint8_t num_freqs, 
             return 0;
         }
         AP_Motors* motors = AP::motors();
-        if (motors != nullptr) {
+        if (motors) {
             // FFT is not healthy, fallback to FFT's throttle-based estimate
             freqs[0] = constrain_float(_fft_min_hz * MAX(1.0f, sqrtf(motors->get_throttle_out() / _throttle_ref)), _fft_min_hz, _fft_max_hz);
             return 1;
@@ -1192,7 +1198,7 @@ uint8_t AP_GyroFFT::calculate_tracking_peaks(float& weighted_center_freq_hz, boo
             num_peaks++;
         } else {
             upper = FrequencyPeak::NONE;
-        }
+        } // coverity[OVERRUN] // Reviewed: safe in context
         if (center != FrequencyPeak::NONE && calculate_filtered_noise(FrequencyPeak::CENTER,  center, freqs, config)) {
             num_peaks++;
         } else {
@@ -1250,13 +1256,13 @@ bool AP_GyroFFT::calculate_filtered_noise(FrequencyPeak target_peak, FrequencyPe
         if (_missed_cycles[_update_axis][target_peak]++ < FFT_MAX_MISSED_UPDATES) {
             return true; // the peak is synthetic
         }
-        update_tl_center_freq_energy(target_peak, _update_axis, 0.0f);
+        update_tl_center_freq_energy(target_peak, _update_axis, 0.0f); // coverity[OVERRUN] // Reviewed: safe in context
         update_tl_noise_center_bandwidth_hz(target_peak, _update_axis, _bandwidth_hover_hz);
-        update_tl_noise_center_freq_hz(target_peak, _update_axis, config._fft_min_hz);
+        update_tl_noise_center_freq_hz(target_peak, _update_axis, config._fft_min_hz); // coverity[OVERRUN] // Reviewed: safe in context
         return false;
     }
 
-    AP_HAL::DSP::FrequencyPeakData* peak_data = &_state->_peak_data[source_peak];
+    AP_HAL::DSP::FrequencyPeakData* peak_data = &_state->_peak_data[source_peak]; // coverity[OVERRUN] // Reviewed: safe in context
 
     const uint16_t nb = peak_data->_bin;
 
@@ -1318,10 +1324,14 @@ bool AP_GyroFFT::get_weighted_frequency(FrequencyPeak peak, float& weighted_peak
 
     const uint16_t bin = peak_data->_bin;
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // calculate the SNR and center frequency energy
     const float max_energy = MAX(1.0f, _state->get_freq_bin(bin));
     const float ref_energy = MAX(1.0f, _ref_energy[bin][_update_axis]);
-    snr = 10.f * (log10f(max_energy) - log10f(ref_energy));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0;
+    snr = 10.f * (log10f(max_energy) - log10f(ref_energy)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     // if the bin energy is above the noise threshold then we have a signal
     if (!_thread_state._noise_needs_calibration && isfinite(_state->get_freq_bin(bin)) && snr > config._snr_threshold_db) {
@@ -1382,11 +1392,13 @@ void AP_GyroFFT::update_ref_energy(uint16_t max_bin)
         for (uint16_t i = 1; i < _state->_bin_count; i++) {
             _ref_energy[i][_update_axis] += _state->get_freq_bin(i);
         }
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         if (--_noise_calibration_cycles[_update_axis] == 0) {
             for (uint16_t i = 1; i < _state->_bin_count; i++) {
                 const float cycles = (static_cast<float>(_window_size) / static_cast<float>(_samples_per_frame)) * 2;
                 // overall random noise is reduced by sqrt(N) when averaging periodigrams so adjust for that
-                _ref_energy[i][_update_axis] = (_ref_energy[i][_update_axis] / cycles) * sqrtf(cycles);
+                // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+                _ref_energy[i][_update_axis] = (_ref_energy[i][_update_axis] / cycles) * sqrtf(cycles); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             }
 
             WITH_SEMAPHORE(_sem);

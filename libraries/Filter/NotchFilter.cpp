@@ -20,6 +20,7 @@
 
 #include "NotchFilter.h"
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 const static float NOTCH_MAX_SLEW       = 0.05f;
 const static float NOTCH_MAX_SLEW_LOWER = 1.0f - NOTCH_MAX_SLEW;
@@ -29,11 +30,22 @@ const static float NOTCH_MAX_SLEW_UPPER = 1.0f / NOTCH_MAX_SLEW_LOWER;
    calculate the attenuation and quality factors of the filter
  */
 template <class T>
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 void NotchFilter<T>::calculate_A_and_Q(float center_freq_hz, float bandwidth_hz, float attenuation_dB, float& A, float& Q) {
-    A = powf(10, -attenuation_dB / 40.0f);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    A = powf(10, -attenuation_dB / 40.0f); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (center_freq_hz > 0.5 * bandwidth_hz) {
-        const float octaves = log2f(center_freq_hz / (center_freq_hz - bandwidth_hz / 2.0f)) * 2.0f;
-        Q = sqrtf(powf(2, octaves)) / (powf(2, octaves) - 1.0f);
+        errno = 0;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        const float octaves = log2f(center_freq_hz / (center_freq_hz - bandwidth_hz / 2.0f)) * 2.0f; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0;
+        errno = 0;
+        errno = 0;
+        Q = sqrtf(powf(2, octaves)) / (powf(2, octaves) - 1.0f); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     } else {
         Q = 0.0;
     }

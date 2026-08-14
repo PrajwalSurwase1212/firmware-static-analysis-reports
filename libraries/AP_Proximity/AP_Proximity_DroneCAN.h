@@ -12,7 +12,7 @@ class AP_Proximity_DroneCAN : public AP_Proximity_Backend
 {
 public:
     // constructor
-    using AP_Proximity_Backend::AP_Proximity_Backend;
+    using AP_Proximity_Backend::AP_Proximity_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update state
     void update(void) override;

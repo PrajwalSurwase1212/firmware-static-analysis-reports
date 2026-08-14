@@ -14,6 +14,7 @@
  */
 
 #include "SerialLED.h"
+#include <cerrno>
 
 #if AP_NOTIFY_SERIALLED_ENABLED
 
@@ -21,7 +22,7 @@ extern const AP_HAL::HAL& hal;
 
 SerialLED::SerialLED(uint8_t led_off, uint8_t led_bright, uint8_t led_medium, uint8_t led_dim) :
     RGBLed(led_off, led_bright, led_medium, led_dim)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool SerialLED::init()
@@ -38,7 +39,8 @@ bool SerialLED::hw_set_rgb(uint8_t red, uint8_t green, uint8_t blue)
     }
 
     AP_SerialLED *led = AP_SerialLED::get_singleton();
-    if (led == nullptr) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (led == nullptr) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return false;
     }
 

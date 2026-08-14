@@ -27,7 +27,7 @@ class Gripper_Servo {
 public:
     Gripper_Servo() {
         AP_Param::setup_object_defaults(this, var_info);
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update Gripper state
     void update(const struct sitl_input &input);

@@ -93,7 +93,7 @@ private:
             frame_len = 6 + sizeof(T);
             update_checksum();
         }
-        uint8_t header = (uint8_t)ResponseFrameHeaderID::ESC;  // master is always 0x01
+        uint8_t header = (uint8_t)ResponseFrameHeaderID::ESC;  // master is always 0x01 // coverity[RW.ID_MUST_BE_CLASS_OR_NAMESPACE_NAME]
         uint8_t target_id;  // 5 bits only
         uint16_t frame_type = 0;
         uint8_t frame_len;

@@ -63,7 +63,7 @@ public:
         {
             _singleton = this;
             AP_Param::setup_object_defaults(this, var_info);
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     static AC_AttitudeControl *get_singleton(void) {
         return _singleton;

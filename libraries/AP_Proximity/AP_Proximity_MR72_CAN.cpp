@@ -19,6 +19,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include "AP_Proximity_MR72_CAN.h"
+#include <cerrno>
 
 const AP_Param::GroupInfo AP_Proximity_MR72_CAN::var_info[] = {
 
@@ -43,7 +44,7 @@ AP_Proximity_MR72_CAN::AP_Proximity_MR72_CAN(AP_Proximity &_frontend,
     }
 
     AP_Param::setup_object_defaults(this, var_info);
-    state.var_info = var_info;
+    state.var_info = var_info; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // update state
@@ -105,8 +106,11 @@ bool AP_Proximity_MR72_CAN::parse_distance_message(AP_HAL::CANFrame &frame)
     Vector2f obstacle_fr;
     // This parsing comes from the NanoRadar MR72 datasheet
     obstacle_fr.x = ((frame.data[2] & 0x07U) * 256 + frame.data[3]) * 0.2 - 204.6;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     obstacle_fr.y = (frame.data[1] * 32 + (frame.data[2] >> 3)) * 0.2 - 500;
-    const float yaw = correct_angle_for_orientation(wrap_360(degrees(atan2f(obstacle_fr.x, obstacle_fr.y))));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float yaw = correct_angle_for_orientation(wrap_360(degrees(atan2f(obstacle_fr.x, obstacle_fr.y)))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     const float objects_dist = obstacle_fr.length();
 

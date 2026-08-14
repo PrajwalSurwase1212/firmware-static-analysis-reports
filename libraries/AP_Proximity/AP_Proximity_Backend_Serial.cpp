@@ -31,7 +31,7 @@ AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial(AP_Proximity &_frontend
 {
     const AP_SerialManager &serial_manager = AP::serialmanager();
     _uart = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Lidar360, serial_instance);
-    if (_uart != nullptr) {
+    if (_uart) {
         // start uart with larger receive buffer
         _uart->begin(serial_manager.find_baudrate(AP_SerialManager::SerialProtocol_Lidar360, serial_instance), rxspace(), 0);
     }

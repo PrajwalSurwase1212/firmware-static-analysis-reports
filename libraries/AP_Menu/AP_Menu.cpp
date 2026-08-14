@@ -243,11 +243,11 @@ Menu::_call(uint8_t n, uint8_t argc)
 void
 Menu::set_limits(uint8_t commandline_max, uint8_t args_max)
 {
-    if (_inbuf != nullptr) {
+    if (_inbuf) {
         delete[] _inbuf;
         _inbuf = nullptr;
     }
-    if (_argv != nullptr) {
+    if (_argv) {
         delete[] _argv;
         _argv = nullptr;
     }

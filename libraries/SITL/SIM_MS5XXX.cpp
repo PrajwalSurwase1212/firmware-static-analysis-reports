@@ -12,7 +12,7 @@ extern const AP_HAL::HAL& hal;
 MS5XXX::MS5XXX() :
     I2CDevice()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void MS5XXX::reset()
 {

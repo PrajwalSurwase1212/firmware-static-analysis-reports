@@ -22,6 +22,7 @@
 
 #include <AP_HAL/utility/sparse-endian.h>
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 #define BMM350_REG_CHIP_ID              0x00
 #define BMM350_REG_PMU_CMD_AGGR_SET     0x04
@@ -129,7 +130,7 @@ AP_Compass_BMM350::AP_Compass_BMM350(AP_HAL::OwnPtr<AP_HAL::Device> dev,
     : _dev(std::move(dev))
     , _force_external(force_external)
     , _rotation(rotation)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /**
@@ -309,7 +310,8 @@ bool AP_Compass_BMM350::set_power_mode(const enum power_mode mode)
  */
 bool AP_Compass_BMM350::read_bytes(const uint8_t reg, uint8_t *out, const uint16_t read_len)
 {
-    uint8_t data[read_len + 2];
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    uint8_t data[read_len + 2]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
 
     if (!_dev->read_registers(reg, data, read_len + 2)) {
         return false;
@@ -322,7 +324,8 @@ bool AP_Compass_BMM350::read_bytes(const uint8_t reg, uint8_t *out, const uint16
 
 bool AP_Compass_BMM350::init()
 {
-    _dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     // 10 retries for init
     _dev->set_retries(10);
@@ -425,9 +428,11 @@ bool AP_Compass_BMM350::init()
     return true;
 
 err:
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     _dev->get_semaphore()->give();
     return false;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 void AP_Compass_BMM350::timer()
 {

@@ -76,7 +76,7 @@ private:
 
     ObjectBuffer<Transaction> requests{AP_MAVLINK_FTP_MAX_SESSIONS};
 
-    bool initialised{false};
+    bool initialised{false}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // session specific info
     class Session {

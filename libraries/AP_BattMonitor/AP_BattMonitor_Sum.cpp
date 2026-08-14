@@ -45,7 +45,7 @@ AP_BattMonitor_Sum::AP_BattMonitor_Sum(AP_BattMonitor &mon,
 {
     AP_Param::setup_object_defaults(this, var_info);
     _state.var_info = var_info;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // read - read the voltage and current
 void

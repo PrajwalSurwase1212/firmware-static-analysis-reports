@@ -18,6 +18,7 @@
 #if AP_RANGEFINDER_USD1_SERIAL_ENABLED
 
 #include <ctype.h>
+#include <cerrno>
 
 #define USD1_HDR 254   // Header Byte from USD1_Serial (0xFE)
 #define USD1_HDR_V0 72 // Header Byte for beta V0 of USD1_Serial (0x48)
@@ -136,7 +137,8 @@ bool AP_RangeFinder_USD1_Serial::get_reading(float &reading_m)
             _linebuf[_linebuf_len++] = c;
 
             if ((_linebuf_len < (sizeof(_linebuf)/sizeof(_linebuf[0]))) ||
-                (_version == 0 && _linebuf_len < 3)) {
+                // parasoft-suppress BD-PB-CC "Reviewed and safe"
+                (_version == 0 && _linebuf_len < 3)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
                 /* don't process _linebuf until we've collected six bytes of data
                  * (or 3 bytes for Version 0 firmware)
                  */

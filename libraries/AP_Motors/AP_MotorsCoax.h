@@ -25,7 +25,7 @@ public:
     AP_MotorsCoax(uint16_t speed_hz = AP_MOTORS_SPEED_DEFAULT) :
         AP_MotorsMulticopter(speed_hz)
     {
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // init
     void                init(motor_frame_class frame_class, motor_frame_type frame_type) override;

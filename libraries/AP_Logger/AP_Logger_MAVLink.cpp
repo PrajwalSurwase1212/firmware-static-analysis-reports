@@ -31,7 +31,7 @@ AP_Logger_MAVLink::AP_Logger_MAVLink(AP_Logger &front, LoggerMessageWriter_DFLog
 {
     _blockcount = 1024*((uint8_t)_front._params.mav_bufsize) / sizeof(struct dm_block);
     // ::fprintf(stderr, "DM: Using %u blocks\n", _blockcount);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // initialisation
 void AP_Logger_MAVLink::Init()
@@ -39,7 +39,7 @@ void AP_Logger_MAVLink::Init()
     _blocks = nullptr;
     while (_blockcount >= 8) { // 8 is a *magic* number
         _blocks = (struct dm_block *) calloc(_blockcount, sizeof(struct dm_block));
-        if (_blocks != nullptr) {
+        if (_blocks) {
             break;
         }
         _blockcount /= 2;
@@ -108,7 +108,7 @@ struct AP_Logger_MAVLink::dm_block *AP_Logger_MAVLink::dequeue_seqno(AP_Logger_M
 bool AP_Logger_MAVLink::free_seqno_from_queue(uint32_t seqno, dm_block_queue_t &queue)
 {
     struct dm_block *block = dequeue_seqno(queue, seqno);
-    if (block != nullptr) {
+    if (block) {
         block->next = _blocks_free;
         _blocks_free = block;
         _blockcount_free++; // comment me out to expose a bug!
@@ -179,7 +179,7 @@ bool AP_Logger_MAVLink::_WritePrioritisedBlock(const void *pBuffer, uint16_t siz
 struct AP_Logger_MAVLink::dm_block *AP_Logger_MAVLink::next_block()
 {
     AP_Logger_MAVLink::dm_block *ret = _blocks_free;
-    if (ret != nullptr) {
+    if (ret) {
         _blocks_free = ret->next;
         _blockcount_free--;
         ret->seqno = _next_seq_num++;
@@ -300,7 +300,7 @@ void AP_Logger_MAVLink::handle_retry(uint32_t seqno)
     }
 
     struct dm_block *victim = dequeue_seqno(_blocks_sent, seqno);
-    if (victim != nullptr) {
+    if (victim) {
         _last_response_time = AP_HAL::millis();
         enqueue_block(_blocks_retry, victim);
     }
@@ -462,7 +462,7 @@ bool AP_Logger_MAVLink::send_log_blocks_from_queue(dm_block_queue_t &queue)
         }
         queue.sent_count++;
         struct AP_Logger_MAVLink::dm_block *tmp = dequeue_seqno(queue,queue.oldest->seqno);
-        if (tmp != nullptr) { // should never be nullptr
+        if (tmp) { // should never be nullptr
             enqueue_block(_blocks_sent, tmp);
         } else {
             INTERNAL_ERROR(AP_InternalError::error_t::logger_dequeue_failure);
@@ -533,11 +533,11 @@ void AP_Logger_MAVLink::periodic_10Hz(const uint32_t now)
     do_resends(now);
     stats_collect();
 }
-void AP_Logger_MAVLink::periodic_1Hz()
+void AP_Logger_MAVLink::periodic_1Hz() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (rate_limiter == nullptr &&
-        (_front._params.mav_ratemax > 0 ||
-         _front._params.disarm_ratemax > 0 ||
+        (_front._params.mav_ratemax > 0 || // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+         _front._params.disarm_ratemax > 0 || // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
          _front._log_pause)) {
         // setup rate limiting if log rate max > 0Hz or log pause of streaming entries is requested
         rate_limiter = NEW_NOTHROW AP_Logger_RateLimiter(_front, _front._params.mav_ratemax, _front._params.disarm_ratemax);

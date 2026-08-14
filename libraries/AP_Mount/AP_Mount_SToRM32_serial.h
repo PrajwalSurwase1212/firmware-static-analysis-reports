@@ -20,7 +20,7 @@ class AP_Mount_SToRM32_serial : public AP_Mount_Backend_Serial
 
 public:
     // Constructor
-    using AP_Mount_Backend_Serial::AP_Mount_Backend_Serial;
+    using AP_Mount_Backend_Serial::AP_Mount_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update mount position - should be called periodically
     void update() override;

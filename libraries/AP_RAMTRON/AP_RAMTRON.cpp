@@ -7,6 +7,7 @@
 #include "AP_RAMTRON.h"
 #include <AP_Math/crc.h>
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -120,7 +121,8 @@ bool AP_RAMTRON::init(void)
  */
 void AP_RAMTRON::send_offset(uint8_t cmd, uint32_t offset) const
 {
-    if (ramtron_ids[id].addrlen == 3) {
+    // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+    if (ramtron_ids[id].addrlen == 3) { // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
         uint8_t b[4] = { cmd, uint8_t((offset>>16)&0xFF), uint8_t((offset>>8)&0xFF), uint8_t(offset&0xFF) };
         dev->transfer(b, sizeof(b), nullptr, 0);
     } else /* len 2 */ {

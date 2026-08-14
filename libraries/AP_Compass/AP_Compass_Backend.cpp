@@ -14,7 +14,7 @@
 AP_Compass_Backend::AP_Compass_Backend()
     : _compass(AP::compass())
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Compass_Backend::rotate_field(Vector3f &mag, uint8_t instance)
 {
@@ -63,7 +63,7 @@ void AP_Compass_Backend::publish_raw_field(const Vector3f &mag, uint8_t instance
     // sensor rate. We want them to consume only the filtered fields
 #if COMPASS_CAL_ENABLED
     auto& cal = _compass._calibrator[_compass._get_priority(Compass::StateIndex(instance))];
-    if (cal != nullptr) {
+    if (cal) {
         Compass::mag_state &state = _compass._state[Compass::StateIndex(instance)];
         state.last_update_ms = AP_HAL::millis();
         cal->new_sample(mag);

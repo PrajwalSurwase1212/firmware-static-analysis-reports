@@ -56,7 +56,7 @@ void VTOL_Assist::reset()
 /*
   return true if the quadplane should provide stability assistance
  */
-bool VTOL_Assist::should_assist(float aspeed, bool have_airspeed)
+bool VTOL_Assist::should_assist(float aspeed, bool have_airspeed) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!plane.arming.is_armed_and_safety_off() || (state == STATE::ASSIST_DISABLED) || quadplane.tailsitter.is_control_surface_tailsitter()) {
         // disarmed or disabled by aux switch or because a control surface tailsitter
@@ -81,7 +81,7 @@ bool VTOL_Assist::should_assist(float aspeed, bool have_airspeed)
 
     force_assist = state == STATE::FORCE_ENABLED;
 
-    if (speed <= 0) {
+    if (speed <= 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // all checks disabled via speed threshold, still allow force enabled
         speed_assist = false;
         alt_error.reset();
@@ -95,7 +95,7 @@ bool VTOL_Assist::should_assist(float aspeed, bool have_airspeed)
        (!quadplane.option_is_set(QuadPlane::Option::DISABLE_SYNTHETIC_AIRSPEED_ASSIST) || plane.ahrs.using_airspeed_sensor());
 
     const uint32_t now_ms = AP_HAL::millis();
-    const uint32_t tigger_delay_ms = delay * 1000;
+    const uint32_t tigger_delay_ms = delay * 1000; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const uint32_t clear_delay_ms = tigger_delay_ms * 2;
 
     /*

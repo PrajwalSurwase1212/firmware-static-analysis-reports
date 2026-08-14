@@ -27,6 +27,7 @@
 #include <AP_HAL/utility/sparse-endian.h>
 #include <AP_Math/AP_Math.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <cerrno>
 
 #define WAI_REG 0x0
 #define DEVICE_ID 0x10
@@ -101,14 +102,15 @@ AP_Compass_IST8310::AP_Compass_IST8310(AP_HAL::OwnPtr<AP_HAL::Device> dev,
     : _dev(std::move(dev))
     , _rotation(rotation)
     , _force_external(force_external)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool AP_Compass_IST8310::init()
 {
     uint8_t reset_count = 0;
 
-    _dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     // high retries for init
     _dev->set_retries(10);

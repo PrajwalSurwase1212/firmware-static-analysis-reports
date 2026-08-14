@@ -25,7 +25,7 @@ extern const AP_HAL::HAL &hal;
 bool MultiHeap::create(uint32_t total_size, uint8_t max_heaps, bool _allow_expansion, uint32_t _reserve_size)
 {
     max_heaps = MIN(MAX_HEAPS, max_heaps);
-    if (heaps != nullptr) {
+    if (heaps) {
         // don't allow double allocation
         return false;
     }
@@ -98,7 +98,7 @@ void *MultiHeap::allocate(uint32_t size)
             break;
         }
         void *newptr = heap_allocate(heaps[i].hp, size);
-        if (newptr != nullptr) {
+        if (newptr) {
             last_failed = false;
             return newptr;
         }

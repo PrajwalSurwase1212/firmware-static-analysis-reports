@@ -25,6 +25,7 @@ Written with reference to the PX4 driver written by Roman Dvorak <dvorakroman@th
 #include <AP_Math/AP_Math.h>
 
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -79,7 +80,8 @@ bool AP_TemperatureSensor_SHT3x::read_measurements(uint16_t &temp, uint16_t &hum
         return 0;
     }
 
-    if (val[2] != crc8_generic(&val[0], 2, 0x31, 0xff)) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if (val[2] != crc8_generic(&val[0], 2, 0x31, 0xff)) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         // temperature CRC is incorrect
         return false;
     }

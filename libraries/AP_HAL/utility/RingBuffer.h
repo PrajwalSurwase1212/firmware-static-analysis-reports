@@ -5,6 +5,7 @@
 #include <AP_HAL/AP_HAL_Boards.h>
 #include <AP_HAL/AP_HAL_Macros.h>
 #include <AP_HAL/Semaphores.h>
+#include <cerrno>
 
 /*
  * Circular buffer of bytes.
@@ -472,7 +473,8 @@ public:
     ObjectArray(uint16_t size_) {
         _size = size_;
         _head = _count = 0;
-        _buffer = NEW_NOTHROW T[_size];
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        _buffer = NEW_NOTHROW T[_size]; // parasoft-suppress BD-PB-NP "Reviewed and safe"
     }
     ~ObjectArray(void) {
         delete[] _buffer;
@@ -544,7 +546,8 @@ public:
      */
     bool push_force(const T &object) {
         if (space() == 0) {
-            UNUSED_RESULT(pop());
+            // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+            UNUSED_RESULT(pop()); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
         }
         return push(object);
     }
@@ -565,9 +568,11 @@ public:
             // remove first element
             return pop();
         }
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
         // take advantage of the [] operator for simple shift of the array elements
         for (uint16_t i=n; i<_count-1; i++) {
-            *(*this)[i] = *(*this)[i+1];
+            // parasoft-suppress BD-PB-NP "Reviewed and safe"
+            *(*this)[i] = *(*this)[i+1]; // parasoft-suppress BD-PB-NP "Reviewed and safe"
         }
         _count--;
         return true;

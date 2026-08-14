@@ -45,7 +45,7 @@ AP_Mount_Xacti::AP_Mount_Xacti(class AP_Mount &frontend, class AP_Mount_Params &
 
     // static assert that Param enum matches parameter names array
     static_assert((uint8_t)AP_Mount_Xacti::Param::LAST+1 == ARRAY_SIZE(AP_Mount_Xacti::_param_names), "AP_Mount_Xacti::_param_names array must match Param enum");
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // init - performs any required initialisation for this instance
 void AP_Mount_Xacti::init()
@@ -721,7 +721,7 @@ const char* AP_Mount_Xacti::get_param_name_str(Param param) const
         INTERNAL_ERROR(AP_InternalError::error_t::invalid_arg_or_result);
         return "";
     }
-    return _param_names[(uint8_t)param];
+    return _param_names[(uint8_t)param]; // coverity[OVERRUN] // Reviewed: safe in context
 }
 
 // helper function to set integer parameters

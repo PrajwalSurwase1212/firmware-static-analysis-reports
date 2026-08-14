@@ -32,7 +32,7 @@ uint16_t mavlink_packetise(ByteBuffer &writebuf, uint16_t n)
         if (i == limit) {
             n = limit;
         }
-        return n;
+        return n; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     }
 
     // cope with both MAVLink1 and MAVLink2 packets

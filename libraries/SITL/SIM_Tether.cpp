@@ -89,7 +89,7 @@ const AP_Param::GroupInfo TetherSim::var_info[] = {
 TetherSim::TetherSim()
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 void TetherSim::update(const Location& veh_pos)
@@ -182,7 +182,7 @@ void TetherSim::send_report(void)
             &heartbeat);
         uint8_t buf[300];
         const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-        if (mav_socket.send(buf, len) < 0) {
+        if (mav_socket.send(buf, len) < 0) { // coverity[CHECKED_RETURN]
             // safe to ignore: telemetry drop should not interrupt execution
         }
     }
@@ -210,7 +210,7 @@ void TetherSim::send_report(void)
         mavlink_message_t msg;
         mavlink_msg_global_position_int_encode_status(sys_id, component_id, &mav_status, &msg, &global_position_int);
         uint8_t buf[300];
-        const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+        const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg); // coverity[CHECKED_RETURN]
         if (len > 0) {
             if (mav_socket.send(buf, len) < 0) {
                 // safe to ignore: telemetry drop should not interrupt execution

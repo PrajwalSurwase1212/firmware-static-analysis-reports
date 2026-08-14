@@ -34,7 +34,7 @@ extern const AP_HAL::HAL &hal;
 AP_SmartAudio::AP_SmartAudio()
 {
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 AP_SmartAudio *AP_SmartAudio::_singleton;
 

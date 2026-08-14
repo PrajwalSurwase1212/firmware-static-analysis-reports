@@ -142,7 +142,7 @@ protected:
 class AP_Baro_MS5837 : public AP_Baro_MS56XX
 {
 public:
-    AP_Baro_MS5837(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> dev)
+    AP_Baro_MS5837(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> dev) // coverity[UNINIT_CTOR] // Reviewed: safe in context
         : AP_Baro_MS56XX(baro, std::move(dev))
         , _subtype(DEVTYPE_BARO_MS5837_30BA) {}
     static AP_Baro_Backend *probe(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> dev);

@@ -37,6 +37,7 @@
 
 #include <AP_Logger/AP_Logger.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -189,10 +190,10 @@ AP_TemperatureSensor::AP_TemperatureSensor()
 {
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_TemperatureSensor must be singleton");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // init - instantiate the temperature sensors
@@ -287,7 +288,8 @@ void AP_TemperatureSensor::init()
 void AP_TemperatureSensor::update()
 {
     for (uint8_t i=0; i<_num_instances; i++) {
-        if (drivers[i] != nullptr && get_type(i) != AP_TemperatureSensor_Params::Type::NONE) {
+        // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+        if (drivers[i] != nullptr && get_type(i) != AP_TemperatureSensor_Params::Type::NONE) { // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
             drivers[i]->update();
 
 #if HAL_LOGGING_ENABLED

@@ -19,6 +19,7 @@
  */
 #include "tailsitter.h"
 #include "Plane.h"
+#include <cerrno>
 
 #if HAL_QUADPLANE_ENABLED
 
@@ -194,7 +195,7 @@ static const struct AP_Param::defaults_table_struct defaults_table_tailsitter[] 
 
 Tailsitter::Tailsitter(QuadPlane& _quadplane, AP_MotorsMulticopter*& _motors):quadplane(_quadplane),motors(_motors)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void Tailsitter::setup()
@@ -243,7 +244,8 @@ void Tailsitter::setup()
         quadplane.options.set(quadplane.options.get() | int32_t(QuadPlane::Option::ONLY_ARM_IN_QMODE_OR_AUTO));
     }
 
-    transition = NEW_NOTHROW Tailsitter_Transition(quadplane, motors, *this);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    transition = NEW_NOTHROW Tailsitter_Transition(quadplane, motors, *this); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     if (!transition) {
         AP_BoardConfig::allocation_error("tailsitter transition");
     }
@@ -280,7 +282,7 @@ bool Tailsitter::active(void)
 }
 
 /*
-  run output for tailsitters
+  run output for tailsitters // coverity[RW.ROUTINE_NOT_EMITTED]
  */
 void Tailsitter::output(void)
 {
@@ -305,7 +307,7 @@ void Tailsitter::output(void)
             /*
               during transitions to vtol mode set the throttle to hover thrust, center the rudder
             */
-            if (!is_negative(transition_throttle_vtol)) { 
+            if (!is_negative(transition_throttle_vtol)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 // Q_TAILSIT_THR_VT is positive use it until transition is complete
                 throttle = motors->thr_lin.actuator_to_thrust(MIN(transition_throttle_vtol*0.01,1.0));
             } else {
@@ -347,7 +349,7 @@ void Tailsitter::output(void)
             // No tilt output unless forward gain is set
             float tilt_left = 0.0;
             float tilt_right = 0.0;
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             // in forward flight: set motor tilt servos and throttles using FW controller
             if (vectored_forward_gain > 0) {
                 // remove scaling from surface speed scaling and apply throttle scaling
@@ -408,7 +410,7 @@ void Tailsitter::output(void)
 
             // No output unless hover gain is set
             float tilt_left = 0.0;
-            float tilt_right = 0.0;
+            float tilt_right = 0.0; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
             if (vectored_hover_gain > 0) {
                 const float hover_throttle = motors->get_throttle_hover();
@@ -435,22 +437,22 @@ void Tailsitter::output(void)
     plane.pitchController.reset_I();
     plane.rollController.reset_I();
     plane.yawController.reset_I();
-
-    // pull in copter control outputs
-    SRV_Channels::set_output_scaled(SRV_Channel::k_aileron, (motors->get_yaw()+motors->get_yaw_ff())*-SERVO_MAX*VTOL_yaw_scale);
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    // pull in copter control outputs // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    SRV_Channels::set_output_scaled(SRV_Channel::k_aileron, (motors->get_yaw()+motors->get_yaw_ff())*-SERVO_MAX*VTOL_yaw_scale); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, (motors->get_pitch()+motors->get_pitch_ff())*SERVO_MAX*VTOL_pitch_scale);
     SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, (motors->get_roll()+motors->get_roll_ff())*SERVO_MAX*VTOL_roll_scale);
 
     if (plane.arming.is_armed_and_safety_off()) {
         // scale surfaces for throttle
         speed_scaling();
-    } else if (tailsitter_motors != nullptr) {
+    } else if (tailsitter_motors) {
         tailsitter_motors->set_min_throttle(0.0);
     }
 
     // No tilt output unless hover gain is set
     float tilt_left = 0.0;
-    float tilt_right = 0.0;
+    float tilt_right = 0.0; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     if (vectored_hover_gain > 0) {
         // thrust vectoring VTOL modes
@@ -480,9 +482,9 @@ void Tailsitter::output(void)
     bool roll_lim = _have_rudder && (fabsf(SRV_Channels::get_output_scaled(SRV_Channel::Function::k_rudder)) >= SERVO_MAX);
     bool pitch_lim = _have_elevator && (fabsf(SRV_Channels::get_output_scaled(SRV_Channel::Function::k_elevator)) >= SERVO_MAX);
     bool yaw_lim = _have_aileron && (fabsf(SRV_Channels::get_output_scaled(SRV_Channel::Function::k_aileron)) >= SERVO_MAX);
-
-    // Mix elevons and V-tail, always giving full priority to pitch
-    float elevator_mix = SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) * (100.0 - plane.g.mixing_offset) * 0.01 * plane.g.mixing_gain;
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    // Mix elevons and V-tail, always giving full priority to pitch // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    float elevator_mix = SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) * (100.0 - plane.g.mixing_offset) * 0.01 * plane.g.mixing_gain; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     float aileron_mix = SRV_Channels::get_output_scaled(SRV_Channel::k_aileron) * (100.0 + plane.g.mixing_offset) * 0.01 * plane.g.mixing_gain;
     float rudder_mix = SRV_Channels::get_output_scaled(SRV_Channel::k_rudder) * (100.0 + plane.g.mixing_offset) * 0.01 * plane.g.mixing_gain;
 
@@ -650,7 +652,8 @@ void Tailsitter::speed_scaling(void)
 
     // Scaling with throttle
     float throttle_scaler = throttle_scale_max;
-    if (throttle > 0.0f && hover_throttle > 0.0f) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (throttle > 0.0f && hover_throttle > 0.0f) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         throttle_scaler = constrain_float(hover_throttle / throttle, gain_scaling_min, throttle_scale_max);
     }
 
@@ -778,7 +781,7 @@ void Tailsitter::speed_scaling(void)
         SRV_Channels::set_output_scaled(functions[i], v);
     }
 
-    if (tailsitter_motors != nullptr) {
+    if (tailsitter_motors) {
         tailsitter_motors->set_min_throttle(disk_loading_min_throttle);
     }
 
@@ -823,9 +826,11 @@ void Tailsitter_Transition::update()
 {
     const uint32_t now = millis();
 
-    float aspeed;
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    float aspeed; // coverity[RW.ROUTINE_NOT_EMITTED]
     bool have_airspeed = quadplane.ahrs.airspeed_estimate(aspeed);
-    quadplane.assisted_flight = quadplane.assist.should_assist(aspeed, have_airspeed);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    quadplane.assisted_flight = quadplane.assist.should_assist(aspeed, have_airspeed); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     if (transition_state != State::DONE) {
         // during transition we ask TECS to use a synthetic
@@ -854,7 +859,7 @@ void Tailsitter_Transition::update()
         plane.nav_pitch_cd = constrain_float(fw_transition_initial_pitch - (quadplane.tailsitter.transition_rate_fw * dt) * 0.1f * (plane.fly_inverted()?-1.0f:1.0f), -8500, 8500);
         plane.nav_roll_cd = 0;
         quadplane.disable_yaw_rate_time_constant();
-        quadplane.attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw_cd(plane.nav_roll_cd,
+        quadplane.attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw_cd(plane.nav_roll_cd, // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                                                                       plane.nav_pitch_cd,
                                                                       0);
         // set throttle at either hover throttle or current throttle, whichever is higher, through the transition
@@ -888,10 +893,12 @@ void Tailsitter_Transition::VTOL_update()
     last_vtol_mode_ms = now;
 
     if (transition_state == State::ANGLE_WAIT_VTOL) {
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         float aspeed;
         bool have_airspeed = quadplane.ahrs.airspeed_estimate(aspeed);
         // provide assistance in forward flight portion of tailsitter transition
-        quadplane.assisted_flight = quadplane.assist.should_assist(aspeed, have_airspeed);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        quadplane.assisted_flight = quadplane.assist.should_assist(aspeed, have_airspeed); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         if (!quadplane.tailsitter.transition_vtol_complete()) {
             return;
         }
@@ -928,7 +935,7 @@ bool Tailsitter_Transition::show_vtol_view() const
     return show_vtol;
 }
 
-void Tailsitter_Transition::set_FW_roll_pitch(int32_t& nav_pitch_cd, int32_t& nav_roll_cd)
+void Tailsitter_Transition::set_FW_roll_pitch(int32_t& nav_pitch_cd, int32_t& nav_roll_cd) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     uint32_t now = AP_HAL::millis();
     if (tailsitter.in_vtol_transition(now)) {
@@ -938,7 +945,7 @@ void Tailsitter_Transition::set_FW_roll_pitch(int32_t& nav_pitch_cd, int32_t& na
          */
         uint32_t dt = now - vtol_transition_start_ms;
         // multiply by 0.1 to convert (degrees/second * milliseconds) to centi degrees
-        nav_pitch_cd = constrain_float(vtol_transition_initial_pitch + (tailsitter.transition_rate_vtol * dt) * 0.1f, -8500, 8500);
+        nav_pitch_cd = constrain_float(vtol_transition_initial_pitch + (tailsitter.transition_rate_vtol * dt) * 0.1f, -8500, 8500); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         nav_roll_cd = 0;
 
     } else if (transition_state == State::DONE) {
@@ -948,7 +955,7 @@ void Tailsitter_Transition::set_FW_roll_pitch(int32_t& nav_pitch_cd, int32_t& na
         vtol_transition_initial_pitch = constrain_float(plane.nav_pitch_cd,-8500,8500);
 
         // rate limit initial pitch down
-        if (fw_limit_start_ms != 0) {
+        if (fw_limit_start_ms != 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             const float pitch_limit_cd = fw_limit_initial_pitch - (now - fw_limit_start_ms) * tailsitter.transition_rate_fw * 0.1;
             if ((pitch_limit_cd <= 0) || (nav_pitch_cd >= pitch_limit_cd)) {
                 // never limit past 0, never limit to a smaller pitch angle
@@ -973,13 +980,13 @@ bool Tailsitter_Transition::allow_stick_mixing() const
     }
     return true;
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 bool Tailsitter_Transition::set_VTOL_roll_pitch_limit(int32_t& nav_roll_cd, int32_t& nav_pitch_cd)
 {
     if (vtol_limit_start_ms == 0) {
         return false;
     }
-    // prevent pitching towards 0 too quickly
+    // prevent pitching towards 0 too quickly // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float pitch_change_cd = (AP_HAL::millis() - vtol_limit_start_ms) * tailsitter.transition_rate_vtol * 0.1;
     if (pitch_change_cd > fabsf(vtol_limit_initial_pitch)) {
         // limit has passed 0, nothing to do

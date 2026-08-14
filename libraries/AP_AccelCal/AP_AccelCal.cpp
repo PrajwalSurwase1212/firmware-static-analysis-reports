@@ -22,7 +22,7 @@
 #define AP_ACCELCAL_POSITION_REQUEST_INTERVAL_MS 1000
 
 #define _printf(fmt, args ...) do {                                     \
-        if (_gcs != nullptr) {                                          \
+        if (_gcs) {                                          \
             _gcs->send_text(MAV_SEVERITY_CRITICAL, fmt, ## args);       \
         }                                                               \
     } while (0)

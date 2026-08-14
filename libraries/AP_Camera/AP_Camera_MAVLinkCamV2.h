@@ -28,7 +28,7 @@ class AP_Camera_MAVLinkCamV2 : public AP_Camera_Backend
 public:
 
     // Constructor
-    using AP_Camera_Backend::AP_Camera_Backend;
+    using AP_Camera_Backend::AP_Camera_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_Camera_MAVLinkCamV2);

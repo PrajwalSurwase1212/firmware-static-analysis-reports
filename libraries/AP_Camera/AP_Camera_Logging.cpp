@@ -70,7 +70,7 @@ void AP_Camera_Backend::Write_CameraInfo(enum LogMessages msg, uint64_t timestam
 
 #if HAL_MOUNT_ENABLED
     auto *mount = AP_Mount::get_singleton();
-    if (mount!= nullptr) {
+    if (mount) {
         mount->write_log(get_mount_instance(), timestamp_us);
     }
 #endif

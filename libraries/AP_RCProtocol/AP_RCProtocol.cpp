@@ -47,6 +47,7 @@
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -112,7 +113,8 @@ void AP_RCProtocol::init()
     backend[AP_RCProtocol::FDM] = FDM_backend;
 #if AP_RCPROTOCOL_UDP_ENABLED
     // the UDP-Packed16Bit backend gives way to the FDM backend:
-    UDP_backend->set_fdm_backend(FDM_backend);
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (UDP_backend) { UDP_backend->set_fdm_backend(FDM_backend); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 #endif  // AP_RCPROTOCOL_UDP_ENABLED
 #endif  // AP_RCPROTOCOL_FDM_ENABLED
 #if AP_RCPROTOCOL_RADIO_ENABLED

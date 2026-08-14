@@ -28,7 +28,7 @@ class Sprayer {
 public:
     Sprayer() {
         AP_Param::setup_object_defaults(this, var_info);
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update sprayer state
     void update(const struct sitl_input &input);

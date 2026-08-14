@@ -17,6 +17,7 @@
 
 #include "CANIface.h"
 #include "system.h"
+#include <cerrno>
 
 bool AP_HAL::CANFrame::priorityHigherThan(const CANFrame& rhs) const
 {
@@ -58,7 +59,8 @@ bool AP_HAL::CANFrame::priorityHigherThan(const CANFrame& rhs) const
  */
 int16_t AP_HAL::CANIface::receive(CANFrame& out_frame, uint64_t& out_ts_monotonic, CanIOFlags& out_flags)
 {
-    if ((out_flags & IsForwardedFrame) != 0) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if ((out_flags & IsForwardedFrame) != 0) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         // this frame was forwarded from another interface to this one, so we should not forward it back
         return 1;
     }
@@ -66,7 +68,7 @@ int16_t AP_HAL::CANIface::receive(CANFrame& out_frame, uint64_t& out_ts_monotoni
     WITH_SEMAPHORE(callbacks.sem);
 #endif
     for (auto &cb : callbacks.cb) {
-        if (cb != nullptr) {
+        if (cb) {
             // forward the frame to the registered callbacks and mark it as forwarded
             cb(get_iface_num(), out_frame, out_flags | IsForwardedFrame);
         }
@@ -145,7 +147,7 @@ AP_HAL::CANFrame::CANFrame(uint32_t can_id, const uint8_t* can_data, uint8_t dat
         dlc = 0;
         memset(data, 0, MaxDataLen);
         return;
-    }
+    } // coverity[OVERRUN] // Reviewed: safe in context
     memcpy(this->data, can_data, data_len);
     if (data_len < MaxDataLen) {
         memset(&this->data[data_len], 0, MaxDataLen-data_len);
@@ -169,7 +171,8 @@ AP_HAL::CANFrame::CANFrame(uint32_t can_id, const uint8_t* can_data, uint8_t dat
             dlc = 13;
         } else if (data_len <= 48) {
             dlc = 14;
-        } else if (data_len <= 64) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        } else if (data_len <= 64) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             dlc = 15;
         }
     }

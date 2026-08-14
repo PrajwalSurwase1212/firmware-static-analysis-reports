@@ -58,7 +58,7 @@ AP_MSP::AP_MSP()
 {
     _singleton = this;
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool AP_MSP::init_backend(uint8_t backend_idx, AP_HAL::UARTDriver *uart, AP_SerialManager::SerialProtocol protocol)
 {
@@ -99,7 +99,7 @@ void AP_MSP::init()
     for (const auto msp_protocol: msp_protocols) {
         for (uint8_t protocol_instance=0; protocol_instance<MSP_MAX_INSTANCES-_msp_status.backend_count; protocol_instance++) {
             uart = serial_manager.find_serial(msp_protocol, protocol_instance);
-            if (uart != nullptr) {
+            if (uart) {
                 if (!init_backend(_msp_status.backend_count, uart, msp_protocol)) {
                     break;
                 }
@@ -196,7 +196,7 @@ void AP_MSP::loop(void)
         // check if we had a screen change
         AP_OSD* osd = AP::osd();
 
-        if (osd != nullptr) {
+        if (osd) {
             const uint8_t screen = osd->is_readonly_screen() ? osd->get_current_screen() : _msp_status.current_screen;
             if (_msp_status.current_screen != screen || !_msp_status.osd_initialized) {
                 _msp_status.current_screen = screen;

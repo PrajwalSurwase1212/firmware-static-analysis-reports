@@ -38,7 +38,7 @@ namespace SITL {
 class SoloGimbal {
 public:
 
-    SoloGimbal() {}
+    SoloGimbal() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     void update(const Aircraft &aicraft);
 
 private:

@@ -41,7 +41,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @DisplayName: Eeprom format version number
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
-    GSCALAR(format_version, "FORMAT_VERSION",   0),
+    GSCALAR(format_version, "FORMAT_VERSION",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // SYSID_THISMAV was here
 
@@ -54,7 +54,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: Hz
     // @Range: 0 10
     // @Increment: 0.5
-    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0),
+    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_TKOFF_ALT
     // @DisplayName: Pilot takeoff altitude
@@ -63,14 +63,14 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: cm
     // @Range: 0.0 1000.0
     // @Increment: 10
-    GSCALAR(pilot_takeoff_alt_cm,  "PILOT_TKOFF_ALT",  PILOT_TKOFF_ALT_DEFAULT),
+    GSCALAR(pilot_takeoff_alt_cm,  "PILOT_TKOFF_ALT",  PILOT_TKOFF_ALT_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_THR_BHV
     // @DisplayName: Throttle stick behavior
     // @Description: Bitmask containing various throttle stick options. TX with sprung throttle can set PILOT_THR_BHV to "1" so motor feedback when landed starts from mid-stick instead of bottom of stick.
     // @User: Standard
     // @Bitmask: 0:Feedback from mid stick,1:High throttle cancels landing,2:Disarm on land detection
-    GSCALAR(throttle_behavior, "PILOT_THR_BHV", 0),
+    GSCALAR(throttle_behavior, "PILOT_THR_BHV", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // AP_SerialManager was here
 
@@ -79,7 +79,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for
     // @User: Advanced
     // @Bitmask: 0:Roll,1:Pitch,2:Yaw,3:AccelZ
-    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0), // coverity[PW.NARROWING_CONVERSION]
 
 #if MODE_RTL_ENABLED
     // @Param: RTL_ALT
@@ -89,7 +89,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 30 300000
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_altitude_cm,   "RTL_ALT",     RTL_ALT),
+    GSCALAR(rtl_altitude_cm,   "RTL_ALT",     RTL_ALT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_CONE_SLOPE
     // @DisplayName: RTL cone slope
@@ -98,7 +98,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Increment: 0.1
     // @Values: 0:Disabled,1:Shallow,3:Steep
     // @User: Standard
-    GSCALAR(rtl_cone_slope,   "RTL_CONE_SLOPE",     RTL_CONE_SLOPE_DEFAULT),
+    GSCALAR(rtl_cone_slope,   "RTL_CONE_SLOPE",     RTL_CONE_SLOPE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_SPEED
     // @DisplayName: RTL speed
@@ -107,7 +107,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 2000
     // @Increment: 50
     // @User: Standard
-    GSCALAR(rtl_speed_cms,   "RTL_SPEED",     0),
+    GSCALAR(rtl_speed_cms,   "RTL_SPEED",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_ALT_FINAL
     // @DisplayName: RTL Final Altitude
@@ -116,7 +116,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 1000
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_alt_final_cm,  "RTL_ALT_FINAL", RTL_ALT_FINAL),
+    GSCALAR(rtl_alt_final_cm,  "RTL_ALT_FINAL", RTL_ALT_FINAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_CLIMB_MIN
     // @DisplayName: RTL minimum climb
@@ -125,7 +125,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 3000
     // @Increment: 10
     // @User: Standard
-    GSCALAR(rtl_climb_min_cm,  "RTL_CLIMB_MIN",    RTL_CLIMB_MIN_DEFAULT),
+    GSCALAR(rtl_climb_min_cm,  "RTL_CLIMB_MIN",    RTL_CLIMB_MIN_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_LOIT_TIME
     // @DisplayName: RTL loiter time
@@ -134,14 +134,14 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 60000
     // @Increment: 1000
     // @User: Standard
-    GSCALAR(rtl_loiter_time,      "RTL_LOIT_TIME",    RTL_LOITER_TIME),
+    GSCALAR(rtl_loiter_time,      "RTL_LOIT_TIME",    RTL_LOITER_TIME), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_ALT_TYPE
     // @DisplayName: RTL mode altitude type
     // @Description: RTL altitude type.  Set to 1 for Terrain following during RTL and then set WPNAV_RFND_USE=1 to use rangefinder or WPNAV_RFND_USE=0 to use Terrain database
     // @Values: 0:Relative to Home, 1:Terrain
     // @User: Standard
-    GSCALAR(rtl_alt_type, "RTL_ALT_TYPE", 0),
+    GSCALAR(rtl_alt_type, "RTL_ALT_TYPE", 0), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
     // @Param: FS_GCS_ENABLE
@@ -149,28 +149,28 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: Controls whether failsafe will be invoked (and what action to take) when connection with Ground station is lost for at least 5 seconds. See FS_OPTIONS param for additional actions, or for cases allowing Mission continuation, when GCS failsafe is enabled.
     // @Values: 0:Disabled/NoAction,1:RTL,2:RTL or Continue with Mission in Auto Mode (Removed in 4.0+-see FS_OPTIONS),3:SmartRTL or RTL,4:SmartRTL or Land,5:Land,6:Auto DO_LAND_START/DO_RETURN_PATH_START or RTL,7:Brake or Land
     // @User: Standard
-    GSCALAR(failsafe_gcs, "FS_GCS_ENABLE", FS_GCS_DISABLED),
+    GSCALAR(failsafe_gcs, "FS_GCS_ENABLE", FS_GCS_DISABLED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: GPS_HDOP_GOOD
     // @DisplayName: GPS Hdop Good
     // @Description: GPS Hdop value at or below this value represent a good position.  Used for pre-arm checks
     // @Range: 100 900
     // @User: Advanced
-    GSCALAR(gps_hdop_good, "GPS_HDOP_GOOD", GPS_HDOP_GOOD_DEFAULT),
+    GSCALAR(gps_hdop_good, "GPS_HDOP_GOOD", GPS_HDOP_GOOD_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SUPER_SIMPLE
     // @DisplayName: Super Simple Mode
     // @Description: Bitmask to enable Super Simple mode for some flight modes. Setting this to Disabled(0) will disable Super Simple Mode. The bitmask is for flight mode switch positions
     // @Bitmask: 0:SwitchPos1, 1:SwitchPos2, 2:SwitchPos3, 3:SwitchPos4, 4:SwitchPos5, 5:SwitchPos6
     // @User: Standard
-    GSCALAR(super_simple,   "SUPER_SIMPLE",     0),
+    GSCALAR(super_simple,   "SUPER_SIMPLE",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: WP_YAW_BEHAVIOR
     // @DisplayName: Yaw behaviour during missions
     // @Description: Determines how the autopilot controls the yaw during missions and RTL
     // @Values: 0:Never change yaw, 1:Face next waypoint, 2:Face next waypoint except RTL, 3:Face along GPS course
     // @User: Standard
-    GSCALAR(wp_yaw_behavior,  "WP_YAW_BEHAVIOR",    WP_YAW_BEHAVIOR_DEFAULT),
+    GSCALAR(wp_yaw_behavior,  "WP_YAW_BEHAVIOR",    WP_YAW_BEHAVIOR_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LAND_SPEED
     // @DisplayName: Land speed
@@ -179,7 +179,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 30 200
     // @Increment: 10
     // @User: Standard
-    GSCALAR(land_speed_cms,             "LAND_SPEED",   LAND_SPEED),
+    GSCALAR(land_speed_cms,             "LAND_SPEED",   LAND_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LAND_SPEED_HIGH
     // @DisplayName: Land speed high
@@ -188,7 +188,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(land_speed_high_cms,        "LAND_SPEED_HIGH",   0),
+    GSCALAR(land_speed_high_cms,        "LAND_SPEED_HIGH",   0), // coverity[PW.NARROWING_CONVERSION]
     
     // @Param: PILOT_SPEED_UP
     // @DisplayName: Pilot maximum vertical speed ascending
@@ -197,7 +197,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_speed_up_cms,     "PILOT_SPEED_UP",   PILOT_VELZ_MAX),
+    GSCALAR(pilot_speed_up_cms,     "PILOT_SPEED_UP",   PILOT_VELZ_MAX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_ACCEL_Z
     // @DisplayName: Pilot vertical acceleration
@@ -206,14 +206,14 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_accel_u_cmss,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT),
+    GSCALAR(pilot_accel_u_cmss,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_ENABLE
     // @DisplayName: Throttle Failsafe Enable
     // @Description: The throttle failsafe allows you to configure a software failsafe activated by a setting on the throttle input channel
     // @Values:  0:Disabled,1:Enabled always RTL,2:Enabled Continue with Mission in Auto Mode (Removed in 4.0+),3:Enabled always Land,4:Enabled always SmartRTL or RTL,5:Enabled always SmartRTL or Land,6:Enabled Auto DO_LAND_START/DO_RETURN_PATH_START or RTL,7:Enabled always Brake or Land
     // @User: Standard
-    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   FS_THR_ENABLED_ALWAYS_RTL),
+    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   FS_THR_ENABLED_ALWAYS_RTL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_VALUE
     // @DisplayName: Throttle Failsafe Value
@@ -222,7 +222,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: PWM
     // @Increment: 1
     // @User: Standard
-    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",      FS_THR_VALUE_DEFAULT),
+    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",      FS_THR_VALUE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_DZ
     // @DisplayName: Throttle deadzone
@@ -231,79 +231,79 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 300
     // @Units: PWM
     // @Increment: 1
-    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT),
+    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE1
     // @DisplayName: Flight Mode 1
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is <= 1230
     // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate,27:Auto RTL,28:Turtle
     // @User: Standard
-    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1),
+    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE2
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 2
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1230, <= 1360
-    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2),
+    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE3
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 3
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1360, <= 1490
-    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3),
+    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE4
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 4
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1490, <= 1620
-    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4),
+    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE5
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 5
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1620, <= 1749
-    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5),
+    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE6
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 6
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >=1750
-    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6),
+    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE_CH
     // @DisplayName: Flightmode channel
     // @Description: RC Channel to use for flight mode control
     // @Values: 0:Disabled,5:Channel5,6:Channel6,7:Channel7,8:Channel8,9:Channel9,10:Channel 10,11:Channel 11,12:Channel 12,13:Channel 13,14:Channel 14,15:Channel 15
     // @User: Advanced
-    GSCALAR(flight_mode_chan, "FLTMODE_CH",         CH_MODE_DEFAULT),
+    GSCALAR(flight_mode_chan, "FLTMODE_CH",         CH_MODE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: INITIAL_MODE
     // @DisplayName: Initial flight mode
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver.
     // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,11:Drift,13:Sport,14:Flip,15:AutoTune,16:PosHold,17:Brake,18:Throw,19:Avoid_ADSB,20:Guided_NoGPS,21:Smart_RTL,22:FlowHold,23:Follow,24:ZigZag,25:SystemID,26:Heli_Autorotate
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     (uint8_t)Mode::Number::STABILIZE),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     (uint8_t)Mode::Number::STABILIZE), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SIMPLE
     // @DisplayName: Simple mode bitmask
     // @Description: Bitmask which holds which flight modes use simple heading mode (eg bit 0 = 1 means Flight Mode 0 uses simple mode). The bitmask is for flightmode switch positions.
     // @Bitmask: 0:SwitchPos1, 1:SwitchPos2, 2:SwitchPos3, 3:SwitchPos4, 4:SwitchPos5, 5:SwitchPos6
     // @User: Advanced
-    GSCALAR(simple_modes, "SIMPLE",                 0),
+    GSCALAR(simple_modes, "SIMPLE",                 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
     // @Description: Bitmap of what on-board log types to enable. This value is made up of the sum of each of the log types you want to be saved. It is usually best just to enable all basiclog types by setting this to 65535. Note that if you want to reduce log sizes you should consider using LOG_FILE_RATEMAX instead of disabling logging items with this parameter.
     // @Bitmask: 0:Fast Attitude,1:Medium Attitude,2:GPS,3:System Performance,4:Control Tuning,5:Navigation Tuning,6:RC input,7:IMU,8:Mission Commands,9:Battery Monitor,10:RC output,11:Optical Flow,12:PID,13:Compass,15:Camera,17:Motors,18:Fast IMU,19:Raw IMU,20:Video Stabilization,21:Fast harmonic notch logging
     // @User: Standard
-    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ESC_CALIBRATION
     // @DisplayName: ESC Calibration
     // @Description: Controls whether ArduCopter will enter ESC calibration on the next restart.  Do not adjust this parameter manually.
     // @User: Advanced
     // @Values: 0:Normal Start-up, 1:Start-up in ESC Calibration mode if throttle high, 2:Start-up in ESC Calibration mode regardless of throttle, 3:Start-up and automatically calibrate ESCs, 9:Disabled
-    GSCALAR(esc_calibrate, "ESC_CALIBRATION",       0),
+    GSCALAR(esc_calibrate, "ESC_CALIBRATION",       0), // coverity[PW.NARROWING_CONVERSION]
 
 #if AP_RC_TRANSMITTER_TUNING_ENABLED
     // @Param: TUNE
@@ -311,7 +311,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Description: Selects parameter (normally a PID gain) that is being tuned with an RC transmitter's knob. The RC input channel used is assigned by setting RCx_OPTION to 219.
     // @User: Standard
     // @Values: 0:None,1:Stab Roll/Pitch kP,4:Rate Roll/Pitch kP,5:Rate Roll/Pitch kI,21:Rate Roll/Pitch kD,3:Stab Yaw kP,6:Rate Yaw kP,26:Rate Yaw kD,56:Rate Yaw Filter,55:Motor Yaw Headroom,14:AltHold kP,7:Throttle Rate kP,34:Throttle Accel kP,35:Throttle Accel kI,36:Throttle Accel kD,12:Loiter Pos kP,22:Velocity XY kP,28:Velocity XY kI,10:WP Speed,25:Acro Roll/Pitch deg/s,40:Acro Yaw deg/s,45:RC Feel,13:Heli Ext Gyro,38:Declination,39:Circle Rate,46:Rate Pitch kP,47:Rate Pitch kI,48:Rate Pitch kD,49:Rate Roll kP,50:Rate Roll kI,51:Rate Roll kD,52:Rate Pitch FF,53:Rate Roll FF,54:Rate Yaw FF,58:SysID Magnitude,59:PSC Angle Max,60:Loiter Speed
-    GSCALAR(rc_tuning_param, "TUNE",                   0),
+    GSCALAR(rc_tuning_param, "TUNE",                   0), // coverity[PW.NARROWING_CONVERSION]
 #endif  // AP_RC_TRANSMITTER_TUNING_ENABLED
 
 //#ifndef FORCE_FRAME_TYPE
@@ -321,7 +321,7 @@ const AP_Param::Info Copter::var_info[] = {
 // @Values: 0:Plus, 1:X
 // @User: Standard
 // @RebootRequired: True
-GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
+GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X // coverity[PW.NARROWING_CONVERSION]
 //#endif
 
     // @Group: ARMING_
@@ -334,7 +334,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Units: s
     // @Range: 0 127
     // @User: Advanced
-    GSCALAR(disarm_delay, "DISARM_DELAY",           AUTO_DISARMING_DELAY),
+    GSCALAR(disarm_delay, "DISARM_DELAY",           AUTO_DISARMING_DELAY), // coverity[PW.NARROWING_CONVERSION]
     
     // @Param: ANGLE_MAX
     // @DisplayName: Angle Max
@@ -343,7 +343,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Increment: 10
     // @Range: 1000 8000
     // @User: Advanced
-    ASCALAR(angle_max, "ANGLE_MAX",                 DEFAULT_ANGLE_MAX),
+    ASCALAR(angle_max, "ANGLE_MAX",                 DEFAULT_ANGLE_MAX), // coverity[PW.NARROWING_CONVERSION]
 
 #if MODE_POSHOLD_ENABLED
     // @Param: PHLD_BRAKE_RATE
@@ -352,7 +352,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Units: deg/s
     // @Range: 4 12
     // @User: Advanced
-    GSCALAR(poshold_brake_rate_degs, "PHLD_BRAKE_RATE",  POSHOLD_BRAKE_RATE_DEFAULT),
+    GSCALAR(poshold_brake_rate_degs, "PHLD_BRAKE_RATE",  POSHOLD_BRAKE_RATE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PHLD_BRAKE_ANGLE
     // @DisplayName: PosHold braking angle max
@@ -361,7 +361,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Increment: 10
     // @Range: 2000 4500
     // @User: Advanced
-    GSCALAR(poshold_brake_angle_max, "PHLD_BRAKE_ANGLE",  POSHOLD_BRAKE_ANGLE_DEFAULT),
+    GSCALAR(poshold_brake_angle_max, "PHLD_BRAKE_ANGLE",  POSHOLD_BRAKE_ANGLE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
     // @Param: LAND_REPOSITION
@@ -369,28 +369,28 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Description: Enables user input during LAND mode, the landing phase of RTL, and auto mode landings.
     // @Values: 0:No repositioning, 1:Repositioning
     // @User: Advanced
-    GSCALAR(land_repositioning, "LAND_REPOSITION",     LAND_REPOSITION_DEFAULT),
+    GSCALAR(land_repositioning, "LAND_REPOSITION",     LAND_REPOSITION_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_ACTION
     // @DisplayName: EKF Failsafe Action
     // @Description: Controls the action that will be taken when an EKF failsafe is invoked
     // @Values: 0:Report only, 1:Switch to Land mode if current mode requires postion, 2:Switch to AltHold mode if current mode requires postion, 3:Switch to Land mode from all modes
     // @User: Advanced
-    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT),
+    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass, velocity, position and height variances. Used in arming check and EKF failsafe.
     // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed
     // @User: Advanced
-    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT),
+    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_CRASH_CHECK
     // @DisplayName: Crash check enable
     // @Description: This enables automatic crash checking. When enabled the motors will disarm if a crash is detected.
     // @Values: 0:Disabled, 1:Enabled
     // @User: Advanced
-    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    1),
+    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RC_SPEED
     // @DisplayName: ESC Update Speed
@@ -399,7 +399,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Range: 50 490
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(rc_speed, "RC_SPEED",              RC_FAST_SPEED),
+    GSCALAR(rc_speed, "RC_SPEED",              RC_FAST_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
 #if MODE_ACRO_ENABLED || MODE_SPORT_ENABLED
     // @Param: ACRO_BAL_ROLL
@@ -408,7 +408,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Range: 0 3
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(acro_balance_roll,      "ACRO_BAL_ROLL",    ACRO_BALANCE_ROLL),
+    GSCALAR(acro_balance_roll,      "ACRO_BAL_ROLL",    ACRO_BALANCE_ROLL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_BAL_PITCH
     // @DisplayName: Acro Balance Pitch
@@ -416,7 +416,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Range: 0 3
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(acro_balance_pitch,     "ACRO_BAL_PITCH",   ACRO_BALANCE_PITCH),
+    GSCALAR(acro_balance_pitch,     "ACRO_BAL_PITCH",   ACRO_BALANCE_PITCH), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
     // ACRO_RP_EXPO moved to Command Model class
@@ -427,7 +427,7 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Description: Type of trainer used in acro mode
     // @Values: 0:Disabled,1:Leveling,2:Leveling and Limited
     // @User: Advanced
-    GSCALAR(acro_trainer,   "ACRO_TRAINER",     (uint8_t)ModeAcro::Trainer::LIMITED),
+    GSCALAR(acro_trainer,   "ACRO_TRAINER",     (uint8_t)ModeAcro::Trainer::LIMITED), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
     // variables not in the g class which contain EEPROM saved variables
@@ -639,35 +639,35 @@ GSCALAR(frame_type, "FRAME_TYPE", 1),// default = X
     // @Description: Used by Throw mode. Controls whether motors will run at the speed set by MOT_SPIN_MIN or will be stopped when armed and waiting for the throw.
     // @Values: 0:Stopped,1:Running
     // @User: Standard
-    GSCALAR(throw_motor_start, "THROW_MOT_START", (float)ModeThrow::PreThrowMotorState::STOPPED),
+    GSCALAR(throw_motor_start, "THROW_MOT_START", (float)ModeThrow::PreThrowMotorState::STOPPED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THROW_ALT_MIN
     // @DisplayName: Throw mode minimum altitude
     // @Description: Minimum altitude above which Throw mode will detect a throw or a drop - 0 to disable the check
     // @Units: m
     // @User: Advanced
-    GSCALAR(throw_altitude_min, "THROW_ALT_MIN", 0),
+    GSCALAR(throw_altitude_min, "THROW_ALT_MIN", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THROW_ALT_MAX
     // @DisplayName: Throw mode maximum altitude
     // @Description: Maximum altitude under which Throw mode will detect a throw or a drop - 0 to disable the check
     // @Units: m
     // @User: Advanced
-    GSCALAR(throw_altitude_max, "THROW_ALT_MAX", 0),
+    GSCALAR(throw_altitude_max, "THROW_ALT_MAX", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THROW_ALT_DCSND
     // @DisplayName: Throw mode target altitude to descend
     // @Description: Target altitude to descend during a drop, (must be positive). This allows for rapidly clearing surrounding obstacles.
     // @Units: m
     // @User: Advanced
-    GSCALAR(throw_altitude_descend, "THROW_ALT_DCSND", 1.0),
+    GSCALAR(throw_altitude_descend, "THROW_ALT_DCSND", 1.0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THROW_ALT_ACSND
     // @DisplayName: Throw mode target altitude to ascsend
     // @Description: Target altitude to ascend during a throw upwards (must be positive). This allows for rapidly clearing surrounding obstacles.
     // @Units: m
     // @User: Advanced
-    GSCALAR(throw_altitude_ascend, "THROW_ALT_ACSND", 3.0),
+    GSCALAR(throw_altitude_ascend, "THROW_ALT_ACSND", 3.0), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
 #if OSD_ENABLED || OSD_PARAM_ENABLED

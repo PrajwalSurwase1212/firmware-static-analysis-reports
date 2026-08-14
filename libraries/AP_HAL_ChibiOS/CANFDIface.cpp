@@ -861,7 +861,7 @@ void CANIface::handleTxCompleteInterrupt(const uint64_t timestamp_us)
                 add_to_rx_queue(rx_item);
             }
             stats.num_events++;
-            if (sem_handle != nullptr) {
+            if (sem_handle) {
                 sem_handle->signal_ISR();
             }
         }
@@ -972,7 +972,7 @@ void CANIface::handleRxInterrupt(uint8_t fifo_index)
         had_activity_ = true;
     }
     stats.num_events++;
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         sem_handle->signal_ISR();
     }
 }
@@ -1087,7 +1087,7 @@ void CANIface::checkAvailable(bool& read, bool& write, const AP_HAL::CANFrame* p
 {
     write = false;
     read = !isRxBufferEmpty();
-    if (pending_tx != nullptr) {
+    if (pending_tx) {
         write = canAcceptNewTxFrame();
     }
 }

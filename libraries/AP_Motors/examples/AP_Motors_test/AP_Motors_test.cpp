@@ -73,14 +73,14 @@ void setup()
             strncpy(cmd, arg, eq-arg);
             const float value = atof(eq+1);
             if (strcmp(cmd,"yaw_headroom") == 0) {
-                if (motors_matrix != nullptr) {
+                if (motors_matrix) {
                     motors_matrix->set_yaw_headroom(value);
                 } else {
                     ::printf("frame_class = %d does not accept yaw_headroom commands\n", frame_class);
                 }
 
             } else if (strcmp(cmd,"throttle_avg_max") == 0) {
-                if (motors_matrix != nullptr) {
+                if (motors_matrix) {
                     motors_matrix->set_throttle_avg_max(value);
                 } else {
                     ::printf("frame_class = %d does not accept throttle_avg_max commands\n", frame_class);
@@ -212,7 +212,7 @@ void setup()
                 motors->init(frame_class, AP_Motors::MOTOR_FRAME_TYPE_X);
 
                 // Get the numper of outputs for a regular copter dynamically.  We can't currently do this for heli because the motor mask doesn't tell us the write thing
-                if (motors_matrix != nullptr) {
+                if (motors_matrix) {
                     num_outputs = __builtin_popcount(motors->get_motor_mask());
                 }
 
@@ -305,7 +305,7 @@ void setup()
     motors->get_frame_and_type_string(frame_and_type_string, ARRAY_SIZE(frame_and_type_string));
     hal.console->printf("%s\n", frame_and_type_string);
 
-    if (motors_matrix != nullptr) {
+    if (motors_matrix) {
         motors_matrix->update_throttle_range();
         motors_matrix->set_throttle_avg_max(0.5f);
     }
@@ -383,7 +383,7 @@ void print_motor_tri(uint8_t frame_class, uint8_t frame_type)
         motors_tri->get_frame_and_type_string(frame_and_type_string, ARRAY_SIZE(frame_and_type_string));
         char *frame_string = strchr(frame_and_type_string, ':');
         char *type_string = strchr(frame_and_type_string, '/');
-        if (type_string != nullptr) {
+        if (type_string) {
             *type_string = 0;
         }
 
@@ -437,7 +437,7 @@ void print_motor_matrix(uint8_t frame_class, uint8_t frame_type)
         motors_matrix->get_frame_and_type_string(frame_and_type_string, ARRAY_SIZE(frame_and_type_string));
         char *frame_string = strchr(frame_and_type_string, ':');
         char *type_string = strchr(frame_and_type_string, '/');
-        if (type_string != nullptr) {
+        if (type_string) {
             *type_string = 0;
         }
 
@@ -504,7 +504,7 @@ void stability_test()
     motors->get_frame_and_type_string(frame_and_type_string, ARRAY_SIZE(frame_and_type_string));
     hal.console->printf("%s\n", frame_and_type_string);
 
-    if (motors_matrix != nullptr) {
+    if (motors_matrix) {
         hal.console->printf("Throttle average max: %0.4f\n",  motors_matrix->get_throttle_avg_max());
         hal.console->printf("Yaw headroom: %i\n", motors_matrix->get_yaw_headroom());
         hal.console->printf("Thrust boost: %s\n", thrust_boost?"True":"False");
@@ -525,7 +525,7 @@ void stability_test()
         hal.console->printf("Mot%i,",i+1);
     }
 
-    if (motors_matrix != nullptr) {
+    if (motors_matrix) {
         for (uint8_t i=0; i<num_outputs; i++) {
             hal.console->printf("Mot%i_norm,",i+1);
         }
@@ -556,7 +556,7 @@ void stability_test()
                         hal.console->printf("%d,",(int)hal.rcout->read(i));
                     }
 
-                    if (motors_matrix != nullptr) {
+                    if (motors_matrix) {
                         for (uint8_t i=0; i<num_outputs; i++) {
                             hal.console->printf("%0.4f,", motors_matrix->get_thrust_rpyt_out(i));
                         }

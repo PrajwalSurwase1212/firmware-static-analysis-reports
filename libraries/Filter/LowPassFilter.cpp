@@ -17,7 +17,7 @@ template <class T>
 DigitalLPF<T>::DigitalLPF() {
   // built in initialization
   output = T();
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // add a new raw value to the filter, retrieve the filtered result
 template <class T>

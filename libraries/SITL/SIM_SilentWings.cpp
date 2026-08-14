@@ -73,11 +73,12 @@ SilentWings::SilentWings(const char *frame_str) :
         if (sim_defaults[i].save) {
             enum ap_var_type ptype;
             AP_Param *p = AP_Param::find(sim_defaults[i].name, &ptype);
-            if (!p->configured()) {
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            if (!p->configured()) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                 p->save();
             }
         }
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 

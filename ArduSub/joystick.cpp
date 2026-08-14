@@ -23,7 +23,7 @@ uint32_t buttons_prev;
 bool controls_reset_since_input_hold = true;
 }
 
-void Sub::init_joystick()
+void Sub::init_joystick() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     default_js_buttons();
 
@@ -33,11 +33,11 @@ void Sub::init_joystick()
         g.numGainSettings.set_and_save(1);
     }
 
-    if (g.numGainSettings == 1 || (g.gain_default < g.maxGain + 0.01 && g.gain_default > g.minGain - 0.01)) {
+    if (g.numGainSettings == 1 || (g.gain_default < g.maxGain + 0.01 && g.gain_default > g.minGain - 0.01)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         gain = constrain_float(g.gain_default, g.minGain, g.maxGain); // Use default gain parameter
     } else {
         // Use setting closest to average of minGain and maxGain
-        gain = g.minGain + (g.numGainSettings/2 - 1) * (g.maxGain - g.minGain) / (g.numGainSettings - 1);
+        gain = g.minGain + (g.numGainSettings/2 - 1) * (g.maxGain - g.minGain) / (g.numGainSettings - 1); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 
     gain = constrain_float(gain, 0.1, 1.0);
@@ -46,7 +46,7 @@ void Sub::init_joystick()
     SRV_Channels::set_output_scaled(SRV_Channel::k_video_switch, 0.0);
 }
 
-void Sub::transform_manual_control_to_rc_override(int16_t x, int16_t y, int16_t z, int16_t r, uint16_t buttons, uint16_t buttons2, uint8_t enabled_extensions,
+void Sub::transform_manual_control_to_rc_override(int16_t x, int16_t y, int16_t z, int16_t r, uint16_t buttons, uint16_t buttons2, uint8_t enabled_extensions, // coverity[RW.ROUTINE_NOT_EMITTED]
             int16_t s,
             int16_t t,
             int16_t aux1,
@@ -58,7 +58,7 @@ void Sub::transform_manual_control_to_rc_override(int16_t x, int16_t y, int16_t 
 {
 
     float rpyScale = 0.4*gain; // Scale -1000-1000 to -400-400 with gain
-    float throttleScale = 0.8*gain*g.throttle_gain; // Scale 0-1000 to 0-800 times gain
+    float throttleScale = 0.8*gain*g.throttle_gain; // Scale 0-1000 to 0-800 times gain // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     int16_t rpyCenter = 1500;
     int16_t throttleBase = 1500-500*throttleScale;
 
@@ -135,11 +135,11 @@ void Sub::transform_manual_control_to_rc_override(int16_t x, int16_t y, int16_t 
 
 #if HAL_MOUNT_ENABLED
     RC_Channel *cam_pan_chan = rc().find_channel_for_option(RC_Channel::AUX_FUNC::MOUNT1_YAW);
-    if (cam_pan_chan != nullptr) {
+    if (cam_pan_chan) {
         cam_pan_chan->set_override(cam_pan, tnow);
     }
     RC_Channel *cam_tilt_chan = rc().find_channel_for_option(RC_Channel::AUX_FUNC::MOUNT1_PITCH);
-    if (cam_tilt_chan != nullptr) {
+    if (cam_tilt_chan) {
         cam_tilt_chan->set_override(cam_tilt, tnow);
     }
 #endif  // HAL_MOUNT_ENABLED
@@ -150,7 +150,7 @@ void Sub::transform_manual_control_to_rc_override(int16_t x, int16_t y, int16_t 
     z_last = z;
 }
 
-void Sub::handle_jsbutton_press(uint8_t _button, bool shift, bool held)
+void Sub::handle_jsbutton_press(uint8_t _button, bool shift, bool held) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Act based on the function assigned to this button
     switch (get_button(_button)->function(shift)) {
@@ -313,7 +313,7 @@ void Sub::handle_jsbutton_press(uint8_t _button, bool shift, bool held)
             if (g.numGainSettings == 1) {
                 gain = constrain_float(g.gain_default, g.minGain, g.maxGain);
             } else {
-                gain = constrain_float(gain + (g.maxGain-g.minGain)/(g.numGainSettings-1), g.minGain, g.maxGain);
+                gain = constrain_float(gain + (g.maxGain-g.minGain)/(g.numGainSettings-1), g.minGain, g.maxGain); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
 
             gcs().send_text(MAV_SEVERITY_INFO,"#Gain is %2.0f%%",(double)gain*100);
@@ -329,7 +329,7 @@ void Sub::handle_jsbutton_press(uint8_t _button, bool shift, bool held)
             if (g.numGainSettings == 1) {
                 gain = constrain_float(g.gain_default, g.minGain, g.maxGain);
             } else {
-                gain = constrain_float(gain - (g.maxGain-g.minGain)/(g.numGainSettings-1), g.minGain, g.maxGain);
+                gain = constrain_float(gain - (g.maxGain-g.minGain)/(g.numGainSettings-1), g.minGain, g.maxGain); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
 
             gcs().send_text(MAV_SEVERITY_INFO,"#Gain is %2.0f%%",(double)gain*100);

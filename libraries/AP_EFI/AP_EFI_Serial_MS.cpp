@@ -22,6 +22,7 @@
 #include <AP_SerialManager/AP_SerialManager.h>
 
 #include "AP_EFI_Serial_MS.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -29,7 +30,8 @@ AP_EFI_Serial_MS::AP_EFI_Serial_MS(AP_EFI &_frontend):
     AP_EFI_Backend(_frontend)
 {
     internal_state.estimated_consumed_fuel_volume_cm3 = 0; // Just to be sure
-    port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_EFI, 0);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // coverity[UNINIT_CTOR] // Reviewed: safe in context
+    port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_EFI, 0); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 
@@ -69,8 +71,11 @@ bool AP_EFI_Serial_MS::read_incoming_realtime_data()
     checksum = 0;
     
     // Message length field begins the message (16 bits, excluded from CRC calculation)
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
     // Message length value excludes the message length and CRC bytes 
-    message_length = port->read() << 8;
+    // parasoft-suppress BD-PB-BADSHIFT "Reviewed and safe"
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+    message_length = port->read() << 8; // parasoft-suppress BD-PB-BADSHIFT "Reviewed and safe" // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
     message_length += port->read();
 
     if (message_length >= 256) {

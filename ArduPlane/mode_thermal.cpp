@@ -25,7 +25,7 @@ void ModeThermal::update()
     plane.calc_throttle();
 }
 
-void ModeThermal::update_soaring()
+void ModeThermal::update_soaring() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Update the thermal estimation and switching logic.
     // This is called from soaring.cpp at fixed 50Hz to avoid
@@ -41,7 +41,7 @@ void ModeThermal::update_soaring()
     }
 
     // Check distance to home against MAX_RADIUS.
-    if (plane.g2.soaring_controller.max_radius >= 0 &&
+    if (plane.g2.soaring_controller.max_radius >= 0 && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         sq(position.x)+sq(position.y) > sq(plane.g2.soaring_controller.max_radius) &&
         plane.previous_mode->mode_number()!=Mode::Number::AUTO) {
         // Some other loiter status, and outside of maximum soaring radius, and previous mode wasn't AUTO

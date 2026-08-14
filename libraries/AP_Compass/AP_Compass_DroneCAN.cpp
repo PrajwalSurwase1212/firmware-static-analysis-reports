@@ -33,7 +33,7 @@ HAL_Semaphore AP_Compass_DroneCAN::_sem_registry;
 AP_Compass_DroneCAN::AP_Compass_DroneCAN(AP_DroneCAN* ap_dronecan, uint32_t devid) :
     _devid(devid)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool AP_Compass_DroneCAN::subscribe_msgs(AP_DroneCAN* ap_dronecan)
 {
@@ -172,7 +172,7 @@ void AP_Compass_DroneCAN::handle_magnetic_field(AP_DroneCAN *ap_dronecan, const 
 
     Vector3f mag_vector;
     AP_Compass_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id, 0);
-    if (driver != nullptr) {
+    if (driver) {
         mag_vector[0] = msg.magnetic_field_ga[0];
         mag_vector[1] = msg.magnetic_field_ga[1];
         mag_vector[2] = msg.magnetic_field_ga[2];
@@ -187,7 +187,7 @@ void AP_Compass_DroneCAN::handle_magnetic_field_2(AP_DroneCAN *ap_dronecan, cons
     Vector3f mag_vector;
     uint8_t sensor_id = msg.sensor_id;
     AP_Compass_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id, sensor_id);
-    if (driver != nullptr) {
+    if (driver) {
         mag_vector[0] = msg.magnetic_field_ga[0];
         mag_vector[1] = msg.magnetic_field_ga[1];
         mag_vector[2] = msg.magnetic_field_ga[2];

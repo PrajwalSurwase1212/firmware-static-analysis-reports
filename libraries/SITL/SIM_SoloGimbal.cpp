@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #include "SIM_Aircraft.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -102,8 +103,9 @@ void SoloGimbal::param_send(const struct gimbal_param *p)
                                                          &mavlink.status,
                                                          &msg, &param_value);
 
-    uint8_t msgbuf[len];
-    len = mavlink_msg_to_send_buffer(msgbuf, &msg);
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    uint8_t msgbuf[len]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    len = mavlink_msg_to_send_buffer(msgbuf, &msg); // coverity[CHECKED_RETURN]
     if (len > 0) {
         if (mav_socket.send(msgbuf, len) < 0) {
             // safe to ignore: telemetry drop should not interrupt execution
@@ -144,7 +146,8 @@ void SoloGimbal::send_report(void)
     uint8_t buf[100];
     ssize_t ret;
 
-    while ((ret=mav_socket.recv(buf, sizeof(buf), 0)) > 0) {
+    // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
+    while ((ret=mav_socket.recv(buf, sizeof(buf), 0)) > 0) { // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
         for (uint8_t i=0; i<ret; i++) {
             mavlink_message_t msg;
             mavlink_status_t status;

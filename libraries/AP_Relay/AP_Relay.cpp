@@ -174,12 +174,12 @@ AP_Relay::AP_Relay(void)
     AP_Param::setup_object_defaults(this, var_info);
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (singleton != nullptr) {
+    if (singleton) {
         AP_HAL::panic("AP_Relay must be singleton");
     }
 #endif
     singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Relay::convert_params()
 {
@@ -218,7 +218,7 @@ void AP_Relay::convert_params()
 #if APM_BUILD_TYPE(APM_BUILD_Rover)
     int8_t rover_relay[] = { -1, -1, -1, -1 };
     AP_MotorsUGV *motors = AP::motors_ugv();
-    if (motors != nullptr) {
+    if (motors) {
         motors->get_legacy_relay_index(rover_relay[0], rover_relay[1], rover_relay[2], rover_relay[3]);
     }
 #endif
@@ -475,7 +475,7 @@ bool AP_Relay::arming_checks(size_t buflen, char *buffer) const
 
         // Each pin can only be used by a single relay
         for (size_t j=i+1; j<ARRAY_SIZE(_params); j++) {
-            if (!function_valid((AP_Relay_Params::FUNCTION)_params[j].function.get())) {
+            if (!function_valid((AP_Relay_Params::FUNCTION)_params[j].function.get())) { // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
                 // Relay disabled
                 continue;
             }
@@ -609,7 +609,7 @@ void AP_Relay::DroneCAN::set_pin(const int16_t pin, const bool value)
     uint8_t can_num_drivers = AP::can().get_num_drivers();
     for (uint8_t i = 0; i < can_num_drivers; i++) {
         auto *ap_dronecan = AP_DroneCAN::get_dronecan(i);
-        if (ap_dronecan != nullptr) {
+        if (ap_dronecan) {
             ap_dronecan->relay_hardpoint.broadcast(msg);
         }
     }

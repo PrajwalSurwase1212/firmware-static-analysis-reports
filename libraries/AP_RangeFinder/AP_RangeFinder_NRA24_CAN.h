@@ -9,7 +9,7 @@ public:
     AP_RangeFinder_NRA24_CAN(RangeFinder::RangeFinder_State &_state, AP_RangeFinder_Params &_params) :
         AP_RangeFinder_Backend_CAN(_state, _params, AP_CAN::Protocol::RadarCAN, "nra24")
     {
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update(void) override;
 

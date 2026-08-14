@@ -295,7 +295,7 @@ Blimp::Blimp(void)
       param_loader(var_info),
       flightmode(&mode_manual)
 {
-    channel_right = nullptr;
+    channel_right = nullptr; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     channel_front = nullptr;
     channel_up = nullptr;
     channel_yaw = nullptr;

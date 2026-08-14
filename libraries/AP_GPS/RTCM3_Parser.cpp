@@ -68,7 +68,7 @@ uint16_t RTCM3_Parser::get_id(void) const
 void RTCM3_Parser::resync(void)
 {
     const uint8_t *p = (const uint8_t *)memchr(&pkt[1], RTCMv3_PREAMBLE, pkt_bytes-1);
-    if (p != nullptr) {
+    if (p) {
         const uint16_t idx = p - &pkt[0];
         memmove(&pkt[0], p, pkt_bytes - idx);
         pkt_bytes -= idx;

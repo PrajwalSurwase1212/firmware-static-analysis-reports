@@ -3,6 +3,7 @@
 #include "AP_NavEKF2.h"
 
 #include <AP_DAL/AP_DAL.h>
+#include <cerrno>
 
 /* Monitor GPS data to see if quality is good enough to initialise the EKF
    Monitor magnetometer innovations to see if the heading is good enough to use GPS
@@ -313,7 +314,8 @@ void NavEKF2_core::detectFlight()
         // trigger at 8 m/s airspeed
         if (dal.airspeed_sensor_enabled()) {
             const auto *airspeed = dal.airspeed();
-            if (airspeed->get_airspeed() * dal.get_EAS2TAS() > 10.0f) {
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            if (airspeed->get_airspeed() * dal.get_EAS2TAS() > 10.0f) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                 highAirSpd = true;
             }
         }

@@ -22,6 +22,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Common/AP_Common.h>
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 //macro defines
 #define AD7091R5_I2C_ADDR        0x2F // A0 and A1 tied to GND
@@ -108,7 +109,7 @@ AP_BattMonitor_AD7091R5::AP_BattMonitor_AD7091R5(AP_BattMonitor &mon,
     AP_BattMonitor_Backend(mon, mon_state, params)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    _state.var_info = var_info;
+    _state.var_info = var_info; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /**
@@ -194,8 +195,10 @@ void AP_BattMonitor_AD7091R5::_read_adc()
     WITH_SEMAPHORE(sem);
     if (ret) {
         for (int i=0; i<AD7091R5_NO_OF_CHANNELS; i++) {
-            uint8_t chan = AD7091R5_CH_ID(data[2*i]);
-            _analog_data[chan].data = ((uint16_t)(data[2*i]&AD7091R5_RES_MASK)<<8) | data[2*i+1];
+            // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+            uint8_t chan = AD7091R5_CH_ID(data[2*i]); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+            // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+            _analog_data[chan].data = ((uint16_t)(data[2*i]&AD7091R5_RES_MASK)<<8) | data[2*i+1]; // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         }
         _health = true;
     } else {

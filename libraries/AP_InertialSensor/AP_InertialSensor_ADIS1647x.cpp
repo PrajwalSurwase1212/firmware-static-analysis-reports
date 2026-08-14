@@ -19,6 +19,7 @@
 #include <AP_HAL/utility/sparse-endian.h>
 
 #include "AP_InertialSensor_ADIS1647x.h"
+#include <cerrno>
 
 /*
   device registers
@@ -77,7 +78,7 @@ AP_InertialSensor_ADIS1647x::AP_InertialSensor_ADIS1647x(AP_InertialSensor &imu,
     , dev(std::move(_dev))
     , rotation(_rotation)
     , drdy_pin(drdy_gpio)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_InertialSensor_Backend *
@@ -212,7 +213,8 @@ bool AP_InertialSensor_ADIS1647x::init()
     uint16_t prod_id = 0;
     do {
         // perform software reset
-        write_reg16(REG_GLOB_CMD, GLOB_CMD_SW_RESET);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        write_reg16(REG_GLOB_CMD, GLOB_CMD_SW_RESET); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         hal.scheduler->delay(100);
     } while (!check_product_id(prod_id) && --tries);
     if (tries == 0) {

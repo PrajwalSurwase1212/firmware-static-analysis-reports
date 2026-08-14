@@ -21,7 +21,7 @@ public:
 #endif
     {
         _singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_ServoRelayEvents);

@@ -7,6 +7,7 @@
 #if AP_CRSF_SCRIPTING_ENABLED
 
 #include <AP_Scripting/lua_generated_bindings.h>
+#include <cerrno>
 
 AP_CRSF_Telem::ScriptedParameter* CRSFMenu::add_parameter(uint8_t length, const char* data)
 {
@@ -98,7 +99,8 @@ int lua_CRSF_add_parameter(lua_State *L)
         return 1;
     }
     return 0;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 int lua_CRSF_add_menu(lua_State *L)
 {

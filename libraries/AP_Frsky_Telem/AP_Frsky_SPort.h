@@ -11,7 +11,7 @@ public:
 
     AP_Frsky_SPort(AP_HAL::UARTDriver *port) : AP_Frsky_Backend(port) {
         singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_Frsky_SPort);

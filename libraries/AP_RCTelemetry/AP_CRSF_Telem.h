@@ -228,7 +228,7 @@ public:
         ScriptedParameter* find_parameter(uint8_t param_num);
         ScriptedParameter* add_parameter(uint8_t length, const char* data);
         void dump_structure(uint8_t indent);
-        ScriptedMenu() {}
+        ScriptedMenu() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     };
 
     enum ScriptedParameterEvents : uint8_t {

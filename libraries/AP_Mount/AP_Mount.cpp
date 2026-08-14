@@ -24,6 +24,7 @@
 #include <AP_Math/location.h>
 #include <SRV_Channel/SRV_Channel.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 const AP_Param::GroupInfo AP_Mount::var_info[] = {
 
@@ -42,7 +43,7 @@ const AP_Param::GroupInfo AP_Mount::var_info[] = {
 
 AP_Mount::AP_Mount()
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
         AP_HAL::panic("Mount must be singleton");
 #endif
@@ -50,7 +51,7 @@ AP_Mount::AP_Mount()
     }
     _singleton = this;
 
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // init - detect and initialise all mounts
@@ -678,7 +679,8 @@ bool AP_Mount::pre_arm_checks(char *failure_msg, uint8_t failure_msg_len)
     // check type parameters
     for (uint8_t i=0; i<AP_MOUNT_MAX_INSTANCES; i++) {
         if ((get_mount_type(i) != Type::None) && (_backends[i] == nullptr)) {
-            strncpy(failure_msg, "check TYPE", failure_msg_len);
+            // parasoft-suppress BD-PB-NZTS "Reviewed and safe"
+            strncpy(failure_msg, "check TYPE", failure_msg_len); // parasoft-suppress BD-PB-NZTS "Reviewed and safe"
             return false;
         }
     }

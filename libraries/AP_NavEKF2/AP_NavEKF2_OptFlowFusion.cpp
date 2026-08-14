@@ -67,7 +67,7 @@ Estimation of terrain offset using a single state EKF
 The filter can fuse motion compensated optical flow rates and range finder measurements
 Equations generated using https://github.com/PX4/ecl/tree/master/EKF/matlab/scripts/Terrain%20Estimator
 */
-void NavEKF2_core::EstimateTerrainOffset()
+void NavEKF2_core::EstimateTerrainOffset() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // horizontal velocity squared
     ftype velHorizSq = sq(stateStruct.velocity.x) + sq(stateStruct.velocity.y);
@@ -79,7 +79,7 @@ void NavEKF2_core::EstimateTerrainOffset()
     || gpsNotAvailable 
     || PV_AidingMode == AID_RELATIVE 
     || velHorizSq < 25.0f 
-    || (MAX(ofDataDelayed.flowRadXY[0],ofDataDelayed.flowRadXY[1]) > frontend->_maxFlowRate));
+    || (MAX(ofDataDelayed.flowRadXY[0],ofDataDelayed.flowRadXY[1]) > frontend->_maxFlowRate)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     if ((!rangeDataToFuse && cantFuseFlowData) || (activeHgtSource == HGT_SOURCE_RNG)) {
         // skip update
@@ -265,7 +265,7 @@ void NavEKF2_core::EstimateTerrainOffset()
  * https://github.com/priseborough/InertialNav/blob/master/derivations/RotationVectorAttitudeParameterisation/GenerateNavFilterEquations.m
  * Requires a valid terrain height estimate.
 */
-void NavEKF2_core::FuseOptFlow()
+void NavEKF2_core::FuseOptFlow() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     Vector24 H_LOS;
     Vector3F relVelSensor;
@@ -644,7 +644,7 @@ void NavEKF2_core::FuseOptFlow()
         flowTestRatio[obsIndex] = sq(innovOptFlow[obsIndex]) / (sq(MAX(0.01f * (ftype)frontend->_flowInnovGate, 1.0f)) * varInnovOptFlow[obsIndex]);
 
         // Check the innovation for consistency and don't fuse if out of bounds or flow is too fast to be reliable
-        if ((flowTestRatio[obsIndex]) < 1.0f && (ofDataDelayed.flowRadXY.x < frontend->_maxFlowRate) && (ofDataDelayed.flowRadXY.y < frontend->_maxFlowRate)) {
+        if ((flowTestRatio[obsIndex]) < 1.0f && (ofDataDelayed.flowRadXY.x < frontend->_maxFlowRate) && (ofDataDelayed.flowRadXY.y < frontend->_maxFlowRate)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             // record the last time observations were accepted for fusion
             prevFlowFuseTime_ms = imuSampleTime_ms;
 

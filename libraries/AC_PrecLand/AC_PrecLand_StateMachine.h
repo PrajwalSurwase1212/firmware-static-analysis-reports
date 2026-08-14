@@ -18,7 +18,7 @@ public:
     // Constructor
     AC_PrecLand_StateMachine() {
         init();
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Do not allow copies
     CLASS_NO_COPY(AC_PrecLand_StateMachine);

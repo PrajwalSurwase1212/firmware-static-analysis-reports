@@ -235,7 +235,7 @@ bool AP_Arming_Rover::motor_checks(bool report)
 #if HAL_TORQEEDO_ENABLED
     char failure_msg[50] = {};
     AP_Torqeedo *torqeedo = AP_Torqeedo::get_singleton();
-    if (torqeedo != nullptr) {
+    if (torqeedo) {
         if (!torqeedo->pre_arm_checks(failure_msg, ARRAY_SIZE(failure_msg))) {
             check_failed(report, "Torqeedo: %s", failure_msg);
             ret = false;

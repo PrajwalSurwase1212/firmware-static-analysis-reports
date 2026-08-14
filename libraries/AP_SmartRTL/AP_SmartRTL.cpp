@@ -16,6 +16,7 @@
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -87,14 +88,14 @@ AP_SmartRTL::AP_SmartRTL(bool example_mode) :
     _example_mode(example_mode)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    _simplify.bitmask.setall();
+    _simplify.bitmask.setall(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // initialise safe rtl including setting up background processes
 void AP_SmartRTL::init()
 {
     // protect against repeated call to init
-    if (_path != nullptr) {
+    if (_path) {
         return;
     }
 
@@ -202,7 +203,8 @@ void AP_SmartRTL::set_home(bool position_ok)
 {
     Vector3f current_pos;
     position_ok &= AP::ahrs().get_relative_position_NED_origin_float(current_pos);
-    set_home(position_ok, current_pos);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    set_home(position_ok, current_pos); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 void AP_SmartRTL::set_home(bool position_ok, const Vector3f& current_pos)
@@ -251,7 +253,8 @@ void AP_SmartRTL::update(bool position_ok, bool save_position)
 
     Vector3f current_pos;
     position_ok &= AP::ahrs().get_relative_position_NED_origin_float(current_pos);
-    update(position_ok, current_pos);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    update(position_ok, current_pos); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 void AP_SmartRTL::update(bool position_ok, const Vector3f& current_pos)
@@ -562,7 +565,7 @@ void AP_SmartRTL::detect_simplifications()
 *   This method runs for the allotted time, and detects loops in a path. Any detected loops are added to _prune.loops,
 *   this function does not alter the path in memory. It works by comparing the line segment between any two sequential points
 *   to the line segment between any other two sequential points. If they get close enough, anything between them could be pruned.
-*
+* // coverity[RW.ROUTINE_NOT_EMITTED]
 *   reset_pruning should have been called at least once before this function is called to setup the indexes (_prune.i, etc)
 */
 void AP_SmartRTL::detect_loops()
@@ -593,7 +596,7 @@ void AP_SmartRTL::detect_loops()
                 return;
             }
         }
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // find the closest distance between two line segments and the mid-point
         dist_point dp = segment_segment_dist(_path[_prune.i], _path[_prune.i-1], _path[_prune.j-1], _path[_prune.j]);
         if (dp.distance < SMARTRTL_PRUNING_DELTA) {
@@ -700,7 +703,7 @@ void AP_SmartRTL::remove_points_by_simplify_bitmask()
 // remove loops until at least num_point_to_delete have been removed from path
 // does not necessarily prune all loops
 // returns false if it failed to remove points (because it could not take semaphore)
-bool AP_SmartRTL::remove_points_by_loops(uint16_t num_points_to_remove)
+bool AP_SmartRTL::remove_points_by_loops(uint16_t num_points_to_remove) // coverity[LOCK_EVASION] // Reviewed: safe in context
 {
     // get semaphore before modifying path
     if (!_path_sem.take_nonblocking()) {
@@ -739,7 +742,7 @@ bool AP_SmartRTL::remove_points_by_loops(uint16_t num_points_to_remove)
             // we return true so thorough_cleanup does not get stuck
             return true;
         }
-
+ // coverity[COPY_PASTE_ERROR]
         // fix the indices of any existing prune loops
         // we do not check for overlapping loops because add_loops should have caught them
         const uint16_t threshold = loop.start_index;

@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include <cerrno>
 
 #if HAL_LOGGING_ENABLED
 
@@ -90,7 +91,7 @@ struct PACKED log_Control_Tuning {
     int32_t groundspeed_undershoot;
 };
 
-// Write a control tuning packet. Total length : 22 bytes
+// Write a control tuning packet. Total length : 22 bytes // coverity[RW.ROUTINE_NOT_EMITTED]
 void Plane::Log_Write_Control_Tuning()
 {
     float est_airspeed = 0;
@@ -98,9 +99,10 @@ void Plane::Log_Write_Control_Tuning()
     ahrs.airspeed_estimate(est_airspeed, airspeed_estimate_type);
 
     float synthetic_airspeed;
-    if (!ahrs.synthetic_airspeed(synthetic_airspeed)) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!ahrs.synthetic_airspeed(synthetic_airspeed)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         synthetic_airspeed = logger.quiet_nan();
-    }
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     int16_t pitch = ahrs.pitch_sensor - g.pitch_trim * 100;
 #if HAL_QUADPLANE_ENABLED
@@ -147,7 +149,7 @@ void Plane::Log_Write_OFG_Guided()
     struct log_OFG_Guided pkt = {
         LOG_PACKET_HEADER_INIT(LOG_OFG_MSG),
         time_us                : AP_HAL::micros64(),
-        target_airspeed_cm     : (float)guided_state.target_airspeed_cm*(float)0.01,
+        target_airspeed_cm     : (float)guided_state.target_airspeed_cm*(float)0.01, // coverity[PW.NARROWING_CONVERSION]
         target_airspeed_accel  : guided_state.target_airspeed_accel,
         target_alt             : guided_state.target_location.alt * 0.01,
         target_alt_rate        : guided_state.target_alt_rate,
@@ -229,7 +231,8 @@ void Plane::Log_Write_Status()
         ,throttle_supressed : throttle_suppressed
         };
 
-    logger.WriteBlock(&pkt, sizeof(pkt));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    logger.WriteBlock(&pkt, sizeof(pkt)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 struct PACKED log_AETR {

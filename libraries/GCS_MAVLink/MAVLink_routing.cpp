@@ -33,7 +33,7 @@ extern const AP_HAL::HAL& hal;
 #define ROUTING_DEBUG 0
 
 // constructor
-MAVLink_routing::MAVLink_routing(void) : num_routes(0)
+MAVLink_routing::MAVLink_routing(void) : num_routes(0) // coverity[UNINIT_CTOR] // Reviewed: safe in context
 {
     memset(routes, 0, sizeof(routes));
 }

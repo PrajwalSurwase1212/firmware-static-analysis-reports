@@ -103,7 +103,7 @@ MAV_COLLISION_ACTION AP_Avoidance_Copter::handle_avoidance(const AP_Avoidance::O
 #endif
 
     // return with action taken
-    return actual_action;
+    return actual_action; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
 }
 
 void AP_Avoidance_Copter::handle_recovery(RecoveryAction recovery_action)

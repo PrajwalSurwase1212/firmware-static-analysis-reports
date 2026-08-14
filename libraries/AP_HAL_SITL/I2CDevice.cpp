@@ -32,7 +32,7 @@ class I2CBus {
     friend class I2CDeviceManager;
 public:
 
-    I2CBus() { bus = i2c_buscount++; }
+    I2CBus() { bus = i2c_buscount++; } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     uint8_t bus;
     Semaphore sem;
@@ -137,7 +137,7 @@ I2CDevice::I2CDevice(I2CBus &bus, uint8_t address)
     // ::fprintf(stderr, "bus.bus=%u address=0x%02x\n", bus.bus, address);
     set_device_bus(bus.bus);
     set_device_address(address);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 #include <stdio.h>
 

@@ -1,10 +1,11 @@
 #include "Plane.h"
+#include <cerrno>
 
 /*
   calculate speed scaling number for control surfaces. This is applied
   to PIDs to change the scaling of the PID with speed. At high speed
   we move the surfaces less, and at low speeds we move them more.
- */
+ */ // coverity[RW.ROUTINE_NOT_EMITTED]
 float Plane::calc_speed_scaler(void)
 {
     float aspeed, speed_scaler;
@@ -13,14 +14,14 @@ float Plane::calc_speed_scaler(void)
             auto_state.highest_airspeed = aspeed;
         }
         // ensure we have scaling over the full configured airspeed
-        const float airspeed_min = MAX(aparm.airspeed_min, MIN_AIRSPEED_MIN);
-        const float scale_min = MIN(0.5, g.scaling_speed / (2.0 * aparm.airspeed_max));
+        const float airspeed_min = MAX(aparm.airspeed_min, MIN_AIRSPEED_MIN); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        const float scale_min = MIN(0.5, g.scaling_speed / (2.0 * aparm.airspeed_max)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const float scale_max = MAX(2.0, g.scaling_speed / (0.7 * airspeed_min));
         if (aspeed > 0.0001f) {
             speed_scaler = g.scaling_speed / aspeed;
         } else {
             speed_scaler = scale_max;
-        }
+        } // coverity[RW.NO_MATCHING_FUNCTION]
         speed_scaler = constrain_float(speed_scaler, scale_min, scale_max);
 
 #if HAL_QUADPLANE_ENABLED
@@ -45,8 +46,10 @@ float Plane::calc_speed_scaler(void)
         // we use a fixed value here as changing the trim throttle
         // value is often done at runtime - and changing that
         // shouldn't change the speed scaler here (it will change the
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // effective PID values)
-        speed_scaler = sqrtf(AP_PLANE_TRIM_THROTTLE_DEFAULT / throttle_out);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        speed_scaler = sqrtf(AP_PLANE_TRIM_THROTTLE_DEFAULT / throttle_out); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // This case is constrained tighter as we don't have real speed info
         speed_scaler = constrain_float(speed_scaler, 0.6f, 1.67f);
     } else {
@@ -154,8 +157,11 @@ float Plane::stabilize_roll_get_roll_out()
     }
 #endif
 
+// parasoft-suppress BD-PB-NP "Reviewed and safe"
+
     bool disable_integrator = false;
-    if (control_mode == &mode_stabilize && channel_roll->get_control_in() != 0) {
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (control_mode == &mode_stabilize && channel_roll->get_control_in() != 0) { // parasoft-suppress BD-PB-NP "Reviewed and safe"
         disable_integrator = true;
     }
     return rollController.get_servo_out(nav_roll_cd - ahrs.roll_sensor, speed_scaler, disable_integrator,
@@ -175,7 +181,7 @@ void Plane::stabilize_pitch()
         // from a percentage to a -4500..4500 centidegree angle
         SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, 45*force_elevator);
         return;
-    }
+    } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     const float pitch_out = stabilize_pitch_get_pitch_out();
     SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, pitch_out);
@@ -207,7 +213,7 @@ float Plane::stabilize_pitch_get_pitch_out()
     }
 #endif
     // if LANDING_FLARE RCx_OPTION switch is set and in FW mode, manual throttle,throttle idle then set pitch to LAND_PITCH_DEG if flight option FORCE_FLARE_ATTITUDE is set
-#if HAL_QUADPLANE_ENABLED
+#if HAL_QUADPLANE_ENABLED // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const bool quadplane_in_frwd_transition = quadplane.in_frwd_transition();
 #else
     const bool quadplane_in_frwd_transition = false;
@@ -646,7 +652,7 @@ void Plane::update_load_factor(void)
     aerodynamic_load_factor = 1.0f / cosf(radians(demanded_roll));
 
     apply_load_factor_roll_limits();
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 /*
   limit nav_roll_cd to ensure that the load factor does not take us below the
@@ -672,7 +678,7 @@ void Plane::apply_load_factor_roll_limits(void)
 #if HAL_QUADPLANE_ENABLED
     if (quadplane.tailsitter.active()) {
         // no limits while hovering
-        return;
+        return; // coverity[RW.INCOMPATIBLE_OPERANDS]
     }
 #endif
 

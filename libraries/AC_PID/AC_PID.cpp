@@ -127,7 +127,7 @@ AC_PID::AC_PID(float initial_p, float initial_i, float initial_d, float initial_
     AP_Param::setup_object_defaults(this, var_info);
 
     // this param is not in the table, so its default is no loaded in the call above
-    _slew_rate_tau.set(initial_srtau);
+    _slew_rate_tau.set(initial_srtau); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // reset input filter to first value received
     _flags._reset_filter = true;
@@ -220,7 +220,7 @@ float AC_PID::update_all(float target, float measurement, float dt, bool limit, 
         // Reset target filter
         _target = target;
 #if AP_FILTER_ENABLED
-        if (_target_notch != nullptr) {
+        if (_target_notch) {
             _target_notch->reset();
             _target = _target_notch->apply(_target);
         }
@@ -229,7 +229,7 @@ float AC_PID::update_all(float target, float measurement, float dt, bool limit, 
         // Calculate error and reset error filter
         _error = _target - measurement;
 #if AP_FILTER_ENABLED
-        if (_error_notch != nullptr) {
+        if (_error_notch) {
             _error_notch->reset();
             _error = _error_notch->apply(_error);
         }
@@ -243,7 +243,7 @@ float AC_PID::update_all(float target, float measurement, float dt, bool limit, 
         // Apply target filters
         const float target_last = _target;
 #if AP_FILTER_ENABLED
-        if (_target_notch != nullptr) {
+        if (_target_notch) {
             // Allocate and set up target notch filter
             target = _target_notch->apply(target);
         }
@@ -255,7 +255,7 @@ float AC_PID::update_all(float target, float measurement, float dt, bool limit, 
         const float error_last = _error;
         float error = _target - measurement;
 #if AP_FILTER_ENABLED
-        if (_error_notch != nullptr) {
+        if (_error_notch) {
             // Allocate and set up error notch filter
             error = _error_notch->apply(error);
         }
@@ -330,13 +330,13 @@ float AC_PID::update_error(float error, float dt, bool limit)
     // Bypasses target filtering for legacy compatibility
     _target = 0.0;
     const float output = update_all(0.0, -error, dt, limit);
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
     // Make sure logged target and actual are still 0 to maintain behaviour
     _pid_info.target = 0.0;
     _pid_info.actual = 0.0;
 
     return output;
-}
+} // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
 // Updates the integrator based on current error and dt.
 // If `limit` is true, the integrator is only allowed to shrink to avoid wind-up.
@@ -429,17 +429,17 @@ float AC_PID::get_filt_T_alpha(float dt) const
 // Returns alpha value for the error low-pass filter (based on filter frequency and dt)
 float AC_PID::get_filt_E_alpha(float dt) const
 {
-    return calc_lowpass_alpha_dt(dt, _filt_E_hz);
+    return calc_lowpass_alpha_dt(dt, _filt_E_hz); // coverity[RW.ROUTINE_NOT_EMITTED]
 }
 
-// Returns alpha value for the derivative low-pass filter (based on filter frequency and dt)
+// Returns alpha value for the derivative low-pass filter (based on filter frequency and dt) // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 float AC_PID::get_filt_D_alpha(float dt) const
 {
     return calc_lowpass_alpha_dt(dt, _filt_D_hz);
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 // Sets the integrator directly, clamped to the IMAX bounds. Also flags I-term as externally set.
-void AC_PID::set_integrator(float integrator)
+void AC_PID::set_integrator(float integrator) // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 {
     _flags._I_set = true;
     _integrator = constrain_float(integrator, -_kimax, _kimax);

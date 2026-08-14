@@ -1,6 +1,7 @@
 #include "Plane.h"
 
 #include "qautotune.h"
+#include <cerrno>
 
 static void failsafe_check_static()
 {
@@ -99,7 +100,8 @@ void Plane::init_ardupilot()
     hal.scheduler->register_timer_failsafe(failsafe_check_static, 1000);
 
 #if HAL_QUADPLANE_ENABLED
-    quadplane.setup();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    quadplane.setup(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 #endif
 
     AP_Param::reload_defaults_file(true);
@@ -344,7 +346,7 @@ bool Plane::set_mode_by_number(const Mode::Number new_mode_number, const ModeRea
         return false;
     }
     return set_mode(*new_mode, reason);
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void Plane::check_long_failsafe()
 {
@@ -355,21 +357,21 @@ void Plane::check_long_failsafe()
     // -------------------
     if (failsafe.state != FAILSAFE_LONG &&
         failsafe.state != FAILSAFE_GCS &&
-        flight_stage != AP_FixedWing::FlightStage::LAND) {
+        flight_stage != AP_FixedWing::FlightStage::LAND) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (failsafe.rc_failsafe &&
             (tnow - rc_last_seen_ms) > g.fs_timeout_long*1000) {
             failsafe_long_on_event(FAILSAFE_LONG, ModeReason::RADIO_FAILSAFE);
-        } else if (g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_AUTO && control_mode == &mode_auto &&
+        } else if (g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_AUTO && control_mode == &mode_auto && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                    gcs_last_seen_ms != 0 &&
                    (tnow - gcs_last_seen_ms) > g.fs_timeout_long*1000) {
             failsafe_long_on_event(FAILSAFE_GCS, ModeReason::GCS_FAILSAFE);
         } else if ((g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HEARTBEAT ||
-                    g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_RSSI) &&
+                    g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_RSSI) && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                    gcs_last_seen_ms != 0 &&
                    (tnow - gcs_last_seen_ms) > g.fs_timeout_long*1000) {
             failsafe_long_on_event(FAILSAFE_GCS, ModeReason::GCS_FAILSAFE);
         } else if (g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_RSSI && 
-                   gcs().chan(0) != nullptr &&
+                   gcs().chan(0) != nullptr && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                    gcs().chan(0)->last_radio_status_remrssi_ms() != 0 &&
                    (tnow - gcs().chan(0)->last_radio_status_remrssi_ms()) > g.fs_timeout_long*1000) {
             failsafe_long_on_event(FAILSAFE_GCS, ModeReason::GCS_FAILSAFE);

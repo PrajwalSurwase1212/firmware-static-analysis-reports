@@ -29,7 +29,7 @@ namespace SITL {
 class SerialRangeFinder : public SerialDevice {
 public:
 
-    SerialRangeFinder() {};
+    SerialRangeFinder() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update state
     virtual void update(float range);

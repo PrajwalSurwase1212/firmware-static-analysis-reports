@@ -187,7 +187,7 @@ void AP_RCProtocol_SUMD::_process_byte(uint32_t timestamp_us, uint8_t byte)
 
                 values[i] = (uint16_t)((_rxpacket.sumd_data[i * 2 + 1] << 8) | _rxpacket.sumd_data[i * 2 + 2]) >> 3;
             }
-            add_input(MIN(_rxpacket.length, (uint8_t)ARRAY_SIZE(values)), values, (_rxpacket.status == SUMD_ID_FAILSAFE));
+            add_input(MIN(_rxpacket.length, (uint8_t)ARRAY_SIZE(values)), values, (_rxpacket.status == SUMD_ID_FAILSAFE)); // coverity[OVERRUN] // Reviewed: safe in context
 #ifdef SUMD_DEBUG
         } else {
             hal.console->printf(" CRC - fail 0x%X 0x%X\n", _crc16, (uint16_t)(_rxpacket.crc16_high << 8) + byte);

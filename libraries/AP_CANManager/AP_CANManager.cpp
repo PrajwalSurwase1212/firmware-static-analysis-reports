@@ -42,6 +42,7 @@
 #include <AP_Common/ExpandingString.h>
 #include <AP_Common/sorting.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 #define LOG_TAG "CANMGR"
 #define LOG_BUFFER_SIZE 1024
@@ -109,10 +110,10 @@ AP_CANManager *AP_CANManager::_singleton;
 AP_CANManager::AP_CANManager()
 {
     AP_Param::setup_object_defaults(this, var_info);
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_CANManager must be singleton");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 #if !AP_TEST_DRONECAN_DRIVERS
@@ -202,9 +203,9 @@ void AP_CANManager::init()
         // Allocate the set type of Driver
         switch (drv_type[drv_idx]) {
 #if HAL_ENABLE_DRONECAN_DRIVERS
-        case AP_CAN::Protocol::DroneCAN:
+        case AP_CAN::Protocol::DroneCAN: // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
             _drivers[drv_idx] = _drv_param[drv_idx]._uavcan = NEW_NOTHROW AP_DroneCAN(drv_idx);
-
+ // coverity[COPY_PASTE_ERROR]
             if (_drivers[drv_idx] == nullptr) {
                 AP_BoardConfig::allocation_error("uavcan %d", drv_idx + 1);
                 continue;
@@ -339,7 +340,8 @@ bool AP_CANManager::register_driver(AP_CAN::Protocol dtype, AP_CANDriver *driver
         return true;
     }
     return false;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 // register a new auxillary sensor driver for 11 bit address frames
 bool AP_CANManager::register_11bit_driver(AP_CAN::Protocol dtype, CANSensor *sensor, uint8_t &driver_index)

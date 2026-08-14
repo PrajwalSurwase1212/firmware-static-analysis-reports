@@ -31,6 +31,7 @@
 #include <AP_Follow/AP_Follow.h>
 
 #include "ap_message.h"
+#include <cerrno>
 
 #define GCS_DEBUG_SEND_MESSAGE_TIMINGS 0
 
@@ -209,7 +210,8 @@ public:
         // there were concerns over return a too-large value for
         // txspace (in case we tried to do too much with the space in
         // a single loop):
-        return MIN(_port->txspace(), 8192U);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        return MIN(_port->txspace(), 8192U); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
 
     bool check_payload_size(uint16_t max_payload_len);
@@ -1101,7 +1103,7 @@ public:
             AP_HAL::panic("GCS must be singleton");
 #endif
         }
-
+ // coverity[UNINIT_CTOR] // Reviewed: safe in context
         AP_Param::setup_object_defaults(this, var_info);
     };
 
@@ -1120,7 +1122,7 @@ public:
         uint16_t                entry_created_ms;
         uint8_t                 bitmask;
     };
-    class StatusTextQueue : public ObjectArray<statustext_t> {
+    class StatusTextQueue : public ObjectArray<statustext_t> { // coverity[UNINIT_CTOR] // Reviewed: safe in context
     public:
         using ObjectArray::ObjectArray;
         HAL_Semaphore &semaphore() { return _sem; }

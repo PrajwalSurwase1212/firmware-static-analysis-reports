@@ -18,7 +18,7 @@ TCPServerDevice::TCPServerDevice(const char *ip, uint16_t port, bool wait):
 
 TCPServerDevice::~TCPServerDevice()
 {
-    if (sock != nullptr) {
+    if (sock) {
         delete sock;
         sock = nullptr;
     }
@@ -40,7 +40,7 @@ ssize_t TCPServerDevice::read(uint8_t *buf, uint16_t n)
 {
     if (sock == nullptr) {
         sock = listener.accept(0);
-        if (sock != nullptr) {
+        if (sock) {
             sock->set_blocking(_blocking);
         }
     }
@@ -102,7 +102,7 @@ bool TCPServerDevice::open()
 
 bool TCPServerDevice::close()
 {
-    if (sock != nullptr) {
+    if (sock) {
         delete sock;
         sock = nullptr;
     }

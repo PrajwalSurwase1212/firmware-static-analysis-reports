@@ -45,7 +45,7 @@ AP_Beacon_SITL::AP_Beacon_SITL(AP_Beacon &frontend) :
     AP_Beacon_Backend(frontend),
     sitl(AP::sitl())
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // return true if sensor is basically healthy (we are receiving data)
 bool AP_Beacon_SITL::healthy()

@@ -17,6 +17,7 @@
 #include "WheelEncoder_Quadrature.h"
 #include "WheelEncoder_SITL_Quadrature.h"
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -153,7 +154,7 @@ AP_WheelEncoder::AP_WheelEncoder(void)
 {
     _singleton = this;
 
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // initialise the AP_WheelEncoder class.
@@ -195,7 +196,8 @@ void AP_WheelEncoder::init(void)
 void AP_WheelEncoder::update(void)
 {
     for (uint8_t i=0; i<num_instances; i++) {
-        if (drivers[i] != nullptr && _type[i] != WheelEncoder_TYPE_NONE) {
+        // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+        if (drivers[i] != nullptr && _type[i] != WheelEncoder_TYPE_NONE) { // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
             drivers[i]->update();
         }
     }

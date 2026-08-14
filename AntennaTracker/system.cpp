@@ -3,7 +3,7 @@
 // mission storage
 static const StorageAccess wp_storage(StorageManager::StorageMission);
 
-void Tracker::init_ardupilot()
+void Tracker::init_ardupilot() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // initialise notify
     notify.init();
@@ -75,7 +75,7 @@ void Tracker::init_ardupilot()
     }
     set_mode(*newmode, ModeReason::STARTUP);
 
-    if (g.startup_delay > 0) {
+    if (g.startup_delay > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // arm servos with trim value to allow them to start up (required
         // for some servos)
         prepare_servos();

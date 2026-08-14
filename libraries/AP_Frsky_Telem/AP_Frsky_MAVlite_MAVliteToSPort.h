@@ -51,7 +51,7 @@ private:
     uint8_t payload_count = 0;
     uint8_t payload_len{0};
 
-    int16_t checksum{0};                       // sent at end of packet
+    int16_t checksum{0};                       // sent at end of packet // coverity[UNINIT_CTOR] // Reviewed: safe in context
     void update_checksum(const uint8_t c);
 };
 

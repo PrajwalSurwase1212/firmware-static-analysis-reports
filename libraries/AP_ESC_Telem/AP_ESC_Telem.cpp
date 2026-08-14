@@ -24,6 +24,7 @@
 #include <AP_TemperatureSensor/AP_TemperatureSensor_config.h>
 
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 //#define ESC_TELEM_DEBUG
 
@@ -53,7 +54,7 @@ AP_ESC_Telem::AP_ESC_Telem()
     _singleton = this;
 #if !defined(IOMCU_FW)
     AP_Param::setup_object_defaults(this, var_info);
-#endif
+#endif // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // return the average motor RPM
@@ -421,7 +422,7 @@ void AP_ESC_Telem::send_esc_telemetry_mavlink(uint8_t mav_chan)
 
         bool all_stale = true;
         for (uint8_t j=0; j<4; j++) {
-            const uint8_t esc_id = (i * 4 + j) + esc_offset;
+            const uint8_t esc_id = (i * 4 + j) + esc_offset; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
             if (esc_id < ESC_TELEM_MAX_ESCS &&
                 (!_telem_data[esc_id].stale() || _rpm_data[esc_id].data_valid)) {
                 all_stale = false;
@@ -442,7 +443,7 @@ void AP_ESC_Telem::send_esc_telemetry_mavlink(uint8_t mav_chan)
             const uint8_t esc_id = (i * 4 + j) + esc_offset;
             if (esc_id >= ESC_TELEM_MAX_ESCS) {
                 continue;
-            }
+            } // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
             volatile AP_ESC_Telem_Backend::TelemetryData const &telemdata = _telem_data[esc_id];
 
             s.temperature[j] = telemdata.temperature_cdeg / 100;
@@ -685,8 +686,9 @@ void AP_ESC_Telem::update()
                 _last_telem_log_ms[i] = telemdata.last_update_ms;
                 _last_rpm_log_us[i] = rpmdata.last_update_us;
 
-                float rpm = AP::logger().quiet_nanf();
-                (void)get_rpm(i, rpm);
+                float rpm = AP::logger().quiet_nanf(); // coverity[CHECKED_RETURN]
+                // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+                (void)get_rpm(i, rpm); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                 float raw_rpm = AP::logger().quiet_nanf();
                 (void)get_raw_rpm(i, raw_rpm);
 

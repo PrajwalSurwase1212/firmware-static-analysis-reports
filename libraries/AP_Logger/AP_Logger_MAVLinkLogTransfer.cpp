@@ -69,7 +69,7 @@ void AP_Logger::handle_log_request_list(GCS_MAVLINK &link, const mavlink_message
 {
     WITH_SEMAPHORE(_log_send_sem);
 
-    if (_log_sending_link != nullptr) {
+    if (_log_sending_link) {
         link.send_text(MAV_SEVERITY_INFO, "Log download in progress");
         return;
     }
@@ -108,7 +108,7 @@ void AP_Logger::handle_log_request_data(GCS_MAVLINK &link, const mavlink_message
 {
     WITH_SEMAPHORE(_log_send_sem);
 
-    if (_log_sending_link != nullptr) {
+    if (_log_sending_link) {
         // some GCS (e.g. MAVProxy) attempt to stream request_data
         // messages when they're filling gaps in the downloaded logs.
         // This channel check avoids complaining to them, at the cost

@@ -22,7 +22,7 @@
 
 class AP_EFI_MAV : public AP_EFI_Backend {
 public:
-	using AP_EFI_Backend::AP_EFI_Backend;
+	using AP_EFI_Backend::AP_EFI_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update() override;
 

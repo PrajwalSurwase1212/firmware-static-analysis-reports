@@ -1369,7 +1369,7 @@ void AP_BLHeli::update(void)
             motors_disabled = false;
             SRV_Channels::set_disabled_channel_mask(motors_disabled_mask);
         }
-        if (uart != nullptr) {
+        if (uart) {
             debug("Unlocked UART");
             uart->lock_port(0, 0);
             uart_locked = false;

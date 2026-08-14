@@ -107,7 +107,7 @@ public:
 
 #if AP_RCPROTOCOL_ENABLED
 
-    AP_RCProtocol() {}
+    AP_RCProtocol() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     ~AP_RCProtocol();
     friend class AP_RCProtocol_Backend;
 

@@ -139,7 +139,7 @@ AP_Radio_beken::AP_Radio_beken(AP_Radio &_radio) :
  */
 bool AP_Radio_beken::init(void)
 {
-    if (_irq_handler_ctx != nullptr) {
+    if (_irq_handler_ctx) {
         AP_HAL::panic("AP_Radio_beken: double instantiation of irq_handler");
     }
     chVTObjectInit(&timeout_vt);
@@ -1177,7 +1177,7 @@ void AP_Radio_beken::irq_handler_thd(void *arg)
         DEBUG1_LOW();
         eventmask_t evt = chEvtWaitAny(ALL_EVENTS);
         DEBUG1_HIGH();
-        if (_irq_handler_ctx != nullptr) { // Sanity check
+        if (_irq_handler_ctx) { // Sanity check
             _irq_handler_ctx->name = "RadioBeken";    // Only useful to be done once but here is done often
         }
 

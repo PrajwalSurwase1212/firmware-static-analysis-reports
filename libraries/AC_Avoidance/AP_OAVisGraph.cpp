@@ -23,7 +23,7 @@
 AP_OAVisGraph::AP_OAVisGraph() :
     _items(20)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // add item to visiblity graph, returns true on success, false if graph is full
 bool AP_OAVisGraph::add_item(const OAItemID &id1, const OAItemID &id2, float distance_cm)

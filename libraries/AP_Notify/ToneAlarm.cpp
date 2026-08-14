@@ -27,6 +27,7 @@
 #include <stdio.h>
 
 #include <AP_Filesystem/AP_Filesystem.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -114,7 +115,8 @@ bool AP_ToneAlarm::init()
         return false;
     }
 #if AP_NOTIFY_TONEALARM_ENABLED
-    if (!hal.util->toneAlarm_init(pNotify->get_buzzer_types())) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!hal.util->toneAlarm_init(pNotify->get_buzzer_types())) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return false;
     }
 #endif

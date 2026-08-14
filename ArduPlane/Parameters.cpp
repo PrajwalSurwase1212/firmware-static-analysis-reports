@@ -12,7 +12,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @DisplayName: Eeprom format version number
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
-    GSCALAR(format_version,         "FORMAT_VERSION", 0),
+    GSCALAR(format_version,         "FORMAT_VERSION", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // SYSID_THISMAV was here
 
@@ -26,7 +26,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 10
     // @Increment: 1
     // @User: Standard
-    ASCALAR(autotune_level, "AUTOTUNE_LEVEL",  6),
+    ASCALAR(autotune_level, "AUTOTUNE_LEVEL",  6), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AUTOTUNE_OPTIONS
     // @DisplayName: Autotune options bitmask
@@ -34,7 +34,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Bitmask: 0: Disable FLTD update by Autotune
     // @Bitmask: 1: Disable FLTT update by Autotune
     // @User: Advanced
-    ASCALAR(autotune_options, "AUTOTUNE_OPTIONS",  0),
+    ASCALAR(autotune_options, "AUTOTUNE_OPTIONS",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // TELEM_DELAY was here
 
@@ -43,7 +43,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for
     // @User: Advanced
     // @Bitmask: 0:Roll,1:Pitch,2:Yaw,3:Steering,4:Landing,5:AccZ
-    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: KFF_RDDRMIX
     // @DisplayName: Rudder Mix
@@ -51,7 +51,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 1
     // @Increment: 0.01
     // @User: Standard
-    GSCALAR(kff_rudder_mix,         "KFF_RDDRMIX",    RUDDER_MIX),
+    GSCALAR(kff_rudder_mix,         "KFF_RDDRMIX",    RUDDER_MIX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: KFF_THR2PTCH
     // @DisplayName: Throttle to Pitch Mix
@@ -59,7 +59,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -5 5
     // @Increment: 0.01
     // @User: Advanced
-    GSCALAR(kff_throttle_to_pitch,  "KFF_THR2PTCH",   0),
+    GSCALAR(kff_throttle_to_pitch,  "KFF_THR2PTCH",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: STAB_PITCH_DOWN
     // @DisplayName: Low throttle pitch down trim 
@@ -68,7 +68,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Increment: 0.1
     // @Units: deg
     // @User: Advanced
-    GSCALAR(stab_pitch_down, "STAB_PITCH_DOWN",   2.0f),
+    GSCALAR(stab_pitch_down, "STAB_PITCH_DOWN",   2.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ALT_SLOPE_MIN
     // @DisplayName: Altitude slope minimum
@@ -77,7 +77,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Increment: 1
     // @Units: m
     // @User: Advanced
-    GSCALAR(alt_slope_min, "ALT_SLOPE_MIN", 15),
+    GSCALAR(alt_slope_min, "ALT_SLOPE_MIN", 15), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ALT_SLOPE_MAXHGT
     // @DisplayName: Altitude slope maximum height
@@ -86,14 +86,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Increment: 1
     // @Units: m
     // @User: Advanced
-    GSCALAR(alt_slope_max_height, "ALT_SLOPE_MAXHGT", 5.0),
+    GSCALAR(alt_slope_max_height, "ALT_SLOPE_MAXHGT", 5.0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: STICK_MIXING
     // @DisplayName: Stick Mixing
     // @Description: When enabled, this adds user stick input to the control surfaces in auto modes, allowing the user to have some degree of flight control without changing modes. There are 3 types of stick mixing available. If you set STICK_MIXING to 1 or 4 then it will use "fly by wire" mixing. 4 will provide roll and yaw control, while 1 also provides FBW-A style pitch control. If you set STICK_MIXING to 3 then it will apply to the yaw while in quadplane modes only, such as while doing an automatic VTOL takeoff or landing. WARNING: FBW-A pitch control does not offer flight envelope protections. Prolonged pitch inputs in mode 1 can result in a stall or overspeed condition, and should be avoided.
     // @Values: 0:Disabled,1:FBW style,3:VTOL Yaw only,4:FBW style (no pitch)
     // @User: Advanced
-    GSCALAR(stick_mixing,           "STICK_MIXING",   uint8_t(StickMixing::FBW)),
+    GSCALAR(stick_mixing,           "STICK_MIXING",   uint8_t(StickMixing::FBW)), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_MINSPD
     // @DisplayName: Takeoff throttle min speed
@@ -102,7 +102,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 30
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(takeoff_throttle_min_speed,     "TKOFF_THR_MINSPD",  0),
+    GSCALAR(takeoff_throttle_min_speed,     "TKOFF_THR_MINSPD",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_MINACC
     // @DisplayName: Takeoff throttle min acceleration
@@ -111,7 +111,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 30
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(takeoff_throttle_min_accel,     "TKOFF_THR_MINACC",  0),
+    GSCALAR(takeoff_throttle_min_accel,     "TKOFF_THR_MINACC",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_DELAY
     // @DisplayName: Takeoff throttle delay
@@ -120,7 +120,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 127
     // @Increment: 1
     // @User: Standard
-    GSCALAR(takeoff_throttle_delay,     "TKOFF_THR_DELAY",  2),
+    GSCALAR(takeoff_throttle_delay,     "TKOFF_THR_DELAY",  2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_MAX_T
     // @DisplayName: Takeoff throttle maximum time
@@ -129,7 +129,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 10
     // @Increment: 0.5
     // @User: Standard
-    ASCALAR(takeoff_throttle_max_t,     "TKOFF_THR_MAX_T",  4),
+    ASCALAR(takeoff_throttle_max_t,     "TKOFF_THR_MAX_T",  4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_MIN
     // @DisplayName: Takeoff minimum throttle
@@ -138,7 +138,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(takeoff_throttle_min,       "TKOFF_THR_MIN",    0),
+    ASCALAR(takeoff_throttle_min,       "TKOFF_THR_MIN",    0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_IDLE
     // @DisplayName: Takeoff idle throttle
@@ -147,14 +147,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(takeoff_throttle_idle,       "TKOFF_THR_IDLE",    0),
+    ASCALAR(takeoff_throttle_idle,       "TKOFF_THR_IDLE",    0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_OPTIONS
     // @DisplayName: Takeoff options
     // @Description: This selects the mode of the takeoff in AUTO and TAKEOFF flight modes. 
     // @Bitmask: 0: When unset the maximum allowed throttle is always used (THR_MAX or TKOFF_THR_MAX) during takeoff. When set TECS is allowed to operate between a minimum (THR_MIN or TKOFF_THR_MIN) and a maximum (THR_MAX or TKOFF_THR_MAX) limit. Applicable only when using an airspeed sensor.
     // @User: Advanced
-    ASCALAR(takeoff_options,               "TKOFF_OPTIONS",       0),
+    ASCALAR(takeoff_options,               "TKOFF_OPTIONS",       0), // coverity[PW.NARROWING_CONVERSION]
     
     // @Param: TKOFF_TDRAG_ELEV
     // @DisplayName: Takeoff tail dragger elevator
@@ -163,7 +163,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -100 100
     // @Increment: 1
     // @User: Standard
-    GSCALAR(takeoff_tdrag_elevator,     "TKOFF_TDRAG_ELEV",  0),
+    GSCALAR(takeoff_tdrag_elevator,     "TKOFF_TDRAG_ELEV",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_TDRAG_SPD1
     // @DisplayName: Takeoff tail dragger speed1
@@ -172,7 +172,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 30
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(takeoff_tdrag_speed1,     "TKOFF_TDRAG_SPD1",  0),
+    GSCALAR(takeoff_tdrag_speed1,     "TKOFF_TDRAG_SPD1",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_ROTATE_SPD
     // @DisplayName: Takeoff rotate speed
@@ -181,7 +181,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 30
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(takeoff_rotate_speed,     "TKOFF_ROTATE_SPD",  0),
+    GSCALAR(takeoff_rotate_speed,     "TKOFF_ROTATE_SPD",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_SLEW
     // @DisplayName: Takeoff throttle slew rate
@@ -190,7 +190,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -1 127
     // @Increment: 1
     // @User: Standard
-    GSCALAR(takeoff_throttle_slewrate, "TKOFF_THR_SLEW",  0),
+    GSCALAR(takeoff_throttle_slewrate, "TKOFF_THR_SLEW",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_PLIM_SEC
     // @DisplayName: Takeoff pitch limit reduction
@@ -199,7 +199,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 10
     // @Increment: 0.5
     // @User: Advanced
-    GSCALAR(takeoff_pitch_limit_reduction_sec, "TKOFF_PLIM_SEC",  2),
+    GSCALAR(takeoff_pitch_limit_reduction_sec, "TKOFF_PLIM_SEC",  2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_FLAP_PCNT
     // @DisplayName: Takeoff flap percentage
@@ -208,7 +208,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Units: %
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(takeoff_flap_percent,     "TKOFF_FLAP_PCNT", 0),
+    GSCALAR(takeoff_flap_percent,     "TKOFF_FLAP_PCNT", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LEVEL_ROLL_LIMIT
     // @DisplayName: Level flight roll limit
@@ -217,14 +217,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 45
     // @Increment: 1
     // @User: Standard
-    GSCALAR(level_roll_limit,              "LEVEL_ROLL_LIMIT",   5),
+    GSCALAR(level_roll_limit,              "LEVEL_ROLL_LIMIT",   5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: USE_REV_THRUST
     // @DisplayName: Bitmask for when to allow negative reverse thrust
     // @Description: This controls when to use reverse thrust. If set to a non-zero value then the bits correspond to flight stages where reverse thrust may be used. The most commonly used value for USE_REV_THRUST is 2, which means AUTO_LAND only. That enables reverse thrust in the landing stage of AUTO mode. Another common choice is 1, which means to use reverse thrust in all auto flight stages. Reverse thrust is always used in MANUAL mode if enabled with THR_MIN < 0. In non-autothrottle controlled modes, if reverse thrust is not used, then THR_MIN is effectively set to 0 for that mode.
     // @Bitmask: 0:AUTO_ALWAYS,1:AUTO_LAND,2:AUTO_LOITER_TO_ALT,3:AUTO_LOITER_ALL,4:AUTO_WAYPOINTS,5:LOITER,6:RTL,7:CIRCLE,8:CRUISE,9:FBWB,10:GUIDED,11:AUTO_LANDING_PATTERN,12:FBWA,13:ACRO,14:STABILIZE,15:THERMAL
     // @User: Advanced
-    GSCALAR(use_reverse_thrust,     "USE_REV_THRUST",  float(UseReverseThrust::AUTO_LAND_APPROACH)),
+    GSCALAR(use_reverse_thrust,     "USE_REV_THRUST",  float(UseReverseThrust::AUTO_LAND_APPROACH)), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ALT_OFFSET
     // @DisplayName: Altitude offset
@@ -233,7 +233,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -32767 32767
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(alt_offset, "ALT_OFFSET",                 0),
+    GSCALAR(alt_offset, "ALT_OFFSET",                 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: WP_RADIUS
     // @DisplayName: Waypoint Radius
@@ -242,7 +242,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 1 32767
     // @Increment: 1
     // @User: Standard
-    GSCALAR(waypoint_radius,        "WP_RADIUS",      WP_RADIUS_DEFAULT),
+    GSCALAR(waypoint_radius,        "WP_RADIUS",      WP_RADIUS_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: WP_MAX_RADIUS
     // @DisplayName: Waypoint Maximum Radius
@@ -251,7 +251,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 32767
     // @Increment: 1
     // @User: Standard
-    GSCALAR(waypoint_max_radius,        "WP_MAX_RADIUS",      0),
+    GSCALAR(waypoint_max_radius,        "WP_MAX_RADIUS",      0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: WP_LOITER_RAD
     // @DisplayName: Waypoint Loiter Radius
@@ -260,7 +260,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -32767 32767
     // @Increment: 1
     // @User: Standard
-    ASCALAR(loiter_radius,          "WP_LOITER_RAD",  LOITER_RADIUS_DEFAULT),
+    ASCALAR(loiter_radius,          "WP_LOITER_RAD",  LOITER_RADIUS_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_RADIUS
     // @DisplayName: RTL loiter radius
@@ -269,21 +269,21 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -32767 32767
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_radius,             "RTL_RADIUS",  0),
+    GSCALAR(rtl_radius,             "RTL_RADIUS",  0), // coverity[PW.NARROWING_CONVERSION]
     
     // @Param: STALL_PREVENTION
     // @DisplayName: Enable stall prevention
     // @Description: Enables roll limits at low airspeed in roll limiting flight modes. Roll limits based on aerodynamic load factor in turns and scale on AIRSPEED_MIN that must be set correctly. Without airspeed sensor, uses synthetic airspeed from wind speed estimate that may both be inaccurate.
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-    ASCALAR(stall_prevention, "STALL_PREVENTION",  1),
+    ASCALAR(stall_prevention, "STALL_PREVENTION",  1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AIRSPEED_CRUISE
     // @DisplayName: Target cruise airspeed
     // @Description: Target cruise airspeed in m/s in automatic throttle modes. Value is as an indicated (calibrated/apparent) airspeed.
     // @Units: m/s
     // @User: Standard
-    ASCALAR(airspeed_cruise,     "AIRSPEED_CRUISE",  AIRSPEED_CRUISE),
+    ASCALAR(airspeed_cruise,     "AIRSPEED_CRUISE",  AIRSPEED_CRUISE), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AIRSPEED_MIN
     // @DisplayName: Minimum Airspeed
@@ -292,7 +292,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 5 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(airspeed_min, "AIRSPEED_MIN",  AIRSPEED_FBW_MIN),
+    ASCALAR(airspeed_min, "AIRSPEED_MIN",  AIRSPEED_FBW_MIN), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AIRSPEED_MAX
     // @DisplayName: Maximum Airspeed
@@ -301,7 +301,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 5 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(airspeed_max, "AIRSPEED_MAX",  AIRSPEED_FBW_MAX),
+    ASCALAR(airspeed_max, "AIRSPEED_MAX",  AIRSPEED_FBW_MAX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AIRSPEED_STALL
     // @DisplayName: Stall airspeed
@@ -309,14 +309,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Units: m/s
     // @Range: 5 75
     // @User: Standard
-    ASCALAR(airspeed_stall, "AIRSPEED_STALL", 0),
+    ASCALAR(airspeed_stall, "AIRSPEED_STALL", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FBWB_ELEV_REV
     // @DisplayName: Fly By Wire elevator reverse
     // @Description: Reverse sense of elevator in FBWB and CRUISE modes. When set to 0 up elevator (pulling back on the stick) means to raise altitude. When set to 1, up elevator means to lower altitude.
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-    GSCALAR(flybywire_elev_reverse, "FBWB_ELEV_REV",  0),
+    GSCALAR(flybywire_elev_reverse, "FBWB_ELEV_REV",  0), // coverity[PW.NARROWING_CONVERSION]
 
 #if AP_TERRAIN_AVAILABLE
     // @Param: TERRAIN_FOLLOW
@@ -324,7 +324,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: This enables terrain following for CRUISE mode, FBWB mode, RTL and for rally points. To use this option you also need to set TERRAIN_ENABLE to 1, which enables terrain data fetching from the GCS, and you need to have a GCS that supports sending terrain data to the aircraft. When terrain following is enabled then CRUISE and FBWB mode will hold height above terrain rather than height above home. In RTL the return to launch altitude will be considered to be a height above the terrain. Rally point altitudes will be taken as height above the terrain. This option does not affect mission items, which have a per-waypoint flag for whether they are height above home or height above the terrain. To use terrain following missions you need a ground station which can set the waypoint type to be a terrain height waypoint when creating the mission.
     // @Bitmask: 0: Enable all modes, 1:FBWB, 2:Cruise, 3:Auto, 4:RTL, 5:Avoid_ADSB, 6:Guided, 7:Loiter, 8:Circle, 9:QRTL, 10:QLand, 11:Qloiter, 12:AUTOLAND
     // @User: Standard
-    GSCALAR(terrain_follow, "TERRAIN_FOLLOW",  0),
+    GSCALAR(terrain_follow, "TERRAIN_FOLLOW",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TERRAIN_LOOKAHD
     // @DisplayName: Terrain lookahead
@@ -332,7 +332,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 10000
     // @Units: m
     // @User: Standard
-    GSCALAR(terrain_lookahead, "TERRAIN_LOOKAHD",  2000),
+    GSCALAR(terrain_lookahead, "TERRAIN_LOOKAHD",  2000), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
     // @Param: FBWB_CLIMB_RATE
@@ -342,7 +342,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Units: m/s
 	// @Increment: 0.1
     // @User: Standard
-    GSCALAR(flybywire_climb_rate, "FBWB_CLIMB_RATE",  2.0f),
+    GSCALAR(flybywire_climb_rate, "FBWB_CLIMB_RATE",  2.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_MIN
     // @DisplayName: Minimum Throttle
@@ -351,7 +351,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -100 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(throttle_min,           "THR_MIN",        THROTTLE_MIN),
+    ASCALAR(throttle_min,           "THR_MIN",        THROTTLE_MIN), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_MAX
     // @DisplayName: Maximum Throttle
@@ -360,7 +360,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(throttle_max,           "THR_MAX",        THROTTLE_MAX),
+    ASCALAR(throttle_max,           "THR_MAX",        THROTTLE_MAX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TKOFF_THR_MAX
     // @DisplayName: Maximum Throttle for takeoff
@@ -369,7 +369,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Advanced
-    ASCALAR(takeoff_throttle_max,   "TKOFF_THR_MAX",        0),
+    ASCALAR(takeoff_throttle_max,   "TKOFF_THR_MAX",        0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_SLEWRATE
     // @DisplayName: Throttle slew rate
@@ -378,7 +378,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 127
     // @Increment: 1
     // @User: Standard
-    ASCALAR(throttle_slewrate,      "THR_SLEWRATE",   100),
+    ASCALAR(throttle_slewrate,      "THR_SLEWRATE",   100), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLAP_SLEWRATE
     // @DisplayName: Flap slew rate
@@ -387,28 +387,28 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(flap_slewrate,          "FLAP_SLEWRATE",   75),
+    GSCALAR(flap_slewrate,          "FLAP_SLEWRATE",   75), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_SUPP_MAN
     // @DisplayName: Throttle suppress manual passthru
     // @Description: When throttle is suppressed in auto mode it is normally forced to zero. If you enable this option, then while suppressed it will be manual throttle. This is useful on petrol engines to hold the idle throttle manually while waiting for takeoff
 	// @Values: 0:Disabled,1:Enabled
     // @User: Advanced
-    GSCALAR(throttle_suppress_manual,"THR_SUPP_MAN",   0),
+    GSCALAR(throttle_suppress_manual,"THR_SUPP_MAN",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_PASS_STAB
     // @DisplayName: Throttle passthru in stabilize
     // @Description: If this is set then when in STABILIZE, FBWA or ACRO modes the throttle is a direct passthru from the transmitter. This means the THR_MIN and THR_MAX settings are not used in these modes. This is useful for petrol engines where you setup a throttle cut switch that suppresses the throttle below the normal minimum.
 	// @Values: 0:Disabled,1:Enabled
     // @User: Advanced
-    GSCALAR(throttle_passthru_stabilize,"THR_PASS_STAB",   0),
+    GSCALAR(throttle_passthru_stabilize,"THR_PASS_STAB",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_FAILSAFE
     // @DisplayName: Throttle and RC Failsafe Enable
     // @Description: 0 disables the failsafe. 1 enables failsafe on loss of RC input. This is detected either by throttle values below THR_FS_VALUE, loss of receiver valid pulses/data, or by the FS bit in receivers that provide it, like SBUS. A programmable failsafe action will occur and RC inputs, if present, will be ignored. A value of 2 means that the RC inputs won't be used when RC failsafe is detected by any of the above methods, but it won't trigger an RC failsafe action.
     // @Values: 0:Disabled,1:Enabled,2:EnabledNoFailsafe
     // @User: Standard
-    GSCALAR(throttle_fs_enabled,    "THR_FAILSAFE",   int(ThrFailsafe::Enabled)),
+    GSCALAR(throttle_fs_enabled,    "THR_FAILSAFE",   int(ThrFailsafe::Enabled)), // coverity[PW.NARROWING_CONVERSION]
 
 
     // @Param: THR_FS_VALUE
@@ -417,7 +417,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 925 2200
     // @Increment: 1
     // @User: Standard
-    GSCALAR(throttle_fs_value,      "THR_FS_VALUE",   950),
+    GSCALAR(throttle_fs_value,      "THR_FS_VALUE",   950), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: TRIM_THROTTLE
     // @DisplayName: Throttle cruise percentage
@@ -426,28 +426,28 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-    ASCALAR(throttle_cruise,        "TRIM_THROTTLE",  AP_PLANE_TRIM_THROTTLE_DEFAULT),
+    ASCALAR(throttle_cruise,        "TRIM_THROTTLE",  AP_PLANE_TRIM_THROTTLE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THROTTLE_NUDGE
     // @DisplayName: Throttle nudge enable
     // @Description: When enabled, this uses the throttle input in auto-throttle modes to 'nudge' the throttle or airspeed to higher or lower values. When you have an airspeed sensor the nudge affects the target airspeed, so that throttle inputs above 50% will increase the target airspeed from AIRSPEED_CRUISE up to a maximum of AIRSPEED_MAX. When no airspeed sensor is enabled the throttle nudge will push up the target throttle for throttle inputs above 50%.
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-    GSCALAR(throttle_nudge,         "THROTTLE_NUDGE",  1),
+    GSCALAR(throttle_nudge,         "THROTTLE_NUDGE",  1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_SHORT_ACTN
     // @DisplayName: Short failsafe action
     // @Description: The action to take on a short failsafe event. A short failsafe event can be triggered instantly by loss of RC control or by throttle value (see THR_FS_VALUE). If in CIRCLE or RTL mode this parameter is ignored. A short failsafe event in stabilization and manual modes will cause a change to CIRCLE mode if FS_SHORT_ACTN is 0 or 1, a change to FBWA mode with zero throttle if FS_SHORT_ACTN is 2, and a change to FBWB mode if FS_SHORT_ACTN is 4. In all other modes (AUTO, GUIDED and LOITER) a short failsafe event will cause no mode change if FS_SHORT_ACTN is set to 0, will cause a change to CIRCLE mode if set to 1, will change to FBWA mode with zero throttle if set to 2, or will change to FBWB if set to 4. Please see the documentation for FS_LONG_ACTN for the behaviour after FS_LONG_TIMEOUT seconds of failsafe. This parameter only applies to failsafes during fixed wing modes. Quadplane modes will switch to QLAND unless Q_OPTIONS bit 5(QRTL) or 20(RTL) are set.
     // @Values: 0:CIRCLE/no change(if already in AUTO|GUIDED|LOITER),1:CIRCLE,2:FBWA at zero throttle,3:Disable,4:FBWB
     // @User: Standard
-    GSCALAR(fs_action_short,        "FS_SHORT_ACTN",  FS_ACTION_SHORT_BESTGUESS),
+    GSCALAR(fs_action_short,        "FS_SHORT_ACTN",  FS_ACTION_SHORT_BESTGUESS), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_LONG_ACTN
     // @DisplayName: Long failsafe action
     // @Description: The action to take on a long (FS_LONG_TIMEOUT seconds) failsafe event. If the aircraft was in a stabilization or manual mode when failsafe started and a long failsafe occurs then it will change to RTL mode if FS_LONG_ACTN is 0 or 1, and will change to FBWA if FS_LONG_ACTN is set to 2. If the aircraft was in an auto mode (such as AUTO or GUIDED) when the failsafe started then it will continue in the auto mode if FS_LONG_ACTN is set to 0, will change to RTL mode if FS_LONG_ACTN is set to 1 and will change to FBWA mode if FS_LONG_ACTN is set to 2. If FS_LONG_ACTN is set to 3, the parachute will be deployed (make sure the chute is configured and enabled). If FS_LONG_ACTN is set to 4 the aircraft will switch to mode AUTO with the current waypoint if it is not already in mode AUTO, unless it is in the middle of a landing sequence. If FS_LONG_ACTN is set to 5, will switch to AUTOLAND mode if possible, otherwise RTL mode. This parameter only applies to failsafes during fixed wing modes. Quadplane modes will switch to QLAND unless Q_OPTIONS bit 5 (QRTL) or 20(RTL) are set.
     // @Values: 0:Continue,1:ReturnToLaunch,2:Glide,3:Deploy Parachute,4:Auto,5:AUTOLAND
     // @User: Standard
-    GSCALAR(fs_action_long,         "FS_LONG_ACTN",   FS_ACTION_LONG_CONTINUE),
+    GSCALAR(fs_action_long,         "FS_LONG_ACTN",   FS_ACTION_LONG_CONTINUE), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_LONG_TIMEOUT
     // @DisplayName: Long failsafe timeout
@@ -456,65 +456,65 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 1 300
     // @Increment: 0.5
     // @User: Standard
-    GSCALAR(fs_timeout_long,        "FS_LONG_TIMEOUT", 5),
+    GSCALAR(fs_timeout_long,        "FS_LONG_TIMEOUT", 5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_GCS_ENABL
     // @DisplayName: GCS failsafe enable
     // @Description: Enable ground control station telemetry failsafe. Failsafe will trigger after FS_LONG_TIMEOUT seconds of no MAVLink heartbeat messages. There are three possible enabled settings. Setting FS_GCS_ENABL to 1 means that GCS failsafe will be triggered when the aircraft has not received a MAVLink HEARTBEAT message. Note that heartbeat tracking only becomes active after having received the first heartbeat from the MAV_GCS_SYSID primary GCS system. Setting FS_GCS_ENABL to 2 means that GCS failsafe will be triggered on either a loss of HEARTBEAT messages, or a RADIO_STATUS message from a MAVLink enabled telemetry adio indicating that the primary ground station is not receiving status updates from the aircraft, which is indicated by the RADIO_STATUS.remrssi field being zero (this may happen if you have a one way link due to asymmetric noise on the ground station and aircraft radios).Setting FS_GCS_ENABL to 3 means that GCS failsafe will be triggered by Heartbeat(like option one), but only in AUTO mode. WARNING: Enabling this option opens up the possibility of your plane going into failsafe mode and running the motor on the ground it it loses contact with your ground station. If this option is enabled on an electric plane then you should enable ARMING_REQUIRED.
     // @Values: 0:Disabled,1:Heartbeat,2:HeartbeatAndREMRSSI,3:HeartbeatAndAUTO
     // @User: Standard
-    GSCALAR(gcs_heartbeat_fs_enabled, "FS_GCS_ENABL", GCS_FAILSAFE_OFF),
+    GSCALAR(gcs_heartbeat_fs_enabled, "FS_GCS_ENABL", GCS_FAILSAFE_OFF), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE_CH
     // @DisplayName: Flightmode channel
     // @Description: RC Channel to use for flight mode control
     // @Values: 0:Disabled,1:Channel 1,2:Channel 2,3:Channel 3,4:Channel 4,5:Channel 5,6:Channel 6,7:Channel 7,8:Channel 8,9:Channel 9,10:Channel 10,11:Channel 11,12:Channel 12,13:Channel 13,14:Channel 14,15:Channel 15,16:Channel 16
     // @User: Advanced
-    GSCALAR(flight_mode_channel,    "FLTMODE_CH",     FLIGHT_MODE_CHANNEL),
+    GSCALAR(flight_mode_channel,    "FLTMODE_CH",     FLIGHT_MODE_CHANNEL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE1
     // @DisplayName: FlightMode1
     // @Description: Flight mode for switch position 1 (910 to 1230 and above 2049)
     // @Values: 0:Manual,1:CIRCLE,2:STABILIZE,3:TRAINING,4:ACRO,5:FBWA,6:FBWB,7:CRUISE,8:AUTOTUNE,10:Auto,11:RTL,12:Loiter,13:TAKEOFF,14:AVOID_ADSB,15:Guided,17:QSTABILIZE,18:QHOVER,19:QLOITER,20:QLAND,21:QRTL,22:QAUTOTUNE,23:QACRO,24:THERMAL,25:Loiter to QLand,26:AUTOLAND
     // @User: Standard
-    GSCALAR(flight_mode1,           "FLTMODE1",       FLIGHT_MODE_1),
+    GSCALAR(flight_mode1,           "FLTMODE1",       FLIGHT_MODE_1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE2
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: FlightMode2
     // @Description: Flight mode for switch position 2 (1231 to 1360)
-    GSCALAR(flight_mode2,           "FLTMODE2",       FLIGHT_MODE_2),
+    GSCALAR(flight_mode2,           "FLTMODE2",       FLIGHT_MODE_2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE3
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: FlightMode3
     // @Description: Flight mode for switch position 3 (1361 to 1490)
-    GSCALAR(flight_mode3,           "FLTMODE3",       FLIGHT_MODE_3),
+    GSCALAR(flight_mode3,           "FLTMODE3",       FLIGHT_MODE_3), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE4
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: FlightMode4
     // @Description: Flight mode for switch position 4 (1491 to 1620)
-    GSCALAR(flight_mode4,           "FLTMODE4",       FLIGHT_MODE_4),
+    GSCALAR(flight_mode4,           "FLTMODE4",       FLIGHT_MODE_4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE5
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: FlightMode5
     // @Description: Flight mode for switch position 5 (1621 to 1749)
-    GSCALAR(flight_mode5,           "FLTMODE5",       FLIGHT_MODE_5),
+    GSCALAR(flight_mode5,           "FLTMODE5",       FLIGHT_MODE_5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE6
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: FlightMode6
     // @Description: Flight mode for switch position 6 (1750 to 2049)
-    GSCALAR(flight_mode6,           "FLTMODE6",       FLIGHT_MODE_6),
+    GSCALAR(flight_mode6,           "FLTMODE6",       FLIGHT_MODE_6), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: INITIAL_MODE
     // @DisplayName: Initial flight mode
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver.
     // @CopyValuesFrom: FLTMODE1
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     Mode::Number::MANUAL),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ROLL_LIMIT_DEG
     // @DisplayName: Maximum Bank Angle
@@ -523,7 +523,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 90
     // @Increment: 1
     // @User: Standard
-    ASCALAR(roll_limit,          "ROLL_LIMIT_DEG",    ROLL_LIMIT_DEG),
+    ASCALAR(roll_limit,          "ROLL_LIMIT_DEG",    ROLL_LIMIT_DEG), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PTCH_LIM_MAX_DEG
     // @DisplayName: Maximum Pitch Angle
@@ -532,7 +532,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 90
     // @Increment: 1
     // @User: Standard
-    ASCALAR(pitch_limit_max,     "PTCH_LIM_MAX_DEG",  PITCH_MAX),
+    ASCALAR(pitch_limit_max,     "PTCH_LIM_MAX_DEG",  PITCH_MAX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PTCH_LIM_MIN_DEG
     // @DisplayName: Minimum Pitch Angle
@@ -541,7 +541,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -90 0
     // @Increment: 1
     // @User: Standard
-    ASCALAR(pitch_limit_min,     "PTCH_LIM_MIN_DEG",  PITCH_MIN),
+    ASCALAR(pitch_limit_min,     "PTCH_LIM_MIN_DEG",  PITCH_MIN), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_ROLL_RATE
     // @DisplayName: ACRO mode roll rate
@@ -550,7 +550,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 10 500
     // @Increment: 1
     // @User: Standard
-    GSCALAR(acro_roll_rate,          "ACRO_ROLL_RATE",    180),
+    GSCALAR(acro_roll_rate,          "ACRO_ROLL_RATE",    180), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_PITCH_RATE
     // @DisplayName: ACRO mode pitch rate
@@ -559,7 +559,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 10 500
     // @Increment: 1
     // @User: Standard
-    GSCALAR(acro_pitch_rate,          "ACRO_PITCH_RATE",  180),
+    GSCALAR(acro_pitch_rate,          "ACRO_PITCH_RATE",  180), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_YAW_RATE
     // @DisplayName: ACRO mode yaw rate
@@ -568,14 +568,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 500
     // @Increment: 1
     // @User: Standard
-    GSCALAR(acro_yaw_rate,            "ACRO_YAW_RATE",    0),
+    GSCALAR(acro_yaw_rate,            "ACRO_YAW_RATE",    0), // coverity[PW.NARROWING_CONVERSION]
     
     // @Param: ACRO_LOCKING
     // @DisplayName: ACRO mode attitude locking
     // @Description: Enable attitude locking when sticks are released. If set to 2 then quaternion based locking is used if the yaw rate controller is enabled. Quaternion based locking will hold any attitude
     // @Values: 0:Disabled,1:Enabled,2:Quaternion
     // @User: Standard
-    GSCALAR(acro_locking,             "ACRO_LOCKING",     0),
+    GSCALAR(acro_locking,             "ACRO_LOCKING",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: GROUND_STEER_ALT
     // @DisplayName: Ground steer altitude
@@ -584,7 +584,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: -100 100
     // @Increment: 0.1
     // @User: Standard
-    GSCALAR(ground_steer_alt,         "GROUND_STEER_ALT",   0),
+    GSCALAR(ground_steer_alt,         "GROUND_STEER_ALT",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: GROUND_STEER_DPS
     // @DisplayName: Ground steer rate
@@ -593,21 +593,21 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 10 360
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(ground_steer_dps,         "GROUND_STEER_DPS",  90),
+    GSCALAR(ground_steer_dps,         "GROUND_STEER_DPS",  90), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MIXING_GAIN
     // @DisplayName: Mixing Gain
     // @Description: The gain for the Vtail and elevon output mixers. The default is 0.5, which ensures that the mixer doesn't saturate, allowing both input channels to go to extremes while retaining control over the output. Hardware mixers often have a 1.0 gain, which gives more servo throw, but can saturate. If you don't have enough throw on your servos with VTAIL_OUTPUT or ELEVON_OUTPUT enabled then you can raise the gain using MIXING_GAIN. The mixer allows outputs in the range 900 to 2100 microseconds.
     // @Range: 0.5 1.2
     // @User: Standard
-    GSCALAR(mixing_gain,            "MIXING_GAIN",    0.5f),
+    GSCALAR(mixing_gain,            "MIXING_GAIN",    0.5f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RUDDER_ONLY
     // @DisplayName: Rudder only aircraft
     // @Description: Enable rudder only mode. The rudder will control attitude in attitude controlled modes (such as FBWA). You should setup your transmitter to send roll stick inputs to the RCMAP_YAW channel (normally channel 4). The rudder servo should be attached to the RCMAP_YAW channel as well. Note that automatic ground steering will be disabled for rudder only aircraft. You should also set KFF_RDDRMIX to 1.0. You will also need to setup the YAW2SRV_DAMP yaw damping appropriately for your aircraft. A value of 0.5 for YAW2SRV_DAMP is a good starting point.
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-    GSCALAR(rudder_only,             "RUDDER_ONLY",  0),
+    GSCALAR(rudder_only,             "RUDDER_ONLY",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MIXING_OFFSET
     // @DisplayName: Mixing Offset
@@ -615,7 +615,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Units: d%
     // @Range: -1000 1000
     // @User: Standard
-    GSCALAR(mixing_offset,          "MIXING_OFFSET",  0),
+    GSCALAR(mixing_offset,          "MIXING_OFFSET",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: DSPOILR_RUD_RATE
     // @DisplayName: Differential spoilers rudder rate
@@ -623,14 +623,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Units: %
     // @Range: -100 100
     // @User: Standard
-    GSCALAR(dspoiler_rud_rate,      "DSPOILR_RUD_RATE",  DSPOILR_RUD_RATE_DEFAULT),
+    GSCALAR(dspoiler_rud_rate,      "DSPOILR_RUD_RATE",  DSPOILR_RUD_RATE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
     // @Description: Bitmap of what on-board log types to enable. This value is made up of the sum of each of the log types you want to be saved. It is usually best just to enable all basic log types by setting this to 65535.
     // @Bitmask: 0:Fast Attitude,1:Medium Attitude,2:GPS,3:Performance,4:Control Tuning,5:Navigation Tuning,7:IMU,8:Mission Commands,9:Battery Monitor,10:Compass,11:TECS,12:Camera,13:RC Input-Output,14:Rangefinder,19:Raw IMU,20:Fullrate Attitude,21:Video Stabilization,22:Fullrate Notch
     // @User: Advanced
-    GSCALAR(log_bitmask,            "LOG_BITMASK",    DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask,            "LOG_BITMASK",    DEFAULT_LOG_BITMASK), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SCALING_SPEED
     // @DisplayName: speed used for speed scaling calculations
@@ -639,14 +639,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 0 50
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(scaling_speed,        "SCALING_SPEED",    SCALING_SPEED),
+    GSCALAR(scaling_speed,        "SCALING_SPEED",    SCALING_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MIN_GROUNDSPEED
     // @DisplayName: Minimum ground speed
     // @Description: Minimum ground speed when under airspeed control
     // @Units: m/s
     // @User: Advanced
-    ASCALAR(min_groundspeed,      "MIN_GROUNDSPEED",  MIN_GROUNDSPEED),
+    ASCALAR(min_groundspeed,      "MIN_GROUNDSPEED",  MIN_GROUNDSPEED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PTCH_TRIM_DEG
     // @DisplayName: Pitch angle offset
@@ -654,21 +654,21 @@ const AP_Param::Info Plane::var_info[] = {
     // @Units: deg
     // @Range: -45 45
     // @User: Standard
-    GSCALAR(pitch_trim,             "PTCH_TRIM_DEG",  0.0f),
+    GSCALAR(pitch_trim,             "PTCH_TRIM_DEG",  0.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RTL_ALTITUDE
     // @DisplayName: RTL altitude
     // @Description: Target altitude above home for RTL mode. Maintains current altitude if set to -1. Rally point altitudes are used if plane does not return to home.
     // @Units: m
     // @User: Standard
-    GSCALAR(RTL_altitude,        "RTL_ALTITUDE",   ALT_HOLD_HOME),
+    GSCALAR(RTL_altitude,        "RTL_ALTITUDE",   ALT_HOLD_HOME), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: CRUISE_ALT_FLOOR
     // @DisplayName: Minimum altitude for FBWB and CRUISE mode
     // @Description: This is the minimum altitude in meters (above home) that FBWB and CRUISE modes will allow. If you attempt to descend below this altitude then the plane will level off. It will also force a climb to this altitude if below in these modes. A value of zero means no limit.
     // @Units: m
     // @User: Standard
-    GSCALAR(cruise_alt_floor,   "CRUISE_ALT_FLOOR", CRUISE_ALT_FLOOR),
+    GSCALAR(cruise_alt_floor,   "CRUISE_ALT_FLOOR", CRUISE_ALT_FLOOR), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLAP_1_PERCNT
     // @DisplayName: Flap 1 percentage
@@ -677,7 +677,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Increment: 1
     // @Units: %
     // @User: Advanced
-    GSCALAR(flap_1_percent,         "FLAP_1_PERCNT",  FLAP_1_PERCENT),
+    GSCALAR(flap_1_percent,         "FLAP_1_PERCNT",  FLAP_1_PERCENT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLAP_1_SPEED
     // @DisplayName: Flap 1 speed
@@ -686,7 +686,7 @@ const AP_Param::Info Plane::var_info[] = {
 	// @Increment: 1
     // @Units: m/s
     // @User: Advanced
-    GSCALAR(flap_1_speed,           "FLAP_1_SPEED",   FLAP_1_SPEED),
+    GSCALAR(flap_1_speed,           "FLAP_1_SPEED",   FLAP_1_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLAP_2_PERCNT
     // @DisplayName: Flap 2 percentage
@@ -695,7 +695,7 @@ const AP_Param::Info Plane::var_info[] = {
 	// @Units: %
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(flap_2_percent,         "FLAP_2_PERCNT",  FLAP_2_PERCENT),
+    GSCALAR(flap_2_percent,         "FLAP_2_PERCNT",  FLAP_2_PERCENT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLAP_2_SPEED
     // @DisplayName: Flap 2 speed
@@ -704,7 +704,7 @@ const AP_Param::Info Plane::var_info[] = {
 	// @Units: m/s
 	// @Increment: 1
     // @User: Advanced
-    GSCALAR(flap_2_speed,           "FLAP_2_SPEED",   FLAP_2_SPEED),
+    GSCALAR(flap_2_speed,           "FLAP_2_SPEED",   FLAP_2_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
 #if HAL_WITH_IO_MCU
     // @Param: OVERRIDE_CHAN
@@ -721,7 +721,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: Automatically begin landing sequence after arriving at RTL location. This requires the addition of a DO_LAND_START mission item, which acts as a marker for the start of a landing sequence. The closest landing sequence will be chosen to the current location For a value of 1 a rally point will be used instead of HOME if in range (see rally point documentation).If this is set to 0 and there is a DO_LAND_START or DO_RETURN_PATH_START mission item then you will get an arming check failure. You can set to a value of 3 to avoid the arming check failure and use the DO_LAND_START for go-around (see wiki for aborting autolandings) without it changing RTL behaviour.
     // @Values: 0:Disable,1:Fly HOME then land via DO_LAND_START mission item, 2:Go directly to landing sequence via DO_LAND_START mission item, 3:OnlyForGoAround, 4:Go directly to landing sequence via DO_RETURN_PATH_START mission item
     // @User: Standard
-    GSCALAR(rtl_autoland,         "RTL_AUTOLAND",   float(RtlAutoland::RTL_DISABLE)),
+    GSCALAR(rtl_autoland,         "RTL_AUTOLAND",   float(RtlAutoland::RTL_DISABLE)), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: CRASH_ACC_THRESH
     // @DisplayName: Crash Deceleration Threshold
@@ -730,14 +730,14 @@ const AP_Param::Info Plane::var_info[] = {
     // @Range: 10 127
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(crash_accel_threshold,          "CRASH_ACC_THRESH",   0),
+    GSCALAR(crash_accel_threshold,          "CRASH_ACC_THRESH",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: CRASH_DETECT
     // @DisplayName: Crash Detection
     // @Description: Automatically detect a crash during AUTO flight and perform the bitmask selected action(s). Disarm will turn off motor for safety and to help against burning out ESC and motor. Set to 0 to disable crash detection.
     // @Bitmask: 0:Disarm
     // @User: Advanced
-    ASCALAR(crash_detection_enable,         "CRASH_DETECT",   0),
+    ASCALAR(crash_detection_enable,         "CRASH_DETECT",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Group: BARO
     // @Path: ../libraries/AP_Baro/AP_Baro.cpp
@@ -780,7 +780,7 @@ const AP_Param::Info Plane::var_info[] = {
     // @Description: Sets the use of a rangefinder for automatic landing and other use cases. When enabled for landing and takeoff the rangefinder will be used both on the landing approach and for final flare as well as as VTOL landing and for takeoffs and throttle suppression when close to the ground. When enabled for assist the rangefinder will be used for VTOL assistance. When enabled for climb the rangefinder will be used for the initial climb in QRTL and AUTO. Set to 0 to disable use of the rangefinder.
     // @Bitmask: 0:All, 1:TakeoffAndLanding, 2:Assist, 3:InitialClimb
     // @User: Standard
-    GSCALAR(rangefinder_landing,    "RNGFND_LANDING",   0),
+    GSCALAR(rangefinder_landing,    "RNGFND_LANDING",   0), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
 #if AP_TERRAIN_AVAILABLE

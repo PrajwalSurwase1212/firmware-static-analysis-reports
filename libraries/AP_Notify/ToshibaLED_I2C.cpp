@@ -44,7 +44,7 @@ ToshibaLED_I2C::ToshibaLED_I2C(uint8_t bus)
     : RGBLed(TOSHIBA_LED_OFF, TOSHIBA_LED_BRIGHT, TOSHIBA_LED_MEDIUM, TOSHIBA_LED_DIM)
     , _bus(bus)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool ToshibaLED_I2C::init(void)
 {

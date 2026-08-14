@@ -109,7 +109,7 @@ bool AP_RangeFinder_RDS02UF::get_reading(float &distance_m)
 void AP_RangeFinder_RDS02UF::move_header_in_buffer(uint8_t initial_offset)
 {
     uint8_t* header_ptr = (uint8_t*)memchr(&u.parse_buffer[initial_offset], RDS02_HEAD, body_length - initial_offset);
-    if (header_ptr != nullptr) {
+    if (header_ptr) {
         size_t header_offset = header_ptr - &u.parse_buffer[0];
         if (header_offset != 0) {
             // header was found, but not at index 0; move it back to start of array

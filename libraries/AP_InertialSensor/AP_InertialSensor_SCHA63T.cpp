@@ -24,6 +24,7 @@
 
 #if defined(HAL_GPIO_PIN_SCHA63T_RESET)
 #include <hal.h>
+#include <cerrno>
 #endif
 
 #define BACKEND_SAMPLE_RATE       1000
@@ -108,7 +109,8 @@ void AP_InertialSensor_SCHA63T::start()
     // setup callbacks
     dev_uno->register_periodic_callback(backend_period_us, FUNCTOR_BIND_MEMBER(&AP_InertialSensor_SCHA63T::read_accel, void));
     dev_due->register_periodic_callback(backend_period_us, FUNCTOR_BIND_MEMBER(&AP_InertialSensor_SCHA63T::read_gyro, void));
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 /*
   probe and initialise accelerometer

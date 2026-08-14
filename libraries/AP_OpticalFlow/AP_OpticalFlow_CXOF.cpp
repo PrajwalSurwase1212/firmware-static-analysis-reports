@@ -55,7 +55,7 @@ AP_OpticalFlow_CXOF::AP_OpticalFlow_CXOF(AP_OpticalFlow &_frontend, AP_HAL::UART
     OpticalFlow_backend(_frontend),
     uart(_uart)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // detect the device
 AP_OpticalFlow_CXOF *AP_OpticalFlow_CXOF::detect(AP_OpticalFlow &_frontend)

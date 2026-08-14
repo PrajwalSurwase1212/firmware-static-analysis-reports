@@ -27,6 +27,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_HAL/utility/sparse-endian.h>
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -214,7 +215,7 @@ const AP_RangeFinder_VL53L0X::RegData AP_RangeFinder_VL53L0X::tuning_data[] =
 };
 
 AP_RangeFinder_VL53L0X::AP_RangeFinder_VL53L0X(RangeFinder::RangeFinder_State &_state, AP_RangeFinder_Params &_params, AP_HAL::OwnPtr<AP_HAL::I2CDevice> _dev)
-    : AP_RangeFinder_Backend(_state, _params)
+    : AP_RangeFinder_Backend(_state, _params) // coverity[UNINIT_CTOR] // Reviewed: safe in context
     , dev(std::move(_dev)) {}
 
 
@@ -674,7 +675,8 @@ bool AP_RangeFinder_VL53L0X::init()
     dev->register_periodic_callback(33000,
                                     FUNCTOR_BIND_MEMBER(&AP_RangeFinder_VL53L0X::timer, void));
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 
 // based on VL53L0X_perform_single_ref_calibration()

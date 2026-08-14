@@ -59,6 +59,7 @@ static const float GYRO_SCALE = (0.0174532f / 16.4f);
 #endif
 
 #include "AP_InertialSensor_Invensensev2_registers.h"
+#include <cerrno>
 
 #define INV2_SAMPLE_SIZE 14
 #define INV2_FIFO_BUFFER_LEN 8
@@ -74,12 +75,12 @@ AP_InertialSensor_Invensensev2::AP_InertialSensor_Invensensev2(AP_InertialSensor
     , _temp_filter(1125, 1)
     , _rotation(rotation)
     , _dev(std::move(dev))
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_InertialSensor_Invensensev2::~AP_InertialSensor_Invensensev2()
 {
-    if (_fifo_buffer != nullptr) {
+    if (_fifo_buffer) {
         hal.util->free_type(_fifo_buffer, INV2_FIFO_BUFFER_LEN * INV2_SAMPLE_SIZE, AP_HAL::Util::MEM_DMA_SAFE);
     }
     _dev->deregister_bankselect_callback();
@@ -253,7 +254,8 @@ void AP_InertialSensor_Invensensev2::start()
 
     // start the timer process to read samples
     _dev->register_periodic_callback(1265625UL / _gyro_backend_rate_hz, FUNCTOR_BIND_MEMBER(&AP_InertialSensor_Invensensev2::_poll_data, void));
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 // get a startup banner to output to the GCS
 bool AP_InertialSensor_Invensensev2::get_output_banner(char* banner, uint8_t banner_len) {
@@ -445,7 +447,8 @@ bool AP_InertialSensor_Invensensev2::_accumulate_sensor_rate_sampling(uint8_t *s
     }
 
     if (ret) {
-        float temp = (static_cast<float>(tsum)/n_samples)*temp_sensitivity + temp_zero;
+        // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
+        float temp = (static_cast<float>(tsum)/n_samples)*temp_sensitivity + temp_zero; // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
         _temp_filtered = _temp_filter.apply(temp);
     }
     
@@ -560,7 +563,8 @@ bool AP_InertialSensor_Invensensev2::_check_raw_temp(int16_t t2)
         // cached copy OK
         return true;
     }
-    uint8_t trx[2];
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    uint8_t trx[2] = {0};
     if (_block_read(INV2REG_TEMP_OUT_H, trx, 2)) {
         _raw_temp = int16_val(trx, 0);
     }

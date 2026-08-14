@@ -89,7 +89,7 @@ void Copter::failsafe_radio_off_event()
 
 void Copter::announce_failsafe(const char *type, const char *action_undertaken)
 {
-    if (action_undertaken != nullptr) {
+    if (action_undertaken) {
         gcs().send_text(MAV_SEVERITY_WARNING, "%s Failsafe - %s", type, action_undertaken);
     } else {
         gcs().send_text(MAV_SEVERITY_WARNING, "%s Failsafe", type);

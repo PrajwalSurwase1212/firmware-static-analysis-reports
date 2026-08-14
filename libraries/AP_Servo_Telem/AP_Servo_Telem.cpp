@@ -29,7 +29,7 @@ AP_Servo_Telem::AP_Servo_Telem()
         AP_HAL::panic("Too many AP_Servo_Telem instances");
     }
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // return true if the requested types of data are available
 bool AP_Servo_Telem::TelemetryData::present(const uint16_t type_mask) const volatile
@@ -130,8 +130,8 @@ void AP_Servo_Telem::write_log()
             pos_cmd     : telemdata.present(TelemetryData::Types::COMMANDED_POSITION) ? telemdata.command_position              : AP::logger().quiet_nanf(),
             voltage     : telemdata.present(TelemetryData::Types::VOLTAGE)            ? telemdata.voltage                       : AP::logger().quiet_nanf(),
             current     : telemdata.present(TelemetryData::Types::CURRENT)            ? telemdata.current                       : AP::logger().quiet_nanf(),
-            mot_temp    : telemdata.present(TelemetryData::Types::MOTOR_TEMP)         ? telemdata.motor_temperature_cdeg * 0.01 : AP::logger().quiet_nanf(),
-            pcb_temp    : telemdata.present(TelemetryData::Types::PCB_TEMP)           ? telemdata.pcb_temperature_cdeg * 0.01   : AP::logger().quiet_nanf(),
+            mot_temp    : telemdata.present(TelemetryData::Types::MOTOR_TEMP)         ? telemdata.motor_temperature_cdeg * 0.01 : AP::logger().quiet_nanf(), // coverity[PW.NARROWING_CONVERSION]
+            pcb_temp    : telemdata.present(TelemetryData::Types::PCB_TEMP)           ? telemdata.pcb_temperature_cdeg * 0.01   : AP::logger().quiet_nanf(), // coverity[PW.NARROWING_CONVERSION]
             error       : telemdata.status_flags,
         };
         AP::logger().WriteBlock(&pkt, sizeof(pkt));

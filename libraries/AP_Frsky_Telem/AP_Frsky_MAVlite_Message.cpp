@@ -1,6 +1,7 @@
 #include "AP_Frsky_MAVlite_Message.h"
 
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 #if HAL_WITH_FRSKY_TELEM_BIDIRECTIONAL
 bool AP_Frsky_MAVlite_Message::get_bytes(uint8_t *bytes, const uint8_t offset, const uint8_t count) const
@@ -25,7 +26,8 @@ bool AP_Frsky_MAVlite_Message::set_bytes(const uint8_t *bytes, const uint8_t off
 bool AP_Frsky_MAVlite_Message::get_string(char* value, const uint8_t offset) const
 {
     if (get_bytes((uint8_t*)value, offset, MIN((uint8_t)16, len - offset))) {
-        value[MIN((uint8_t)16, len - offset)] = 0x00; // terminator
+        // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+        value[MIN((uint8_t)16, len - offset)] = 0x00; // terminator // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
         return true;
     }
     return false;

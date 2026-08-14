@@ -245,7 +245,7 @@ void SimMCast::update(const struct sitl_input &input)
     update_external_payload(input);
 
     auto *_sitl = AP::sitl();
-    if (_sitl != nullptr) {
+    if (_sitl) {
         battery_voltage = _sitl->batt_voltage;
     }
 }

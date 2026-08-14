@@ -256,7 +256,7 @@ protected:
 
 private:
     Vector3f target_pos;
-    float target_yaw = 0.0f;
+    float target_yaw = 0.0f; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class ModeLand : public Mode

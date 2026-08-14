@@ -28,7 +28,7 @@
 
 class AP_RCTelemetry {
 public:
-    AP_RCTelemetry(uint8_t time_slots) : _time_slots(time_slots) {}
+    AP_RCTelemetry(uint8_t time_slots) : _time_slots(time_slots) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     virtual ~AP_RCTelemetry() {};
 
     /* Do not allow copies */

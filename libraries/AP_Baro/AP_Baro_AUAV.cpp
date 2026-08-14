@@ -25,7 +25,7 @@ AP_Baro_AUAV::AP_Baro_AUAV(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> _dev)
     , dev(std::move(_dev))
 {
     i2c_dev = (AP_HAL::I2CDevice*)dev.get();
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 AP_Baro_Backend *AP_Baro_AUAV::probe(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> _dev)
 {

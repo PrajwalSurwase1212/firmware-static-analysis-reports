@@ -206,7 +206,7 @@ AP_Landing::AP_Landing(AP_Mission &_mission, AP_AHRS &_ahrs, AP_TECS *_tecs_Cont
 #endif
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   return a location alt in cm as AMSL
@@ -608,11 +608,11 @@ bool AP_Landing::get_target_altitude_location(Location &location)
 /*
  * returns target airspeed in cm/s depending on flight stage
  */
-int32_t AP_Landing::get_target_airspeed_cm(void)
+int32_t AP_Landing::get_target_airspeed_cm(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!flags.in_progress) {
         // not landing, use regular cruise airspeed
-        return aparm.airspeed_cruise*100;
+        return aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 
     switch (type) {

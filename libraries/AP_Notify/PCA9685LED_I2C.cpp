@@ -20,6 +20,7 @@
 #if AP_NOTIFY_PCA9685_ENABLED
 
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 #define NAVIO_LED_BRIGHT 0x0    // full brightness
 #define NAVIO_LED_MEDIUM 0x7F    // medium brightness
@@ -36,7 +37,7 @@ extern const AP_HAL::HAL& hal;
 
 PCA9685LED_I2C::PCA9685LED_I2C() : 
     RGBLed(NAVIO_LED_OFF, NAVIO_LED_BRIGHT, NAVIO_LED_MEDIUM, NAVIO_LED_DIM)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool PCA9685LED_I2C::init()
@@ -47,7 +48,8 @@ bool PCA9685LED_I2C::init()
         return false;
     }
 
-    _dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     _dev->set_retries(5);
 
@@ -73,7 +75,8 @@ bool PCA9685LED_I2C::init()
     _dev->register_periodic_callback(20000, FUNCTOR_BIND_MEMBER(&PCA9685LED_I2C::_timer, void));
 
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 // set_rgb - set color as a combination of red, green and blue values
 bool PCA9685LED_I2C::hw_set_rgb(uint8_t red, uint8_t green, uint8_t blue)

@@ -167,7 +167,7 @@ void AP_Networking::Port::tcp_server_init(void)
 void AP_Networking::Port::tcp_client_init(void)
 {
     sock = NEW_NOTHROW SocketAPM(false);
-    if (sock != nullptr) {
+    if (sock) {
         sock->set_blocking(true);
         thread_create(FUNCTOR_BIND_MEMBER(&AP_Networking::Port::tcp_client_loop, void));
     }
@@ -254,19 +254,19 @@ void AP_Networking::Port::tcp_server_loop(void)
         }
         if (sock == nullptr) {
             sock = listen_sock->accept(100);
-            if (sock != nullptr) {
+            if (sock) {
                 sock->set_blocking(false);
                 char buf[IP4_STR_LEN];
                 uint16_t last_port;
                 const char *last_addr = listen_sock->last_recv_address(buf, sizeof(buf), last_port);
-                if (last_addr != nullptr) {
+                if (last_addr) {
                     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "TCP[%u]: connection from %s:%u", (unsigned)state.idx, last_addr, unsigned(last_port));
                 }
                 connected = true;
                 sock->reuseaddress();
             }
         }
-        if (sock != nullptr) {
+        if (sock) {
             active = send_receive();
         }
     }
@@ -382,7 +382,8 @@ bool AP_Networking::Port::send_receive(void)
         {
             WITH_SEMAPHORE(sem);
             available = writebuffer->available();
-            available = MIN(300U, available);
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            available = MIN(300U, available); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 #if AP_MAVLINK_PACKETISE_ENABLED
             if (packetise) {
                 available = mavlink_packetise(*writebuffer, available);

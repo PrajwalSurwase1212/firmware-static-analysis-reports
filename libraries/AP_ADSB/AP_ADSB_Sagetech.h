@@ -20,7 +20,7 @@
 #if HAL_ADSB_SAGETECH_ENABLED
 class AP_ADSB_Sagetech : public AP_ADSB_Backend {
 public:
-    using AP_ADSB_Backend::AP_ADSB_Backend;
+    using AP_ADSB_Backend::AP_ADSB_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // init - performs any required initialisation for this instance
     bool init() override;

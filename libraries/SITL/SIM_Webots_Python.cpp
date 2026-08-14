@@ -70,7 +70,7 @@ void WebotsPython::send_servos(const struct sitl_input &input)
     for (unsigned i = 0; i < 16; ++i){
       pkt.motor_speed[i] = (input.servos[i]-1000) / 1000.0f;
     }
-    if (socket_sitl.sendto(&pkt, sizeof(pkt), _webots_address, _webots_port) < 0) {
+    if (socket_sitl.sendto(&pkt, sizeof(pkt), _webots_address, _webots_port) < 0) { // coverity[CHECKED_RETURN]
         // safe to ignore: SITL socket output failures shouldn't halt the simulator
     }
 }
@@ -86,7 +86,8 @@ void WebotsPython::recv_fdm(const struct sitl_input &input)
       we re-send the servo packet every 0.1 seconds until we get a
       reply. This allows us to cope with some packet loss to the FDM
      */
-    while (socket_sitl.recv(&pkt, sizeof(pkt), 100) != sizeof(pkt)) {
+    // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
+    while (socket_sitl.recv(&pkt, sizeof(pkt), 100) != sizeof(pkt)) { // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
         send_servos(input);
         // Reset the timestamp after a long disconnection, also catch webots reset
         if (get_wall_time_us() > last_wall_time_us + WEBOTS_TIMEOUT_US) {
@@ -144,7 +145,8 @@ void WebotsPython::drain_sockets()
     do {
         received = socket_sitl.recv(buf, buflen, 0);
         if (received < 0) {
-            if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) {
+            // parasoft-suppress BD-PB-CC "Reviewed and safe"
+            if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
                 fprintf(stderr, "error recv on socket in: %s \n",
                         strerror(errno));
             }

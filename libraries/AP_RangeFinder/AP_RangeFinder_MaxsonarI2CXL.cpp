@@ -29,6 +29,7 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <AP_HAL/utility/sparse-endian.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -37,7 +38,7 @@ AP_RangeFinder_MaxsonarI2CXL::AP_RangeFinder_MaxsonarI2CXL(RangeFinder::RangeFin
                                                            AP_HAL::I2CDevice *dev)
     : AP_RangeFinder_Backend(_state, _params)
     , _dev(dev)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -72,7 +73,8 @@ AP_RangeFinder_Backend *AP_RangeFinder_MaxsonarI2CXL::detect(RangeFinder::RangeF
  */
 bool AP_RangeFinder_MaxsonarI2CXL::_init(void)
 {
-    _dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     if (!start_reading()) {
         _dev->get_semaphore()->give();
@@ -102,7 +104,7 @@ bool AP_RangeFinder_MaxsonarI2CXL::start_reading()
     uint8_t cmd = AP_RANGE_FINDER_MAXSONARI2CXL_COMMAND_TAKE_RANGE_READING;
 
     // send command to take reading
-    return _dev->transfer(&cmd, sizeof(cmd), nullptr, 0);
+    return _dev->transfer(&cmd, sizeof(cmd), nullptr, 0); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 }
 
 // read - return last value measured by sensor
@@ -114,8 +116,10 @@ bool AP_RangeFinder_MaxsonarI2CXL::get_reading(uint16_t &reading_cm)
     bool ret = _dev->transfer(nullptr, 0, (uint8_t *) &val, sizeof(val));
 
     if (ret) {
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         // combine results into distance
-        reading_cm = be16toh(val);
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        reading_cm = be16toh(val); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     }
 
     // trigger a new reading

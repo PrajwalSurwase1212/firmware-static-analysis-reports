@@ -21,6 +21,7 @@
 #include <AP_HAL/utility/sparse-endian.h>
 #include <stdio.h>
 #include "SIM_EFI_MegaSquirt.h"
+#include <cerrno>
 
 using namespace SITL;
 
@@ -130,7 +131,8 @@ void EFI_MegaSquirt::send_table(void)
     }
 
     uint16_t len = htobe16(table_size+1);
-    uint8_t outbuf[1+table_size];
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    uint8_t outbuf[1+table_size]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
     outbuf[0] = 0;
     swab(table_offset+(const uint8_t *)&table7, &outbuf[1], table_size);
 

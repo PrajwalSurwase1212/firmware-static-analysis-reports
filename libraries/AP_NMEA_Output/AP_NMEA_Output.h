@@ -36,7 +36,7 @@ public:
     AP_NMEA_Output() {
         // setup parameter defaults
         AP_Param::setup_object_defaults(this, var_info);
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_NMEA_Output);

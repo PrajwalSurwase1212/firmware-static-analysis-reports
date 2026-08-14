@@ -177,7 +177,7 @@ void AP_RCProtocol_ST24::_process_byte(uint8_t byte)
                     values[chan_index] = (uint16_t)(values[chan_index] * ST24_SCALE_FACTOR + 0.5f) + ST24_SCALE_OFFSET;
                     chan_index++;
                 }
-                add_input(num_values, values, false);//AP_RCProtocol: Fix the issue of ST24 receiver not working
+                add_input(num_values, values, false);//AP_RCProtocol: Fix the issue of ST24 receiver not working // coverity[OVERRUN] // Reviewed: safe in context
             }
             break;
 

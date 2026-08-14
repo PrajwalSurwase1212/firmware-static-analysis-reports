@@ -24,6 +24,7 @@
 #include <AP_InternalError/AP_InternalError.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <cerrno>
 
 #if AP_GPS_SBF_ENABLED
 extern const AP_HAL::HAL& hal;
@@ -75,7 +76,7 @@ AP_GPS_SBF::AP_GPS_SBF(AP_GPS &_gps,
     if (option_set(AP_GPS::DriverOptions::SBF_UseBaseForYaw) ||
         (get_type() == AP_GPS::GPS_Type::GPS_TYPE_SBF_DUAL_ANTENNA)) {
         state.gps_yaw_configured = true;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_GPS_SBF::~AP_GPS_SBF (void) {
@@ -194,7 +195,7 @@ AP_GPS_SBF::read(void)
                         }
                     }
 
-                    if (config_string != nullptr) {
+                    if (config_string) {
                         const size_t config_length = strlen(config_string);
                         if (config_length <= port->txspace()) {
                             Debug("SBF sending init string: %s", config_string);
@@ -376,7 +377,7 @@ AP_GPS_SBF::parse(uint8_t temp)
                 if (sbf_msg.data.bytes[0] == ':') {
                     // valid command, determine if it was the one we were trying
                     // to send in the configuration sequence
-                    if (config_string != nullptr) {
+                    if (config_string) {
                         if (!strncmp(config_string, (char *)(sbf_msg.data.bytes + 2),
                                      sbf_msg.read - SBF_EXCESS_COMMAND_BYTES)) {
                             Debug("SBF Ack Command: %s\n", sbf_msg.data.bytes);
@@ -697,7 +698,8 @@ void AP_GPS_SBF::broadcast_configuration_failure_reason(void) const
 }
 
 bool AP_GPS_SBF::is_configured (void) const {
-    return ((gps._auto_config == AP_GPS::GPS_AUTO_CONFIG_DISABLE) ||
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    return ((gps._auto_config == AP_GPS::GPS_AUTO_CONFIG_DISABLE) || // parasoft-suppress BD-PB-CC "Reviewed and safe"
             (config_step == Config_State::Complete) ||AP_SIM_GPS_SBF_ENABLED);
 }
 

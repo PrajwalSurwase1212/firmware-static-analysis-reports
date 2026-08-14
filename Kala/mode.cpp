@@ -217,7 +217,7 @@ bool Copter::gcs_mode_enabled(const Mode::Number mode_num)
 
     // Mode disabled, try and grab a mode name to give a better warning.
     Mode *new_flightmode = mode_from_mode_num(mode_num);
-    if (new_flightmode != nullptr) {
+    if (new_flightmode) {
         mode_change_failed(new_flightmode, "GCS entry disabled (FLTMODE_GCSBLOCK)");
     } else {
         notify_no_such_mode((uint8_t)mode_num);

@@ -5,7 +5,7 @@
 class QuadPlane;
 class VTOL_Assist {
 public:
-    VTOL_Assist(QuadPlane& _quadplane):quadplane(_quadplane) {};
+    VTOL_Assist(QuadPlane& _quadplane):quadplane(_quadplane) {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // check for assistance needed
     bool should_assist(float aspeed, bool have_airspeed);

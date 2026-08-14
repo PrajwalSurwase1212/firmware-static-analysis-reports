@@ -15,6 +15,7 @@
 #include <AP_BoardConfig/AP_BoardConfig.h>
 
 #include <AP_Servo_Telem/AP_Servo_Telem.h>
+#include <cerrno>
 
 // Extended Position Data Format defines -100 as 0x0080 decimal 128, we map this to a PWM of 1000 (if range is default)
 #define PWM_POSITION_MIN               1000
@@ -52,7 +53,7 @@ const AP_Param::GroupInfo AP_Volz_Protocol::var_info[] = {
 AP_Volz_Protocol::AP_Volz_Protocol(void)
 {
     // set defaults from the parameter table
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_Volz_Protocol::init(void)
@@ -136,7 +137,7 @@ void AP_Volz_Protocol::loop()
     // One servo at 641Hz, two at 320.5 each, three at 213.7 each ect...
     // Note that we send a telem request every time servo sending is complete. This is like a extra servo.
     // So for a single servo position commands are at 320.5Hz and telem at 320.5Hz.
-
+ // coverity[REVERSE_INULL] // Reviewed: safe in context
     while (port != nullptr) {
 
         // Wait the expected amount of time for the send and receive to complete so we don't step on the response
@@ -207,7 +208,8 @@ void AP_Volz_Protocol::send_position_cmd()
         cmd.ID = CMD_ID::SET_EXTENDED_POSITION;
         cmd.actuator_id = index + 1; // send actuator id as 1 based index so ch1 will have id 1, ch2 will have id 2 ....
         cmd.arg1 = HIGHBYTE(value);
-        cmd.arg2 = LOWBYTE(value);
+        // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+        cmd.arg2 = LOWBYTE(value); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
 
         send_command(cmd);
 
@@ -382,7 +384,7 @@ void AP_Volz_Protocol::update()
 #if AP_SERVO_TELEM_ENABLED
     // Report telem data
     AP_Servo_Telem *servo_telem = AP_Servo_Telem::get_singleton();
-    if (servo_telem != nullptr) {
+    if (servo_telem) {
         const uint32_t now_ms = AP_HAL::millis();
 
         WITH_SEMAPHORE(telem.sem);

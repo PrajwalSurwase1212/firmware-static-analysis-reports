@@ -14,7 +14,7 @@ public:
         separator{_separator},
         term{_term},
         term_len{_term_len}
-        {}
+        {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     enum class RetCode : uint8_t {
         OK,

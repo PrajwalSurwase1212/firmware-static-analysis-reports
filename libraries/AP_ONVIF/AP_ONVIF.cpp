@@ -45,7 +45,7 @@ static AP_ONVIF onvif;
 // Default constructor
 AP_ONVIF::AP_ONVIF()
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_ONVIF must be singleton");
     }
     _singleton = this;
@@ -82,7 +82,7 @@ bool AP_ONVIF::start(const char *user, const char *pass, const char *hostname)
     }
 
     if (strlen(user) > username_len) {
-        if (username != nullptr) {
+        if (username) {
             free(username);
             username = nullptr;
         }
@@ -93,7 +93,7 @@ bool AP_ONVIF::start(const char *user, const char *pass, const char *hostname)
     }
 
     if (strlen(pass) > password_len) {
-        if (password != nullptr) {
+        if (password) {
             free(password);
             password = nullptr;
         }
@@ -105,15 +105,15 @@ bool AP_ONVIF::start(const char *user, const char *pass, const char *hostname)
 
     if (strlen(hostname) > hostname_len) {
         // free if not nullptr
-        if (device_endpoint != nullptr) {
+        if (device_endpoint) {
             free(device_endpoint);
             device_endpoint = nullptr;
         }
-        if (media_endpoint != nullptr) {
+        if (media_endpoint) {
             free(media_endpoint);
             media_endpoint = nullptr;
         }
-        if (ptz_endpoint != nullptr) {
+        if (ptz_endpoint) {
             free(ptz_endpoint);
             ptz_endpoint = nullptr;
         }
@@ -268,7 +268,7 @@ bool AP_ONVIF::probe_onvif_server()
         
         // Just use first one for now
         if (profile_token_size < (strlen(GetProfilesResponse.Profiles[0]->token) + 1)) {
-            if (profile_token != nullptr) {
+            if (profile_token) {
                 free(profile_token);
             }
             profile_token = (char*)malloc(strlen(GetProfilesResponse.Profiles[0]->token) + 1);

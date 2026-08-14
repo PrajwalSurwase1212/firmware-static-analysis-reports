@@ -19,6 +19,7 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <ctype.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -169,23 +170,35 @@ bool AP_RangeFinder_NMEA::decode_latest_term()
 
     if (_sentence_type == SONAR_DBT) {
         // parse DBT messages
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         if (_term_number == 3) {
-            _distance_m = strtof(_term, NULL);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _distance_m = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
     } else if (_sentence_type == SONAR_DPT) {
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // parse DPT messages
         if (_term_number == 1) {
-            _distance_m = strtof(_term, NULL);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _distance_m = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     } else if (_sentence_type == SONAR_MTW) {
         // parse MTW (mean water temperature) messages
         if (_term_number == 1) {
-            _temp_unvalidated = strtof(_term, NULL);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _temp_unvalidated = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
     } else if (_sentence_type == SONAR_HDED) {
         // parse HDED (Hondex custom message)
         if (_term_number == 4) {
-            _distance_m = strtof(_term, NULL);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _distance_m = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
     }
 

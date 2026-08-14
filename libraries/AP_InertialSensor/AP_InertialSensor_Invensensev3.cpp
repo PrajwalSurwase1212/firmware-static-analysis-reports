@@ -36,6 +36,7 @@
 #include <utility>
 #include <stdio.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -193,19 +194,19 @@ AP_InertialSensor_Invensensev3::AP_InertialSensor_Invensensev3(AP_InertialSensor
     : AP_InertialSensor_Backend(imu)
     , rotation(_rotation)
     , dev(std::move(_dev))
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_InertialSensor_Invensensev3::~AP_InertialSensor_Invensensev3()
 {
 #if HAL_INS_HIGHRES_SAMPLE
     if (highres_sampling) {
-        if (fifo_buffer != nullptr) {
+        if (fifo_buffer) {
             hal.util->free_type(fifo_buffer, INV3_FIFO_BUFFER_LEN * INV3_HIGHRES_SAMPLE_SIZE + 1, AP_HAL::Util::MEM_DMA_SAFE);
         }
     } else
 #endif
-    if (fifo_buffer != nullptr) {
+    if (fifo_buffer) {
         hal.util->free_type(fifo_buffer, INV3_FIFO_BUFFER_LEN * INV3_SAMPLE_SIZE + 1, AP_HAL::Util::MEM_DMA_SAFE);
     }
 }
@@ -583,7 +584,8 @@ void AP_InertialSensor_Invensensev3::read_fifo()
         goto check_registers;
     }
 
-    if (n_samples == 0) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if (n_samples == 0) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         /* Not enough data in FIFO */
         goto check_registers;
     }

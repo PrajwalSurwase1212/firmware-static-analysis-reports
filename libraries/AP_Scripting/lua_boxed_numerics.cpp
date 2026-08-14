@@ -12,7 +12,7 @@ extern const AP_HAL::HAL& hal;
 uint32_t coerce_to_uint32_t(lua_State *L, int arg) {
     { // userdata
         const uint32_t * ud = static_cast<uint32_t *>(luaL_testudata(L, arg, "uint32_t"));
-        if (ud != nullptr) {
+        if (ud) {
             return *ud;
         }
     }
@@ -42,7 +42,7 @@ uint32_t coerce_to_uint32_t(lua_State *L, int arg) {
 uint64_t coerce_to_uint64_t(lua_State *L, int arg) {
     { // uint64_t userdata
         const uint64_t * ud = static_cast<uint64_t *>(luaL_testudata(L, arg, "uint64_t"));
-        if (ud != nullptr) {
+        if (ud) {
             return *ud;
         }
     }
@@ -57,7 +57,7 @@ uint64_t coerce_to_uint64_t(lua_State *L, int arg) {
     }
     { // uint32_t userdata
         const uint32_t * ud = static_cast<uint32_t *>(luaL_testudata(L, arg, "uint32_t"));
-        if (ud != nullptr) {
+        if (ud) {
             return static_cast<uint64_t>(*ud);
         }
     }

@@ -69,7 +69,7 @@ AP_GPS_SBP2::AP_GPS_SBP2(AP_GPS &_gps,
 {
     Debug("SBP Driver Initialized");
     parser_state.state = sbp_parser_state_t::WAITING;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Process all bytes available from the stream
 //

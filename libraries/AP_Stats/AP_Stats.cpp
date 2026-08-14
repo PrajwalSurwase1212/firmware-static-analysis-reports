@@ -56,7 +56,7 @@ AP_Stats::AP_Stats(void)
 {
     AP_Param::setup_object_defaults(this, var_info);
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Stats::copy_variables_from_parameters()
 {
@@ -91,7 +91,7 @@ void AP_Stats::update_flighttime()
         const uint32_t now = AP_HAL::millis();
         const uint32_t delta = (now - _flying_ms)/1000;
         flttime += delta;
-        _flying_ms += (uint64_t)delta*1000;
+        _flying_ms += (uint64_t)delta*1000; // coverity[OVERFLOW_BEFORE_WIDEN]
     }
 }
 
@@ -100,7 +100,7 @@ void AP_Stats::update_runtime()
     const uint32_t now = AP_HAL::millis();
     const uint32_t delta = (now - _last_runtime_ms)/1000;
     runtime += delta;
-    _last_runtime_ms += (uint64_t)delta*1000;
+    _last_runtime_ms += (uint64_t)delta*1000; // coverity[OVERFLOW_BEFORE_WIDEN]
 }
 
 void AP_Stats::update()

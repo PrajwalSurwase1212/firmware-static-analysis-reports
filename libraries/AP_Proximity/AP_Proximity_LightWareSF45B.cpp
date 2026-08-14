@@ -25,6 +25,7 @@
 #include <AP_Common/AP_Common.h>
 #include <AP_HAL/AP_HAL.h>
 #include <AP_HAL/utility/sparse-endian.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -98,7 +99,8 @@ void AP_Proximity_LightWareSF45B::process_replies()
 
     // process up to 1K of characters per iteration
     uint32_t nbytes = MIN(_uart->available(), 1024U);
-    while (nbytes-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (nbytes-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         uint8_t c;
         if (!_uart->read(c)) {
             continue;

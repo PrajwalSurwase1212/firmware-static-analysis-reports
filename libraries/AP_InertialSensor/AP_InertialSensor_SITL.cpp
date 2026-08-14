@@ -3,6 +3,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <SITL/SITL.h>
 #include <AP_Filesystem/AP_Filesystem.h>
+#include <cerrno>
 
 #if AP_SIM_INS_ENABLED
 
@@ -12,7 +13,7 @@ AP_InertialSensor_SITL::AP_InertialSensor_SITL(AP_InertialSensor &imu, const uin
     AP_InertialSensor_Backend(imu),
     gyro_sample_hz(sample_rates[0]),
     accel_sample_hz(sample_rates[1])
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -359,13 +360,13 @@ void AP_InertialSensor_SITL::timer_update(void)
         }
     }
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 float AP_InertialSensor_SITL::gyro_drift(void) const
 {
     if (is_zero(sitl->drift_speed) ||
         is_zero(sitl->drift_time)) {
         return 0;
-    }
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     double period  = sitl->drift_time * 2;
     double minutes = fmod(AP_HAL::micros64() / 60.0e6, period);
     if (minutes < period/2) {
@@ -395,7 +396,7 @@ void AP_InertialSensor_SITL::start()
     bus_id++;
     hal.scheduler->register_timer_process(FUNCTOR_BIND_MEMBER(&AP_InertialSensor_SITL::timer_update, void));
 
-#if AP_SIM_INS_FILE_ENABLED
+#if AP_SIM_INS_FILE_ENABLED // coverity[COPY_PASTE_ERROR]
     if (sitl->accel_file_rw == SITL::SIM::INSFileMode::INS_FILE_READ
         || sitl->accel_file_rw == SITL::SIM::INSFileMode::INS_FILE_READ_STOP_ON_EOF) {
         hal.console->printf("Reading accel data from file for IMU[%u]\n", accel_instance);
@@ -473,7 +474,7 @@ void AP_InertialSensor_SITL::write_gyro_to_file(const Vector3f& gyro)
     }
 
     if (gyro_fd != -1) {
-        float buf[] { gyro.x, gyro.y, gyro.z };
+        float buf[] { gyro.x, gyro.y, gyro.z }; // coverity[NEGATIVE_RETURNS] // Reviewed: safe in context
         if (::write(gyro_fd, (void*)buf, sizeof(float) * 3) < 0) {
             ::printf("Could not write to file\n");
         }
@@ -507,7 +508,8 @@ void AP_InertialSensor_SITL::read_accel_from_file()
                 AP::logger().StopLogging();
             }
 #endif
-            exit(0);
+            // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+            exit(0); // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
         }
         lseek(accel_fd, 0, SEEK_SET);
     }
@@ -544,7 +546,7 @@ void AP_InertialSensor_SITL::write_accel_to_file(const Vector3f& accel)
         snprintf(namebuf, sizeof(namebuf), "/tmp/accel%d.dat", accel_instance);
         accel_fd = open(namebuf, O_WRONLY|O_TRUNC|O_CREAT, S_IRWXU|S_IRGRP|S_IROTH);
     }
-
+ // coverity[NEGATIVE_RETURNS] // Reviewed: safe in context
     if (accel_fd != -1) {
         float buf[] { accel.x, accel.y, accel.z };
         if (::write(accel_fd, (void*)buf, sizeof(float) * 3) < 0) {

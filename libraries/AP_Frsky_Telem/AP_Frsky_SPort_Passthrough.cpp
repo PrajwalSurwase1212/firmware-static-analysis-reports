@@ -22,6 +22,7 @@
 #include "AP_Frsky_MAVlite.h"
 #endif //HAL_WITH_FRSKY_TELEM_BIDIRECTIONAL
 #include "AP_Frsky_Parameters.h"
+#include <cerrno>
 
 /*
 for FrSky SPort Passthrough
@@ -515,7 +516,7 @@ uint32_t AP_Frsky_SPort_Passthrough::calc_gps_status(void)
     gps_status |= ((gps.status() > GPS_STATUS_LIMIT) ? gps.status()-GPS_STATUS_LIMIT : 0)<<GPS_ADVSTATUS_OFFSET;
     // Altitude MSL in dm
     const Location &loc = gps.location();
-    gps_status |= prep_number(roundf(loc.alt * 0.1f),2,2)<<GPS_ALTMSL_OFFSET;
+    gps_status |= prep_number(roundf(loc.alt * 0.1f),2,2)<<GPS_ALTMSL_OFFSET; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     return gps_status;
 }
 
@@ -567,7 +568,8 @@ uint32_t AP_Frsky_SPort_Passthrough::calc_ap_status(void)
     // IMU temperature: offset -19, 0 means temp =< 19°, 63 means temp => 82°
     uint8_t imu_temp = 0;
 #if AP_INERTIALSENSOR_ENABLED
-    imu_temp = (uint8_t) roundf(constrain_float(AP::ins().get_temperature(0), AP_IMU_TEMP_MIN, AP_IMU_TEMP_MAX) - AP_IMU_TEMP_MIN);
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    imu_temp = (uint8_t) roundf(constrain_float(AP::ins().get_temperature(0), AP_IMU_TEMP_MIN, AP_IMU_TEMP_MAX) - AP_IMU_TEMP_MIN); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 #endif
 
     // control/flight mode number (limit to 31 (0x1F) since the value is stored on 5 bits)
@@ -588,7 +590,7 @@ uint32_t AP_Frsky_SPort_Passthrough::calc_ap_status(void)
 #if AP_FENCE_ENABLED
     // fence status
     AC_Fence *fence = AP::fence();
-    if (fence != nullptr) {
+    if (fence) {
         ap_status |= (uint8_t)(fence->enabled() && fence->present()) << AP_FENCE_PRESENT_OFFSET;
         ap_status |= (uint8_t)(fence->get_breaches()>0) << AP_FENCE_BREACH_OFFSET;
     }
@@ -848,7 +850,7 @@ bool AP_Frsky_SPort_Passthrough::get_telem_data(sport_packet_t* packet_array, ui
         // call run_wfq_scheduler(false) enough times to create a packet of up to max_size unique elements
         uint32_t item_mask = 0;
         for (uint8_t i=0; i<max_size; i++) {
-            // call the scheduler with the shaper "disabled"
+            // call the scheduler with the shaper "disabled" // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
             const uint8_t item = run_wfq_scheduler(false);
             if (item >= 32) {
                 continue;

@@ -66,7 +66,7 @@ AR_PivotTurn::AR_PivotTurn(AR_AttitudeControl& atc) :
     _atc(atc)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // enable or disable pivot controller
 void AR_PivotTurn::enable(bool enable_pivot)

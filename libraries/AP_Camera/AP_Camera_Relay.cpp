@@ -22,7 +22,7 @@ void AP_Camera_Relay::update()
 }
 
 // entry point to actually take a picture.  returns true on success
-bool AP_Camera_Relay::trigger_pic()
+bool AP_Camera_Relay::trigger_pic() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // fail if have not completed previous picture
     if (trigger_counter > 0) {
@@ -38,7 +38,7 @@ bool AP_Camera_Relay::trigger_pic()
     ap_relay->set(AP_Relay_Params::FUNCTION::CAMERA, _params.relay_on);
 
     // set counter to move servo to off position after this many iterations of update (assumes 50hz update rate)
-    trigger_counter = constrain_float(_params.trigger_duration * 50, 0, UINT16_MAX);
+    trigger_counter = constrain_float(_params.trigger_duration * 50, 0, UINT16_MAX); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     return true;
 }

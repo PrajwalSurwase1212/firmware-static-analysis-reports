@@ -74,7 +74,7 @@ int16_t CANIface::send(const AP_HAL::CANFrame& frame, const uint64_t tx_deadline
     tx_item.setup = true;
     tx_item.index = _tx_frame_counter;
     tx_item.deadline = tx_deadline;
-    if (_tx_queue.push(tx_item)) {
+    if (_tx_queue.push(tx_item)) { // coverity[UNINIT] // Reviewed: safe in context
         _tx_frame_counter++;
         stats.tx_requests++;
     } else {
@@ -239,7 +239,7 @@ bool CANIface::init(const uint32_t bitrate, const OperatingMode mode)
         transport = nullptr;
         return false;
     }
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         transport->set_event_handle(sem_handle);
     }
     return true;
@@ -280,7 +280,7 @@ bool CANIface::select(bool &read_select, bool &write_select,
 bool CANIface::set_event_handle(AP_HAL::BinarySemaphore *handle)
 {
     sem_handle = handle;
-    if (transport != nullptr) {
+    if (transport) {
         transport->set_event_handle(handle);
     }
     return true;

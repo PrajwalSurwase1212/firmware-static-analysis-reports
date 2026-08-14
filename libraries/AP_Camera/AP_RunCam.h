@@ -311,7 +311,7 @@ private:
     public:
         Request(AP_RunCam *device, Command commandID, uint8_t param,
                        uint32_t timeout, uint16_t maxRetryTimes, parse_func_t parserFunc);
-        Request() { _command = Command::COMMAND_NONE; }
+        Request() { _command = Command::COMMAND_NONE; } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         uint8_t *_recv_buf = nullptr; // response data buffer
         AP_RunCam *_device = nullptr; // parent device
@@ -333,7 +333,7 @@ private:
         uint8_t get_crc() const;
         // parse the response
         void parse_response() {
-            if (_parser_func != nullptr) {
+            if (_parser_func) {
                 _parser_func(*this);
             }
         }
@@ -368,7 +368,7 @@ private:
     void disable_osd() {
 #if OSD_ENABLED
         AP_OSD* osd = AP::osd();
-        if (osd != nullptr) {
+        if (osd) {
             osd->disable();
         }
 #endif
@@ -377,7 +377,7 @@ private:
     void enable_osd() {
 #if OSD_ENABLED
         AP_OSD* osd = AP::osd();
-        if (osd != nullptr) {
+        if (osd) {
             osd->enable();
         }
 #endif

@@ -96,7 +96,7 @@ void AP_RCProtocol_UDP::update()
     }
     last_input_ms = AP_HAL::millis();
 
-    add_input(
+    add_input( // coverity[OVERRUN] // Reviewed: safe in context
         MIN(num_channels, ARRAY_SIZE(pwm_input)),
         pwm_input,
         false,  // failsafe

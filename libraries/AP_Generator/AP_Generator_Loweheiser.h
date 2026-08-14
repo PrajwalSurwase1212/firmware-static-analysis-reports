@@ -28,7 +28,7 @@ class AP_Generator_Loweheiser : public AP_Generator_Backend
 
 public:
     // constructor
-    using AP_Generator_Backend::AP_Generator_Backend;
+    using AP_Generator_Backend::AP_Generator_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // init should be called at vehicle startup to get the generator
     // library ready

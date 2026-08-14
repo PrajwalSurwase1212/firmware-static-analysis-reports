@@ -73,7 +73,7 @@ private:
             msg(_msg)
         {
             flags |= (sizeof(T)) << 6;
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
         uint8_t preamble { PREAMBLE };
         uint16_t flags;
         T msg;

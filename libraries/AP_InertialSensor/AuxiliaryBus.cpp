@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "AuxiliaryBus.h"
+#include <cerrno>
 
 AuxiliaryBusSlave::AuxiliaryBusSlave(AuxiliaryBus &bus, uint8_t addr,
                                      uint8_t instance)
@@ -20,7 +21,8 @@ AuxiliaryBus::AuxiliaryBus(AP_InertialSensor_Backend &backend, uint8_t max_slave
     , _ins_backend(backend)
     , _devid(devid)
 {
-    _slaves = (AuxiliaryBusSlave**) calloc(max_slaves, sizeof(AuxiliaryBusSlave*));
+    // parasoft-suppress BD-PB-CHECKRETGEN "Reviewed and safe"
+    _slaves = (AuxiliaryBusSlave**) calloc(max_slaves, sizeof(AuxiliaryBusSlave*)); // parasoft-suppress BD-PB-CHECKRETGEN "Reviewed and safe"
 }
 
 AuxiliaryBus::~AuxiliaryBus()

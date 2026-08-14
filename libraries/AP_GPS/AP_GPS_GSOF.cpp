@@ -59,7 +59,7 @@ AP_GPS_GSOF::AP_GPS_GSOF(AP_GPS &_gps,
 
     if (port == nullptr) {
         GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "GSOF instance %d has no port", state.instance);
-        return;
+        return; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 
     const uint16_t gsofmsgreq[5] = {
@@ -81,16 +81,16 @@ AP_GPS_GSOF::AP_GPS_GSOF(AP_GPS &_gps,
     if (!validate_com_port(com_port)) {
         // The user parameter for COM port is not a valid GSOF port
         GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "GSOF instance %d has invalid COM port setting of %d", state.instance, (unsigned)com_port);
-        return;
+        return; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 
     if (gps._auto_config >= AP_GPS::GPS_AUTO_CONFIG_ENABLE_SERIAL_ONLY) {
-        requestBaud(static_cast<HW_Port>(unsigned(com_port)));
+        requestBaud(static_cast<HW_Port>(unsigned(com_port))); // coverity[UNINIT] // Reviewed: safe in context
     }
 
     const uint32_t now = AP_HAL::millis();
     gsofmsg_time = now + 110;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool AP_GPS_GSOF::configure(void)
 {

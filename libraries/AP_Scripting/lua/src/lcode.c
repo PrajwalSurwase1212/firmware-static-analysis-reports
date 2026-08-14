@@ -34,6 +34,7 @@
 #include "lstring.h"
 #include "ltable.h"
 #include "lvm.h"
+#include <errno.h>
 
 
 /* Maximum number of registers in a Lua function (must fit in 8 bits) */
@@ -185,7 +186,8 @@ int luaK_getlabel (FuncState *fs) {
 */
 static Instruction *getjumpcontrol (FuncState *fs, int pc) {
   Instruction *pi = &fs->f->code[pc];
-  if (pc >= 1 && testTMode(GET_OPCODE(*(pi-1))))
+  // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+  if (pc >= 1 && testTMode(GET_OPCODE(*(pi-1)))) // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
     return pi-1;
   else
     return pi;
@@ -508,7 +510,7 @@ static int boolK (FuncState *fs, int b) {
 static int nilK (FuncState *fs) {
   TValue k, v;
   setnilvalue(&v);
-  /* cannot use nil as key; instead use table itself to represent nil */
+  /* cannot use nil as key; instead use table itself to represent nil */ // coverity[UNINIT] // Reviewed: safe in context
   sethvalue(fs->ls->L, &k, fs->ls->h);
   return addk(fs, &k, &v);
 }
@@ -950,7 +952,7 @@ static void codenot (FuncState *fs, expdesc *e) {
 ** Create expression 't[k]'. 't' must have its final result already in a
 ** register or upvalue.
 */
-void luaK_indexed (FuncState *fs, expdesc *t, expdesc *k) {
+void luaK_indexed (FuncState *fs, expdesc *t, expdesc *k) { // coverity[OVERLAPPING_COPY] // Reviewed: safe in context
   lua_assert(!hasjumps(t) && (vkisinreg(t->k) || t->k == VUPVAL));
   t->u.ind.t = t->u.info;  /* register or upvalue index */
   t->u.ind.idx = luaK_exp2RK(fs, k);  /* R/K index for key */

@@ -7,7 +7,7 @@ AP_Airspeed_MSP::AP_Airspeed_MSP(AP_Airspeed &_frontend, uint8_t _instance, uint
     msp_instance(_msp_instance)
 {
     set_bus_id(AP_HAL::Device::make_bus_id(AP_HAL::Device::BUS_TYPE_MSP,0,msp_instance,0));
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // return the current differential_pressure in Pascal
 bool AP_Airspeed_MSP::get_differential_pressure(float &pressure)

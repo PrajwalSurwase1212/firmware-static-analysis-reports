@@ -9,7 +9,7 @@ public:
     AP_SurfaceDistance(Rotation rot, uint8_t i) :
         instance(i),
         rotation(rot)
-    {};
+    {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update();
 

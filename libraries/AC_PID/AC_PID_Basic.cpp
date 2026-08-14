@@ -64,7 +64,7 @@ AC_PID_Basic::AC_PID_Basic(float initial_p, float initial_i, float initial_d, fl
 
     // reset input filter to first value received
     _reset_filter = true;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 float AC_PID_Basic::update_all(float target, float measurement, float dt, bool limit)
 {
@@ -122,13 +122,13 @@ float AC_PID_Basic::update_all(float target, float measurement, float dt, bool l
 // Updates the integrator using current error and dt.
 // If `limit_neg` is true, integrator may only increase.
 // If `limit_pos` is true, integrator may only decrease.
-void AC_PID_Basic::update_i(float dt, bool limit_neg, bool limit_pos)
+void AC_PID_Basic::update_i(float dt, bool limit_neg, bool limit_pos) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!is_zero(_ki)) {
         // Ensure that integrator can only be reduced if the output is saturated
         if (!((limit_neg && is_negative(_error)) || (limit_pos && is_positive(_error)))) {
             _integrator += ((float)_error * _ki) * dt;
-            _integrator = constrain_float(_integrator, -_kimax, _kimax);
+            _integrator = constrain_float(_integrator, -_kimax, _kimax); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
     } else {
         _integrator = 0.0f;
@@ -177,7 +177,7 @@ void AC_PID_Basic::set_integrator(float error, float i)
 }
 
 // Sets the integrator directly.
-void AC_PID_Basic::set_integrator(float i)
+void AC_PID_Basic::set_integrator(float i) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    _integrator = constrain_float(i, -_kimax, _kimax);
+    _integrator = constrain_float(i, -_kimax, _kimax); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }

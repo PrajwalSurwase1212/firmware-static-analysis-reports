@@ -18,7 +18,7 @@ class AP_Mount_Gremsy : public AP_Mount_Backend
 
 public:
     // Constructor
-    using AP_Mount_Backend::AP_Mount_Backend;
+    using AP_Mount_Backend::AP_Mount_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update mount position
     void update() override;

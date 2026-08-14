@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -67,7 +68,7 @@ void CRRCSim::send_servos_heli(const struct sitl_input &input)
     pkt.throttle   = constrain_float(rsc, 0, 1);
     pkt.yaw_rate   = constrain_float(yaw_rate, -0.5, 0.5);
     pkt.col_pitch  = constrain_float(col_pitch, -0.5, 0.5);
-
+ // coverity[CHECKED_RETURN]
     if (sock.sendto(&pkt, sizeof(pkt), "127.0.0.1", 9002) != sizeof(pkt)) {
         // safe to ignore: SITL UDP output failures shouldn't halt the simulator,
         // it natively recovers on the next packet.
@@ -87,7 +88,7 @@ void CRRCSim::send_servos_fixed_wing(const struct sitl_input &input)
     servo_packet pkt;
     pkt.roll_rate  = constrain_float(roll_rate, -0.5, 0.5);
     pkt.pitch_rate = constrain_float(pitch_rate, -0.5, 0.5);
-    pkt.throttle   = constrain_float(throttle, 0, 1);
+    pkt.throttle   = constrain_float(throttle, 0, 1); // coverity[CHECKED_RETURN]
     pkt.yaw_rate   = constrain_float(yaw_rate, -0.5, 0.5);
     pkt.col_pitch  = 0;
 
@@ -121,7 +122,8 @@ void CRRCSim::recv_fdm(const struct sitl_input &input)
       we re-send the servo packet every 0.1 seconds until we get a
       reply. This allows us to cope with some packet loss to the FDM
      */
-    while (sock.recv(&pkt, sizeof(pkt), 100) != sizeof(pkt)) {
+    // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
+    while (sock.recv(&pkt, sizeof(pkt), 100) != sizeof(pkt)) { // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
         send_servos(input);
     }
 

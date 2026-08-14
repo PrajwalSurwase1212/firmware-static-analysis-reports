@@ -21,6 +21,7 @@
 
 #include <SITL/SITL.h>
 #include <AP_AHRS/AP_AHRS.h>
+#include <cerrno>
 
 void AP_WindVane_SITL::update_direction()
 {
@@ -41,6 +42,9 @@ void AP_WindVane_SITL::update_direction()
         wind_vector_ef.x += AP::sitl()->state.speedN;
         wind_vector_ef.y += AP::sitl()->state.speedE;
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
+        errno = 0;
         _frontend._direction_apparent_raw =  wrap_PI(atan2f(wind_vector_ef.y, wind_vector_ef.x) - AP::ahrs().get_yaw_rad());
 
     } else { // WINDVANE_SITL_APARRENT

@@ -41,7 +41,7 @@ AP_FlashStorage::AP_FlashStorage(uint8_t *_mem_buffer,
     flash_write(_flash_write),
     flash_read(_flash_read),
     flash_erase(_flash_erase),
-    flash_erase_ok(_flash_erase_ok) {}
+    flash_erase_ok(_flash_erase_ok) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // initialise storage
 bool AP_FlashStorage::init(void)

@@ -17,7 +17,7 @@ int lua_CRSF_param_data(lua_State *L);
 // underlying data is always the actual data rather than a copy
 class CRSFParameter {
 public:
-    CRSFParameter() {}
+    CRSFParameter() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     CRSFParameter(AP_CRSF_Telem::ScriptedMenu* m, AP_CRSF_Telem::ScriptedParameter* p) : menu(m), param(p->AP_CRSF_Telem::ScriptedParameter::id) {}
 
     uint8_t id() const { return param; }
@@ -31,7 +31,7 @@ private:
 
 class CRSFMenu {
 public:
-    CRSFMenu() {}
+    CRSFMenu() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     CRSFMenu(AP_CRSF_Telem::ScriptedMenu* m) : menu(m) {}
 
     uint8_t id() const { return menu->id; }

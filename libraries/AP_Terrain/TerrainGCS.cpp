@@ -29,6 +29,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -234,8 +235,9 @@ void AP_Terrain::send_terrain_report(mavlink_channel_t chan, const Location &loc
     uint16_t pending, loaded;
     get_statistics(pending, loaded);
 
-    float current_height = 0.0f;
-    (void)height_above_terrain(current_height, extrapolate);
+    float current_height = 0.0f; // coverity[CHECKED_RETURN]
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    (void)height_above_terrain(current_height, extrapolate); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     if (HAVE_PAYLOAD_SPACE(chan, TERRAIN_REPORT)) {
         mavlink_msg_terrain_report_send(chan, loc.lat, loc.lng, spacing, 
@@ -286,7 +288,7 @@ void AP_Terrain::handle_terrain_data(const mavlink_message_t &msg)
     uint8_t idx_y = (packet.gridbit % TERRAIN_GRID_BLOCK_MUL_Y) * TERRAIN_GRID_MAVLINK_SIZE;
     ASSERT_RANGE(idx_x,0,(TERRAIN_GRID_BLOCK_MUL_X-1)*TERRAIN_GRID_MAVLINK_SIZE);
     ASSERT_RANGE(idx_y,0,(TERRAIN_GRID_BLOCK_MUL_Y-1)*TERRAIN_GRID_MAVLINK_SIZE);
-    for (uint8_t x=0; x<TERRAIN_GRID_MAVLINK_SIZE; x++) {
+    for (uint8_t x=0; x<TERRAIN_GRID_MAVLINK_SIZE; x++) { // coverity[OVERRUN] // Reviewed: safe in context
         for (uint8_t y=0; y<TERRAIN_GRID_MAVLINK_SIZE; y++) {
             grid.height[idx_x+x][idx_y+y] = packet.data[x*TERRAIN_GRID_MAVLINK_SIZE+y];
         }

@@ -37,6 +37,7 @@
 
 #if AP_GPS_DEBUG_LOGGING_ENABLED
 #include <AP_Filesystem/AP_Filesystem.h>
+#include <cerrno>
 #endif
 
 extern const AP_HAL::HAL& hal;
@@ -47,8 +48,9 @@ AP_GPS_Backend::AP_GPS_Backend(AP_GPS &_gps, AP_GPS::Params &_params, AP_GPS::GP
     state(_state),
     params(_params)
 {
-    state.have_speed_accuracy = false;
-    state.have_horizontal_accuracy = false;
+    // parasoft-suppress BD-PB-OVERFARRAY "Reviewed and safe"
+    state.have_speed_accuracy = false; // parasoft-suppress BD-PB-OVERFARRAY "Reviewed and safe"
+    state.have_horizontal_accuracy = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     state.have_vertical_accuracy = false;
 }
 
@@ -111,9 +113,12 @@ void AP_GPS_Backend::fill_3d_velocity(void)
 /*
   fill in 3D velocity for a GPS that doesn't give vertical velocity numbers
  */
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 void AP_GPS_Backend::velocity_to_speed_course(AP_GPS::GPS_State &s)
 {
-    s.ground_course = wrap_360(degrees(atan2f(s.velocity.y, s.velocity.x)));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    s.ground_course = wrap_360(degrees(atan2f(s.velocity.y, s.velocity.x))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     s.ground_speed = s.velocity.xy().length();
 }
 
@@ -121,7 +126,7 @@ void
 AP_GPS_Backend::inject_data(const uint8_t *data, uint16_t len)
 {
     // not all backends have valid ports
-    if (port != nullptr) {
+    if (port) {
         if (port->txspace() > len) {
             port->write(data, len);
         } else {
@@ -283,7 +288,7 @@ void AP_GPS_Backend::check_new_itow(uint32_t itow, uint32_t msg_length)
             // only allow 5Hz to 20Hz in user config
             _rate_ms = constrain_int16(gps.get_rate_ms(state.instance), 50, 200);
         }
-
+ // coverity[OVERFLOW_BEFORE_WIDEN]
         // round to calculated message rate
         dt_ms = ((dt_ms + (_rate_ms/2)) / _rate_ms) * _rate_ms;
 

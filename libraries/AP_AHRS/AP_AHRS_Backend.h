@@ -26,6 +26,7 @@
 #include <AP_InertialSensor/AP_InertialSensor.h>
 #include <AP_Common/Location.h>
 #include <AP_NavEKF/AP_NavEKF_Source.h>
+#include <cerrno>
 
 #define AP_AHRS_TRIM_LIMIT 10.0f        // maximum trim angle in degrees
 #define AP_AHRS_RP_P_MIN   0.05f        // minimum value for AHRS_RP_P parameter
@@ -75,7 +76,8 @@ public:
     // get the index of the current primary gyro sensor
     virtual uint8_t get_primary_gyro_index(void) const {
 #if AP_INERTIALSENSOR_ENABLED
-        return AP::ins().get_first_usable_gyro();
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        return AP::ins().get_first_usable_gyro(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 #else
         return 0;
 #endif

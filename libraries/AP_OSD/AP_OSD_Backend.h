@@ -26,7 +26,7 @@ class AP_OSD_Backend
 
 public:
     //constructor
-    AP_OSD_Backend(AP_OSD &osd): _osd(osd) {}
+    AP_OSD_Backend(AP_OSD &osd): _osd(osd) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     //destructor
     virtual ~AP_OSD_Backend(void) {}

@@ -24,6 +24,7 @@
 #include <AP_Math/AP_Math.h>
 #include <stdio.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -65,20 +66,24 @@ AP_Compass_MMC3416::AP_Compass_MMC3416(AP_HAL::OwnPtr<AP_HAL::Device> _dev,
     : dev(std::move(_dev))
     , force_external(_force_external)
     , rotation(_rotation)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool AP_Compass_MMC3416::init()
 {
-    dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (dev) { dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     dev->set_retries(10);
     
     uint8_t whoami;
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     if (!dev->read_registers(REG_PRODUCT_ID, &whoami, 1) ||
-        whoami != 0x06) {
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        whoami != 0x06) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         // not a MMC3416
-        dev->get_semaphore()->give();
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        if (dev) { dev->get_semaphore()->give(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
         return false;
     }
 

@@ -138,7 +138,7 @@ void PingProtocol::send_message(AP_HAL::UARTDriver *uart, PingProtocol::MessageI
     crc += _dst_id;
 
     // payload
-    if (payload != nullptr) {
+    if (payload) {
         for (uint16_t i = 0; i<payload_len; i++) {
             uart->write(payload[i]);
             crc += payload[i];

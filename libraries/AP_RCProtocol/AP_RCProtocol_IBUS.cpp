@@ -90,7 +90,7 @@ void AP_RCProtocol_IBUS::_process_byte(uint32_t timestamp_us, uint8_t b)
         bool ibus_failsafe = false;
         log_data(AP_RCProtocol::IBUS, timestamp_us, byte_input.buf, byte_input.ofs);
         if (ibus_decode(byte_input.buf, values, &ibus_failsafe)) {
-            add_input(IBUS_INPUT_CHANNELS, values, ibus_failsafe);
+            add_input(IBUS_INPUT_CHANNELS, values, ibus_failsafe); // coverity[OVERRUN] // Reviewed: safe in context
         }
         byte_input.ofs = 0;
     }

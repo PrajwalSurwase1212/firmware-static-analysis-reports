@@ -102,7 +102,7 @@ AP_BattMonitor_Analog::AP_BattMonitor_Analog(AP_BattMonitor &mon,
         }
     }
 
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // read - read the voltage and current
 void

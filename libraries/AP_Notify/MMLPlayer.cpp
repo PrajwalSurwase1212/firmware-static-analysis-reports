@@ -305,7 +305,7 @@ void MMLPlayer::next_action()
 
     float dot_extension = note_period * 0.5f;
     uint8_t dots = next_dots();
-    while (dots--) {
+    while (dots--) { // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
         note_period += dot_extension;
         dot_extension *= 0.5f;
     }

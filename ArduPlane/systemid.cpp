@@ -77,7 +77,7 @@ const AP_Param::GroupInfo AP_SystemID::var_info[] = {
 AP_SystemID::AP_SystemID(void)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // @LoggerMessage: SIDS
 // @Description: System ID settings
@@ -94,7 +94,7 @@ AP_SystemID::AP_SystemID(void)
 /*
   start systemid
  */
-void AP_SystemID::start()
+void AP_SystemID::start() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     start_axis = axis;
 
@@ -122,7 +122,7 @@ void AP_SystemID::start()
     restore.att_bf_feedforward = plane.quadplane.attitude_control->get_bf_feedforward();
 
     waveform_time = 0;
-    time_const_freq = 2.0 / frequency_start; // Two full cycles at the starting frequency
+    time_const_freq = 2.0 / frequency_start; // Two full cycles at the starting frequency // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     chirp_input.init(time_record, frequency_start, frequency_stop, time_fade_in, time_fade_out, time_const_freq);
 

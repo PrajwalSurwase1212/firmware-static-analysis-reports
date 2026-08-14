@@ -84,7 +84,7 @@ void GPS_MSP::publish(const GPS_Data *d)
     msp_gps.sec = tm->tm_sec;
 
     const uint8_t *payload_ptr = (const uint8_t *)&msp_gps;
-    msp_gps.crc = crc8_dvb_s2_update(0, &payload_ptr[3], sizeof(msp_gps)-4);
+    msp_gps.crc = crc8_dvb_s2_update(0, &payload_ptr[3], sizeof(msp_gps)-4); // coverity[OVERRUN] // Reviewed: safe in context
 
     write_to_autopilot((const char *)&msp_gps, sizeof(msp_gps));
 }

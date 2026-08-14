@@ -153,7 +153,7 @@ void AC_PI_2D::save_gains()
 }
 
 // calc_filt_alpha - recalculate the input filter alpha
-void AC_PI_2D::calc_filt_alpha()
+void AC_PI_2D::calc_filt_alpha() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (is_zero(_filt_hz)) {
         _filt_alpha = 1.0f;
@@ -161,6 +161,6 @@ void AC_PI_2D::calc_filt_alpha()
     }
   
     // calculate alpha
-    const float rc = 1/(M_2PI*_filt_hz);
+    const float rc = 1/(M_2PI*_filt_hz); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     _filt_alpha = _dt / (_dt + rc);
 }

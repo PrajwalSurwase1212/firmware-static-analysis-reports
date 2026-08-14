@@ -40,7 +40,7 @@ class AP_DroneCAN_DNA_Server
      */
     class Database {
     public:
-        Database() {};
+        Database() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         // initialize database (storage accessor is always replaced with the one supplied)
         void init(StorageAccess *storage_);

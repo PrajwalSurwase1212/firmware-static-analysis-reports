@@ -33,7 +33,7 @@ AP_EFI_NWPMU::AP_EFI_NWPMU(AP_EFI &_frontend) :
     AP_EFI_Backend(_frontend)
 {
     register_driver(AP_CAN::Protocol::EFI_NWPMU);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_EFI_NWPMU::handle_frame(AP_HAL::CANFrame &frame)
 {

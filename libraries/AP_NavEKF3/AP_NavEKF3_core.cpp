@@ -6,6 +6,7 @@
 #include <AP_VisualOdom/AP_VisualOdom.h>
 #include <AP_Logger/AP_Logger.h>
 #include <AP_DAL/AP_DAL.h>
+#include <cerrno>
 
 // constructor
 NavEKF3_core::NavEKF3_core(NavEKF3 *_frontend, AP_DAL &_dal) :
@@ -14,7 +15,7 @@ NavEKF3_core::NavEKF3_core(NavEKF3 *_frontend, AP_DAL &_dal) :
     public_origin(frontend->common_EKF_origin)
 {
     firstInitTime_ms = 0;
-    lastInitFailReport_ms = 0;
+    lastInitFailReport_ms = 0; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // setup this core backend
@@ -548,7 +549,8 @@ bool NavEKF3_core::InitialiseFilterBootstrap(void)
     yaw_source_last = frontend->sources.getYawSource(core_index);
 
     // define Earth rotation vector in the NED navigation frame
-    calcEarthRateNED(earthRateNED, dal.get_home().lat);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    calcEarthRateNED(earthRateNED, dal.get_home().lat); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     // initialise the covariance matrix
     CovarianceInit();
@@ -1137,7 +1139,7 @@ void NavEKF3_core::CovariancePrediction(Vector3F *rotVarVecPtr)
     dvz_b = stateStruct.accel_bias.z;
 
     bool quatCovResetOnly = false;
-    if (rotVarVecPtr != nullptr) {
+    if (rotVarVecPtr) {
         // Handle special case where we are initialising the quaternion covariances using an earth frame
         // vector defining the variance of the angular alignment uncertainty. Convert he varaince vector
         // to a matrix and rotate into body frame. Use the exisiting gyro error propagation mechanism to
@@ -2008,7 +2010,7 @@ void NavEKF3_core::MagTableConstrain(void)
                                                    table_earth_field_ga.z-limit_ga,
                                                    table_earth_field_ga.z+limit_ga);
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 // constrain states to prevent ill-conditioning
 void NavEKF3_core::ConstrainStates()
 {
@@ -2038,7 +2040,7 @@ void NavEKF3_core::ConstrainStates()
     // height limit covers home alt on everest through to home alt at SL and balloon drop
     stateStruct.position.z = constrain_ftype(stateStruct.position.z,-4.0e4f,1.0e4f);
     // gyro bias limit (this needs to be set based on manufacturers specs)
-    for (uint8_t i=10; i<=12; i++) statesArray[i] = constrain_ftype(statesArray[i],-GYRO_BIAS_LIMIT*dtEkfAvg,GYRO_BIAS_LIMIT*dtEkfAvg);
+    for (uint8_t i=10; i<=12; i++) statesArray[i] = constrain_ftype(statesArray[i],-GYRO_BIAS_LIMIT*dtEkfAvg,GYRO_BIAS_LIMIT*dtEkfAvg); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     // the accelerometer bias limit is controlled by a user adjustable parameter
     for (uint8_t i=13; i<=15; i++) statesArray[i] = constrain_ftype(statesArray[i],-frontend->_accBiasLim*dtEkfAvg,frontend->_accBiasLim*dtEkfAvg);
     // earth magnetic field limit

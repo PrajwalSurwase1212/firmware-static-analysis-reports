@@ -147,7 +147,7 @@ void Copter::heli_update_landing_swash()
 float Copter::get_pilot_desired_rotor_speed() const
 {
     RC_Channel *rc_ptr = rc().find_channel_for_option(RC_Channel::AUX_FUNC::MOTOR_INTERLOCK);
-    if (rc_ptr != nullptr) {
+    if (rc_ptr) {
         rc_ptr->set_range(1000);
         return (float)rc_ptr->get_control_in() * 0.001f;
     }

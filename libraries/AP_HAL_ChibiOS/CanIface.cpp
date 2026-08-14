@@ -535,7 +535,7 @@ void CANIface::handleTxInterrupt(const uint64_t utc_usec)
         handleTxMailboxInterrupt(2, txok, utc_usec);
     }
 
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         PERF_STATS(stats.num_events);
         sem_handle->signal_ISR();
     }
@@ -602,7 +602,7 @@ void CANIface::handleRxInterrupt(uint8_t fifo_index, uint64_t timestamp_us)
 
     had_activity_ = true;
 
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         PERF_STATS(stats.num_events);
         sem_handle->signal_ISR();
     }
@@ -725,7 +725,7 @@ void CANIface::checkAvailable(bool& read, bool& write, const AP_HAL::CANFrame* p
     write = false;
     read = !isRxBufferEmpty();
 
-    if (pending_tx != nullptr) {
+    if (pending_tx) {
         write = canAcceptNewTxFrame(*pending_tx);
     }
 }

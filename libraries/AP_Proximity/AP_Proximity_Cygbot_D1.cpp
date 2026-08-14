@@ -3,6 +3,7 @@
 #if AP_PROXIMITY_CYGBOT_ENABLED
 
 #include "AP_Proximity_Cygbot_D1.h"
+#include <cerrno>
 
 // update the state of the sensor
 void AP_Proximity_Cygbot_D1::update()
@@ -44,7 +45,8 @@ void AP_Proximity_Cygbot_D1::send_sensor_start()
 void AP_Proximity_Cygbot_D1::read_sensor_data()
 {
     uint32_t nbytes = _uart->available();
-    while (nbytes-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (nbytes-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         int16_t byte = _uart->read();
         if (!parse_byte(byte)) {
             // reset

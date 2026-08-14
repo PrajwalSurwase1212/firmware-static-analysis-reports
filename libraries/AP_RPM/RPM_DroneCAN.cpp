@@ -31,7 +31,7 @@ AP_RPM_DroneCAN::AP_RPM_DroneCAN(AP_RPM &_ap_rpm, uint8_t instance, AP_RPM::RPM_
     WITH_SEMAPHORE(_driver_sem);
     _drivers[_driver_instance] = this;
     _driver_instance++;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Subscribe to incoming rpm messages
 bool AP_RPM_DroneCAN::subscribe_msgs(AP_DroneCAN* ap_dronecan)

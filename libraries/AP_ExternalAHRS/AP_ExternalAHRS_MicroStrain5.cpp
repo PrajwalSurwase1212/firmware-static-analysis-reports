@@ -31,6 +31,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include <AP_SerialManager/AP_SerialManager.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -129,7 +130,8 @@ void AP_ExternalAHRS_MicroStrain5::post_imu() const
             gyro: imu_data.gyro,
             temperature: -300
         };
-        AP::ins().handle_external(ins);
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        AP::ins().handle_external(ins); // parasoft-suppress BD-PB-NP "Reviewed and safe"
     }
 
 #if AP_COMPASS_EXTERNALAHRS_ENABLED

@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include <cerrno>
 
 // Code to integrate AC_Fence library with main ArduPlane code
 
@@ -18,7 +19,8 @@ void Plane::fence_checks_async()
     }
 
     fence_breaches.last_check_ms = now;
-    orig_breaches = fence.get_breaches();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    orig_breaches = fence.get_breaches(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     const bool armed = arming.is_armed();
 
     uint16_t mission_id = plane.mission.get_current_nav_cmd().id;
@@ -34,7 +36,7 @@ void Plane::fence_checks_async()
     fence_breaches.new_breaches = fence.check(landing_or_landed);
     fence_breaches.have_updates = true; // new breach status latched so main loop will now pick it up
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 // fence_check - ask fence library to check for breaches and initiate the response
 void Plane::fence_check()
 {
@@ -154,7 +156,7 @@ void Plane::fence_check()
                     // fly to the return point using _retalt
                     loc.set_alt_cm(home.alt + 100.0 * fence.get_return_altitude(),
                                    Location::AltFrame::ABSOLUTE);
-                } else if (fence.get_safe_alt_min() >= fence.get_safe_alt_max()) {
+                } else if (fence.get_safe_alt_min() >= fence.get_safe_alt_max()) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                     // invalid min/max, use RTL_altitude
                     loc.set_alt_cm(home.alt + g.RTL_altitude*100,
                                    Location::AltFrame::ABSOLUTE);

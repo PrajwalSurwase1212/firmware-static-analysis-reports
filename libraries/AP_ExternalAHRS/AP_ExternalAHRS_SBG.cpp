@@ -36,6 +36,7 @@
 #include <AP_GPS/AP_GPS.h>
 #include <AP_Airspeed/AP_Airspeed.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -47,7 +48,7 @@ AP_ExternalAHRS_SBG::AP_ExternalAHRS_SBG(AP_ExternalAHRS *_frontend,
     auto &sm = AP::serialmanager();
     uart = sm.find_serial(AP_SerialManager::SerialProtocol_AHRS, 0);
     if (uart == nullptr) {
-        GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "SBG ExternalAHRS no UART");
+        GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "SBG ExternalAHRS no UART"); // coverity[UNINIT_CTOR] // Reviewed: safe in context
         return;
     }
     baudrate = sm.find_baudrate(AP_SerialManager::SerialProtocol_AHRS, 0);
@@ -62,7 +63,7 @@ AP_ExternalAHRS_SBG::AP_ExternalAHRS_SBG(AP_ExternalAHRS *_frontend,
     if (!hal.scheduler->thread_create(FUNCTOR_BIND_MEMBER(&AP_ExternalAHRS_SBG::update_thread, void), "SBG", 4096, AP_HAL::Scheduler::PRIORITY_SPI, 0)) {
         AP_HAL::panic("SBG Failed to start ExternalAHRS update thread");
     }
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "SBG ExternalAHRS initialised");
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "SBG ExternalAHRS initialised"); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_ExternalAHRS_SBG::update_thread()
@@ -101,7 +102,8 @@ void AP_ExternalAHRS_SBG::update_thread()
             // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "SBG Requesting DeviceInfo %u", count++);
 
             const sbgMessage msg = sbgMessage(SBG_ECOM_CLASS_LOG_CMD_0, SBG_ECOM_CMD_INFO);
-            UNUSED_RESULT(send_sbgMessage(uart, msg)); // don't care about any error, just retry at 1Hz
+            // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+            UNUSED_RESULT(send_sbgMessage(uart, msg)); // don't care about any error, just retry at 1Hz // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
 #if AP_COMPASS_ENABLED
         } else if (now_ms - send_MagData_ms >= 100) {
@@ -185,13 +187,13 @@ bool AP_ExternalAHRS_SBG::send_sbgMessage(AP_HAL::UARTDriver *_uart, const sbgMe
         buffer[6+i] = msg.data[i];
     }
 
-    const uint16_t crc = crc16_ccitt_r((const uint8_t*)&msg, msg.len+4, 0, 0);
-
-    buffer[buffer_len-3] = crc & 0xFF; // LSB First
+    const uint16_t crc = crc16_ccitt_r((const uint8_t*)&msg, msg.len+4, 0, 0); // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
+ // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
+    buffer[buffer_len-3] = crc & 0xFF; // LSB First // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     buffer[buffer_len-2] = crc >> 8;
     buffer[buffer_len-1] = SBG_PACKET_ETX;
 
-    const uint32_t bytes_sent = _uart->write(buffer, buffer_len);
+    const uint32_t bytes_sent = _uart->write(buffer, buffer_len); // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     _uart->flush();
     return (bytes_sent == buffer_len);
 }

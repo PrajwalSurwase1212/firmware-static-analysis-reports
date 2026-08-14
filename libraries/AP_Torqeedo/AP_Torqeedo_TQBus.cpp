@@ -251,7 +251,7 @@ void AP_Torqeedo_TQBus::report_error_codes()
     }
     if (_display_system_state.master_error_code > 0) {
         const char *error_string = map_master_error_code_to_string(_display_system_state.master_error_code);
-        if (error_string != nullptr) {
+        if (error_string) {
             GCS_SEND_TEXT(
                 MAV_SEVERITY_CRITICAL, "%s err:%u %s",
                 msg_prefix,
@@ -923,7 +923,7 @@ void AP_Torqeedo_TQBus::send_motor_msg_request(MotorMsgId msg_id)
 
 // calculate the limited motor speed that is sent to the motors
 // desired_motor_speed argument and returned value are in the range -1000 to 1000
-int16_t AP_Torqeedo_TQBus::calc_motor_speed_limited(int16_t desired_motor_speed)
+int16_t AP_Torqeedo_TQBus::calc_motor_speed_limited(int16_t desired_motor_speed) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const uint32_t now_ms = AP_HAL::millis();
 
@@ -940,7 +940,7 @@ int16_t AP_Torqeedo_TQBus::calc_motor_speed_limited(int16_t desired_motor_speed)
             _dir_limit = -1;
         } else {
             // motor speed is zero
-            if ((_motor_speed_zero_ms != 0) && ((now_ms - _motor_speed_zero_ms) > (_params.dir_delay * 1000))) {
+            if ((_motor_speed_zero_ms != 0) && ((now_ms - _motor_speed_zero_ms) > (_params.dir_delay * 1000))) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 // delay has passed so allow movement in either direction
                 _dir_limit = 0;
                 _motor_speed_zero_ms = 0;
@@ -968,9 +968,9 @@ int16_t AP_Torqeedo_TQBus::calc_motor_speed_limited(int16_t desired_motor_speed)
     _motor_speed_limited_ms = now_ms;
 
     // apply slew limit
-    if (_params.slew_time > 0) {
-       const float chg_max = 1000.0 * dt / _params.slew_time;
-       _motor_speed_limited = constrain_float(desired_motor_speed, _motor_speed_limited - chg_max, _motor_speed_limited + chg_max);
+    if (_params.slew_time > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+       const float chg_max = 1000.0 * dt / _params.slew_time; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+       _motor_speed_limited = constrain_float(desired_motor_speed, _motor_speed_limited - chg_max, _motor_speed_limited + chg_max); // coverity[RW.NO_MATCHING_FUNCTION]
     } else {
         // no slew limit
         _motor_speed_limited = desired_motor_speed;

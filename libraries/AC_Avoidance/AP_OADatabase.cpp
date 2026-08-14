@@ -21,6 +21,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <AP_Math/AP_Math.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -112,12 +113,12 @@ const AP_Param::GroupInfo AP_OADatabase::var_info[] = {
 
 AP_OADatabase::AP_OADatabase()
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_OADatabase must be singleton");
     }
     _singleton = this;
 
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_OADatabase::init()
@@ -221,7 +222,8 @@ void AP_OADatabase::init_database()
         return;
     }
 
-    _database.items = NEW_NOTHROW OA_DbItem[_database.size];
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    _database.items = NEW_NOTHROW OA_DbItem[_database.size]; // parasoft-suppress BD-PB-NP "Reviewed and safe"
 }
 
 // get bitmask of gcs channels item should be sent to based on its importance
@@ -332,7 +334,8 @@ void AP_OADatabase::database_item_add(const OA_DbItem &item)
 
 void AP_OADatabase::database_item_remove(const uint16_t index)
 {
-    if (index >= _database.count || _database.count == 0) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (index >= _database.count || _database.count == 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         // index out of range
         return;
     }

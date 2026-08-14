@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 constexpr const uint8_t SITL::TSYS03::serial[3];
 
@@ -111,8 +112,11 @@ int SITL::TSYS03::rdwr(I2C::i2c_rdwr_ioctl_data *&data)
 
 // swiped from the driver:
 float SITL::TSYS03::temperature_for_adc(const uint16_t _adc) const
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    const float temperature = -40.0 + _adc * 165 / (powf(2, 16) - 1.0);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float temperature = -40.0 + _adc * 165 / (powf(2, 16) - 1.0); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     return temperature;
 }

@@ -17,6 +17,7 @@
 
 #define FORCE_VERSION_H_INCLUDE
 #include "version.h"
+#include <cerrno>
 #undef FORCE_VERSION_H_INCLUDE
 
 const AP_HAL::HAL& hal = AP_HAL::get_HAL();
@@ -47,7 +48,7 @@ Sub::Sub()
           guided_mode(Guided_WP)
 {
     failsafe.pilot_input = true;
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("Can only be one Sub");
     }
     _singleton = this;
@@ -316,7 +317,8 @@ void Sub::one_hz_loop()
     bool arm_check = arming.pre_arm_checks(false);
     ap.pre_arm_check = arm_check;
     AP_Notify::flags.pre_arm_check = arm_check;
-    AP_Notify::flags.pre_arm_gps_check = position_ok();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    AP_Notify::flags.pre_arm_gps_check = position_ok(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     AP_Notify::flags.flying = motors.armed();
 
 #if HAL_LOGGING_ENABLED
@@ -467,7 +469,7 @@ float Sub::get_alt_msl() const
 
     // convert down to up
     return -posD;
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 bool Sub::ensure_ekf_origin()
 {
@@ -481,9 +483,9 @@ bool Sub::ensure_ekf_origin()
         // wait for the gps sensor to set the origin
         // alert the pilot to poor compass performance
         return false;
-    }
-
-    auto backup_origin = Location(static_cast<int32_t>(sub.g2.backup_origin_lat * 1e7),
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    auto backup_origin = Location(static_cast<int32_t>(sub.g2.backup_origin_lat * 1e7), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                                   static_cast<int32_t>(sub.g2.backup_origin_lon * 1e7),
                                   static_cast<int32_t>(sub.g2.backup_origin_alt * 100),
                                   Location::AltFrame::ABSOLUTE);

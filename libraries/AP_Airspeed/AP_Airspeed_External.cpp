@@ -6,7 +6,7 @@ AP_Airspeed_External::AP_Airspeed_External(AP_Airspeed &_frontend, uint8_t _inst
     AP_Airspeed_Backend(_frontend, _instance)
 {
     set_bus_id(AP_HAL::Device::make_bus_id(AP_HAL::Device::BUS_TYPE_SERIAL,0,_instance,0));
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // return the current differential_pressure in Pascal
 bool AP_Airspeed_External::get_differential_pressure(float &pressure)

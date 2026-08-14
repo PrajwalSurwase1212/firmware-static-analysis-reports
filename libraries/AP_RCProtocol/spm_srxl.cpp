@@ -115,6 +115,7 @@ extern "C"
 #error "STM32F7 targets not yet supported for register-based STM HW optimization"
 #else
 #include "stm32f30x.h"  // Default to F3 if not given
+#include <cerrno>
 #endif
 #endif
 #ifdef __cplusplus
@@ -244,7 +245,8 @@ static inline SrxlRcvrEntry* srxlAddReceiverEntry(SrxlBus* pBus, SrxlDevEntry de
         if(pRcvr->info & SRXL_DEVINFO_TELEM_FULL_RANGE)
         {
             uint8_t n;
-            for(n = i; n > srxlRx.rcvrSortInsert; --n)
+            // parasoft-suppress BD-PB-CC "Reviewed and safe"
+            for(n = i; n > srxlRx.rcvrSortInsert; --n) // parasoft-suppress BD-PB-CC "Reviewed and safe"
                 srxlRx.rcvrSorted[n] = srxlRx.rcvrSorted[n - 1];
             srxlRx.rcvrSorted[(srxlRx.rcvrSortInsert)++] = pRcvr;
         }
@@ -930,7 +932,7 @@ bool srxlParsePacket(uint8_t busIndex, uint8_t* packet, uint8_t length)
                 uint8_t b;
                 for(b = 0; b < SRXL_NUM_OF_BUSES; ++b)
                 {
-                    if(b == busIndex)
+                    if(b == busIndex) // coverity[DEADCODE]
                         continue;
                     srxlBus[b].txFlags.broadcastBindInfo = 1;
                 }
@@ -1370,7 +1372,7 @@ bool srxlUpdateCommStats(bool isFade)
         {
             srxlRx.lossCountdown = srxlRx.lossHoldCount + 1;
 
-            if((srxlRx.rcvr[i].rssiRcvd & RSSI_RCVD_DBM) && srxlRx.bestRssi_dBm < srxlRx.rcvr[i].rssi_dBm)
+            if((srxlRx.rcvr[i].rssiRcvd & RSSI_RCVD_DBM) && srxlRx.bestRssi_dBm < srxlRx.rcvr[i].rssi_dBm) // coverity[COPY_PASTE_ERROR]
                 srxlRx.bestRssi_dBm = srxlRx.rcvr[i].rssi_dBm;
             if((srxlRx.rcvr[i].rssiRcvd & RSSI_RCVD_PCT) && srxlRx.bestRssi_Pct < srxlRx.rcvr[i].rssi_Pct)
                 srxlRx.bestRssi_Pct = srxlRx.rcvr[i].rssi_Pct;

@@ -33,6 +33,7 @@ extern const AP_HAL::HAL& hal;
 using namespace AP_HAL;
 
 #include <AP_Terrain/AP_Terrain.h>
+#include <cerrno>
 
 #ifndef AP_SIM_FRAME_CLASS
 #if APM_BUILD_TYPE(APM_BUILD_Kala)
@@ -135,17 +136,17 @@ void SIMState::fdm_input_local(void)
     // ride_along.send(_sitl->state,sitl_model->get_position_relhome());
 
 #if AP_SIM_SOLOGIMBAL_ENABLED
-    if (gimbal != nullptr) {
+    if (gimbal) {
         gimbal->update();
     }
 #endif  // AP_SIM_SOLOGIMBAL_ENABLED
 #if AP_SIM_ADSB_ENABLED
-    if (adsb != nullptr) {
+    if (adsb) {
         adsb->update();
     }
 #endif  // AP_SIM_ADSB_ENABLED
 #if AP_SIM_VICON_ENABLED
-    if (vicon != nullptr) {
+    if (vicon) {
         Quaternion attitude;
         sitl_model->get_attitude(attitude);
         vicon->update(sitl_model->get_location(),
@@ -154,105 +155,105 @@ void SIMState::fdm_input_local(void)
                       attitude);
     }
 #endif  // AP_SIM_VICON_ENABLED
-    if (benewake_tf02 != nullptr) {
+    if (benewake_tf02) {
         benewake_tf02->update(sitl_model->rangefinder_range());
     }
-    if (benewake_tf03 != nullptr) {
+    if (benewake_tf03) {
         benewake_tf03->update(sitl_model->rangefinder_range());
     }
-    if (benewake_tfmini != nullptr) {
+    if (benewake_tfmini) {
         benewake_tfmini->update(sitl_model->rangefinder_range());
     }
-    if (nooploop != nullptr) {
+    if (nooploop) {
         nooploop->update(sitl_model->rangefinder_range());
     }
-    if (teraranger_serial != nullptr) {
+    if (teraranger_serial) {
         teraranger_serial->update(sitl_model->rangefinder_range());
     }
-    if (lightwareserial != nullptr) {
+    if (lightwareserial) {
         lightwareserial->update(sitl_model->rangefinder_range());
     }
-    if (lightwareserial_binary != nullptr) {
+    if (lightwareserial_binary) {
         lightwareserial_binary->update(sitl_model->rangefinder_range());
     }
-    if (lanbao != nullptr) {
+    if (lanbao) {
         lanbao->update(sitl_model->rangefinder_range());
     }
-    if (blping != nullptr) {
+    if (blping) {
         blping->update(sitl_model->rangefinder_range());
     }
-    if (leddarone != nullptr) {
+    if (leddarone) {
         leddarone->update(sitl_model->rangefinder_range());
     }
-    if (rds02uf != nullptr) {
+    if (rds02uf) {
         rds02uf->update(sitl_model->rangefinder_range());
     }
-    if (USD1_v0 != nullptr) {
+    if (USD1_v0) {
         USD1_v0->update(sitl_model->rangefinder_range());
     }
-    if (USD1_v1 != nullptr) {
+    if (USD1_v1) {
         USD1_v1->update(sitl_model->rangefinder_range());
     }
-    if (maxsonarseriallv != nullptr) {
+    if (maxsonarseriallv) {
         maxsonarseriallv->update(sitl_model->rangefinder_range());
     }
-    if (wasp != nullptr) {
+    if (wasp) {
         wasp->update(sitl_model->rangefinder_range());
     }
-    if (nmea != nullptr) {
+    if (nmea) {
         nmea->update(sitl_model->rangefinder_range());
     }
-    if (rf_mavlink != nullptr) {
+    if (rf_mavlink) {
         rf_mavlink->update(sitl_model->rangefinder_range());
     }
-    if (gyus42v2 != nullptr) {
+    if (gyus42v2) {
         gyus42v2->update(sitl_model->rangefinder_range());
     }
-    if (efi_ms != nullptr) {
+    if (efi_ms) {
         efi_ms->update();
     }
 
-    if (frsky_d != nullptr) {
+    if (frsky_d) {
         frsky_d->update();
     }
 
 #if AP_SIM_CRSF_ENABLED
-    if (crsf != nullptr) {
+    if (crsf) {
         crsf->update();
     }
 #endif
 
 #if AP_SIM_PS_RPLIDARA2_ENABLED
-    if (rplidara2 != nullptr) {
+    if (rplidara2) {
         rplidara2->update(sitl_model->get_location());
     }
 #endif
 
 #if AP_SIM_PS_TERARANGERTOWER_ENABLED
-    if (terarangertower != nullptr) {
+    if (terarangertower) {
         terarangertower->update(sitl_model->get_location());
     }
 #endif
 
 #if AP_SIM_PS_LIGHTWARE_SF45B_ENABLED
-    if (sf45b != nullptr) {
+    if (sf45b) {
         sf45b->update(sitl_model->get_location());
     }
 #endif
 
-    if (vectornav != nullptr) {
+    if (vectornav) {
         vectornav->update();
     }
 
-    if (microstrain5 != nullptr) {
+    if (microstrain5) {
         microstrain5->update();
     }
-    if (inertiallabs != nullptr) {
+    if (inertiallabs) {
         inertiallabs->update();
     }
 
 #if AP_SIM_AIS_ENABLED
-    if (ais != nullptr) {
+    if (ais) {
         ais->update();
     }
 #endif
@@ -275,7 +276,7 @@ void SIMState::fdm_input_local(void)
 }
 #endif  // CONFIG_HAL_BOARD != HAL_BOARD_SITL
 
-#if AP_SIM_WIND_SIMULATION_ENABLED
+#if AP_SIM_WIND_SIMULATION_ENABLED // coverity[RW.ROUTINE_NOT_EMITTED]
 void SIMState::update_simulated_wind(struct sitl_input &input)
 {
     float wind_speed = 0;
@@ -296,7 +297,7 @@ void SIMState::update_simulated_wind(struct sitl_input &input)
         if (dt_us > 1000) {
             last_wind_update_us = now;
             // slew wind based on the configured time constant
-            const float dt = dt_us * 1.0e-6;
+            const float dt = dt_us * 1.0e-6; // coverity[RW.NO_MATCHING_FUNCTION]
             const float tc = MAX(_sitl->wind_change_tc, 0.1);
             const float alpha = calc_lowpass_alpha_dt(dt, 1.0/tc);
             _sitl->wind_speed_active     += (_sitl->wind_speed - _sitl->wind_speed_active) * alpha;
@@ -312,7 +313,9 @@ void SIMState::update_simulated_wind(struct sitl_input &input)
         const float altitude = _sitl->state.height_agl;
         switch (_sitl->wind_type) {
         case SITL::SIM::WIND_TYPE_SQRT:
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             if (altitude < _sitl->wind_type_alt) {
+                errno = 0;
                 wind_speed *= sqrtf(MAX(altitude / _sitl->wind_type_alt, 0));
             }
             break;
@@ -441,7 +444,7 @@ void SIMState::set_height_agl(void)
     }
 #endif
 
-    if (_sitl != nullptr) {
+    if (_sitl) {
         // fall back to flat earth model
         _sitl->state.height_agl = _sitl->state.altitude - home_alt;
     }

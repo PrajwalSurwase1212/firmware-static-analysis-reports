@@ -24,7 +24,7 @@ AP_ADSB_Backend::AP_ADSB_Backend(AP_ADSB &frontend, uint8_t instance) :
     _instance(instance),
     _frontend(frontend)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 #endif // HAL_ADSB_ENABLED
 

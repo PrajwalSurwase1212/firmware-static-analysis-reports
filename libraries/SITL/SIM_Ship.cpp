@@ -98,7 +98,7 @@ void Ship::update(float delta_t)
 ShipSim::ShipSim()
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   get the location of the ship
@@ -116,14 +116,14 @@ bool ShipSim::get_location(Location &loc) const
 /*
   get ground speed adjustment if we are landed on the ship
  */
-Vector2f ShipSim::get_ground_speed_adjustment(const Location &loc, float &yaw_rate)
+Vector2f ShipSim::get_ground_speed_adjustment(const Location &loc, float &yaw_rate) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     Location shiploc;
     if (!get_location(shiploc)) {
         yaw_rate = 0;
         return Vector2f(0,0);
     }
-    if (loc.get_distance(shiploc) > deck_size) {
+    if (loc.get_distance(shiploc) > deck_size) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         yaw_rate = 0;
         return Vector2f(0,0);
     }
@@ -227,7 +227,7 @@ void ShipSim::send_report(void)
             &heartbeat);
         uint8_t buf[300];
         const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-        if (mav_socket.send(buf, len) < 0) {
+        if (mav_socket.send(buf, len) < 0) { // coverity[CHECKED_RETURN]
             // safe to ignore: telemetry drop should not interrupt execution
         }
     }
@@ -274,7 +274,7 @@ void ShipSim::send_report(void)
             &msg,
             &global_position_int);
         uint8_t buf[300];
-        const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+        const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg); // coverity[CHECKED_RETURN]
         if (len > 0) {
             if (mav_socket.send(buf, len) < 0) {
                 // safe to ignore: telemetry drop should not interrupt execution
@@ -298,7 +298,7 @@ void ShipSim::send_report(void)
             component_id,
             &mav_status,
             &msg,
-            &attitude);
+            &attitude); // coverity[CHECKED_RETURN]
         uint8_t buf[300];
         const uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
         if (len > 0) {

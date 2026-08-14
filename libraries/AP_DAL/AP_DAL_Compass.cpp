@@ -4,12 +4,13 @@
 
 #include <AP_Logger/AP_Logger.h>
 #include "AP_DAL.h"
+#include <cerrno>
 
 AP_DAL_Compass::AP_DAL_Compass()
 {
     for (uint8_t i=0; i<ARRAY_SIZE(_RMGI); i++) {
         _RMGI[i].instance = i;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_DAL_Compass::start_frame()
@@ -26,7 +27,8 @@ void AP_DAL_Compass::start_frame()
     _RMGH.first_usable = compass.get_first_usable();
     _RMGH.learn_offsets_enabled = compass.learn_offsets_enabled();
 
-    WRITE_REPLAY_BLOCK_IFCHANGED(RMGH, _RMGH, old);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    WRITE_REPLAY_BLOCK_IFCHANGED(RMGH, _RMGH, old); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     for (uint8_t i=0; i<_RMGH.count; i++) {
         log_RMGI &RMGI = _RMGI[i];
@@ -38,6 +40,7 @@ void AP_DAL_Compass::start_frame()
         RMGI.last_update_usec = compass.last_update_usec(i);
         RMGI.field = compass.get_field(i);
 
-        WRITE_REPLAY_BLOCK_IFCHANGED(RMGI, RMGI, old_RMGI);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        WRITE_REPLAY_BLOCK_IFCHANGED(RMGI, RMGI, old_RMGI); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
 }

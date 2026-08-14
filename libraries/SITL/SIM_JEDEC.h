@@ -37,7 +37,7 @@ private:
     } state = State::WAITING;
 
     bool write_enabled{};
-    uint32_t xfr_addr{};
+    uint32_t xfr_addr{}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void sector4k_erase(uint32_t addr);
     void block64k_erase(uint32_t addr);

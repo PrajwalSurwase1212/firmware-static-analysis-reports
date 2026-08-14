@@ -32,7 +32,7 @@ bool ModeThrow::init(bool ignore_checks)
 
 // runs the throw to start controller
 // should be called at 100hz or more
-void ModeThrow::run()
+void ModeThrow::run() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     /* Throw State Machine
     Throw_Disarmed - motors are off
@@ -72,9 +72,9 @@ void ModeThrow::run()
         // initialise the demanded height below/above the throw height from user parameters
         // this allows for rapidly clearing surrounding obstacles
         if (g2.throw_type == ThrowType::Drop) {
-            pos_control->set_pos_desired_U_m(pos_control->get_pos_estimate_NEU_m().z - g.throw_altitude_descend);
+            pos_control->set_pos_desired_U_m(pos_control->get_pos_estimate_NEU_m().z - g.throw_altitude_descend); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         } else {
-            pos_control->set_pos_desired_U_m(pos_control->get_pos_estimate_NEU_m().z + g.throw_altitude_ascend);
+            pos_control->set_pos_desired_U_m(pos_control->get_pos_estimate_NEU_m().z + g.throw_altitude_ascend); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
 
         // Set the auto_arm status to true to avoid a possible automatic disarm caused by selection of an auto mode with throttle at minimum

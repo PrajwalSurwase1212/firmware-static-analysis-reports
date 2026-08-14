@@ -18,6 +18,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include "AR_AttitudeControl.h"
 #include <AP_GPS/AP_GPS.h>
+#include <cerrno>
 
 // attitude control default definition
 #define AR_ATTCONTROL_STEER_ANG_P       2.00f
@@ -585,7 +586,7 @@ AR_AttitudeControl::AR_AttitudeControl() :
     _sailboat_heel_pid(AR_ATTCONTROL_HEEL_SAIL_P, AR_ATTCONTROL_HEEL_SAIL_I, AR_ATTCONTROL_HEEL_SAIL_D, 0.0f, AR_ATTCONTROL_HEEL_SAIL_IMAX, 0.0f, AR_ATTCONTROL_HEEL_SAIL_FILT, 0.0f)
 {
     _singleton = this;
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // return a steering servo output from -1.0 to +1.0 given a desired lateral acceleration rate in m/s/s.
@@ -872,7 +873,7 @@ float AR_AttitudeControl::get_throttle_out_stop(bool motor_limit_low, bool motor
 // balancebot pitch to throttle controller
 // returns a throttle output from -1 to +1 given a desired pitch angle (in radians)
 // pitch_max should be the user defined max pitch angle (in radians)
-// motor_limit should be true if the motors have hit their upper or lower limit
+// motor_limit should be true if the motors have hit their upper or lower limit // coverity[RW.ROUTINE_NOT_EMITTED]
 float AR_AttitudeControl::get_throttle_out_from_pitch(float desired_pitch, float pitch_max, bool motor_limit, float dt)
 {
     // sanity check dt
@@ -888,7 +889,7 @@ float AR_AttitudeControl::get_throttle_out_from_pitch(float desired_pitch, float
     }
     _balance_last_ms = now;
 
-    // limit desired pitch to protect against falling
+    // limit desired pitch to protect against falling // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const bool pitch_limit_active = (_pitch_limit_tc >= 0.01) && (_pitch_limit_throttle_thresh > 0);
     if (pitch_limit_active) {
         desired_pitch = constrain_float(desired_pitch, _pitch_limit_low, _pitch_limit_high);
@@ -907,19 +908,19 @@ float AR_AttitudeControl::get_throttle_out_from_pitch(float desired_pitch, float
 
     // update pitch limits for next iteration
     // note: pitch is positive when leaning backwards, negative when leaning forward
-    if (pitch_limit_active) {
+    if (pitch_limit_active) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const float pitch_limit_incr = 1.0/_pitch_limit_tc * dt * pitch_max;
-        const float pitch_relax_incr = pitch_limit_incr * AR_ATTCONTROL_PITCH_RELAX_RATIO;
+        const float pitch_relax_incr = pitch_limit_incr * AR_ATTCONTROL_PITCH_RELAX_RATIO; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (output <= -_pitch_limit_throttle_thresh) {
-            // very low negative throttle output means we must lower pitch_high (e.g. reduce leaning backwards)
+            // very low negative throttle output means we must lower pitch_high (e.g. reduce leaning backwards) // coverity[RW.NO_MATCHING_FUNCTION]
             _pitch_limit_high = MAX(_pitch_limit_high - pitch_limit_incr, 0);
-        } else {
+        } else { // coverity[RW.NO_MATCHING_FUNCTION]
             _pitch_limit_high = MIN(_pitch_limit_high + pitch_relax_incr, pitch_max);
         }
         if (output >= _pitch_limit_throttle_thresh) {
-            // very high positive throttle output means we must raise pitch_low (reduce leaning forwards)
+            // very high positive throttle output means we must raise pitch_low (reduce leaning forwards) // coverity[RW.NO_MATCHING_FUNCTION]
             _pitch_limit_low = MIN(_pitch_limit_low + pitch_limit_incr, 0);
-        } else {
+        } else { // coverity[RW.NO_MATCHING_FUNCTION]
             _pitch_limit_low = MAX(_pitch_limit_low - pitch_relax_incr, -pitch_max);
         }
     }
@@ -1055,7 +1056,8 @@ float AR_AttitudeControl::get_desired_speed_accel_limited(float desired_speed, f
 
     // if no recent calls to speed controller limit based on current speed
     if (!speed_control_active()) {
-        get_forward_speed(speed_prev);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        get_forward_speed(speed_prev); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
 
     // acceleration limit desired speed

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 #define LOCATION_ALT_MAX_M  83000   // maximum altitude (in meters) that can be fit into Location structure's alt field
 
@@ -189,7 +190,8 @@ public:
     // this alt-frame will be updated to match the destination alt frame
     void linearly_interpolate_alt(const Location &point1, const Location &point2);
 
-    bool initialised() const { return (lat !=0 || lng != 0 || alt != 0); }
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    bool initialised() const { return (lat !=0 || lng != 0 || alt != 0); } // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     // return true if alt is *exactly* zero.  This is not intended to
     // be used for anything except magically changing a 0-altitude
     // passed via mavlink into the current vehicle's altitude

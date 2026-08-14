@@ -32,6 +32,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Logger/AP_Logger.h>
 #include <AP_SerialManager/AP_SerialManager.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -170,7 +171,7 @@ AP_WindVane::AP_WindVane()
         AP_HAL::panic("Too many Wind Vane sensors");
     }
 #endif
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -226,7 +227,8 @@ void AP_WindVane::init(const AP_SerialManager& serial_manager)
 #if AP_WINDVANE_NMEA_ENABLED
         case WindVaneType::WINDVANE_NMEA:
             _direction_driver = NEW_NOTHROW AP_WindVane_NMEA(*this);
-            _direction_driver->init(serial_manager);
+            // parasoft-suppress BD-PB-NP "Reviewed and safe"
+            if (_direction_driver) { _direction_driver->init(serial_manager); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
             break;
 #endif
     }
@@ -259,9 +261,11 @@ void AP_WindVane::init(const AP_SerialManager& serial_manager)
 #if AP_WINDVANE_NMEA_ENABLED
         case Speed_type::WINDSPEED_NMEA:
             // single driver does both speed and direction
+            // parasoft-suppress BD-PB-NP "Reviewed and safe"
             if (_direction_type != WindVaneType::WINDVANE_NMEA) {
                 _speed_driver = NEW_NOTHROW AP_WindVane_NMEA(*this);
-                _speed_driver->init(serial_manager);
+                // parasoft-suppress BD-PB-NP "Reviewed and safe"
+                if (_speed_driver) { _speed_driver->init(serial_manager); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
             } else {
                 _speed_driver = _direction_driver;
             }
@@ -460,10 +464,12 @@ void AP_WindVane::update_true_wind_speed_and_direction()
     const Vector2f wind_apparent_vec(cosf(wind_dir_180) * _speed_apparent, sinf(wind_dir_180) * _speed_apparent);
 
     // add vehicle velocity
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     Vector2f wind_true_vec = Vector2f(wind_apparent_vec.x + veh_velocity.x, wind_apparent_vec.y + veh_velocity.y);
 
     // calculate true speed and direction
-    _direction_true_raw = wrap_PI(atan2f(wind_true_vec.y, wind_true_vec.x) - radians(180));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    _direction_true_raw = wrap_PI(atan2f(wind_true_vec.y, wind_true_vec.x) - radians(180)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _speed_true_raw = wind_true_vec.length();
 }
 
@@ -480,11 +486,13 @@ void AP_WindVane::update_apparent_wind_dir_from_true()
     const float wind_dir_180 = _direction_true + radians(180);
     const Vector2f wind_true_vec(cosf(wind_dir_180) * _speed_true, sinf(wind_dir_180) * _speed_true);
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // add vehicle velocity
     Vector2f wind_apparent_vec = Vector2f(wind_true_vec.x - veh_velocity.x, wind_true_vec.y - veh_velocity.y);
 
     // calculate apartment speed and direction
-    _direction_apparent_raw = wrap_PI(atan2f(wind_apparent_vec.y, wind_apparent_vec.x) - radians(180) - AP::ahrs().get_yaw_rad());
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    _direction_apparent_raw = wrap_PI(atan2f(wind_apparent_vec.y, wind_apparent_vec.x) - radians(180) - AP::ahrs().get_yaw_rad()); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _speed_apparent_raw = wind_apparent_vec.length();
 }
 

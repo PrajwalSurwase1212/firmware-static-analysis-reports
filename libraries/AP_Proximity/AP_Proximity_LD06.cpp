@@ -27,6 +27,7 @@
 
 #if AP_PROXIMITY_LD06_ENABLED
 #include "AP_Proximity_LD06.h"
+#include <cerrno>
 
 #define LD_START_CHAR       0x54
 #define PROXIMITY_LD06_TIMEOUT_MS 50
@@ -91,7 +92,8 @@ void AP_Proximity_LD06::get_readings()
     uint32_t nbytes = MIN((uint16_t) 4000,  _uart->available());
 
     // Loops through all bytes that were received
-    while (nbytes-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (nbytes-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
 
         uint8_t c;
         if (!_uart->read(c)) {

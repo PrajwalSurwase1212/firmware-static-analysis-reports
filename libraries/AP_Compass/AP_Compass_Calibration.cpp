@@ -45,7 +45,7 @@ void Compass::cal_update()
     }
 }
 
-bool Compass::_start_calibration(uint8_t i, bool retry, float delay)
+bool Compass::_start_calibration(uint8_t i, bool retry, float delay) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!healthy(i)) {
         return false;
@@ -93,7 +93,7 @@ bool Compass::_start_calibration(uint8_t i, bool retry, float delay)
         // internal compasses or secondary compasses get twice the
         // threshold. This is because internal compasses tend to be a
         // lot noisier
-        _calibrator[prio]->start(retry, delay, get_offsets_max(), i, _calibration_threshold*2);
+        _calibrator[prio]->start(retry, delay, get_offsets_max(), i, _calibration_threshold*2); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     if (!_cal_thread_started) {
         _cal_requires_reboot = true;

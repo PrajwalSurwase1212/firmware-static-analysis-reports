@@ -36,7 +36,7 @@ private:
     // should be a call on aircraft:
     float some_temperature = 26.5;
 
-    uint32_t last_temperature_update_ms{0};
+    uint32_t last_temperature_update_ms{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 } // namespace SITL

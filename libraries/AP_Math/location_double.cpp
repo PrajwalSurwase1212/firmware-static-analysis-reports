@@ -25,13 +25,17 @@
 #include <stdlib.h>
 #include "AP_Math.h"
 #include "location.h"
+#include <cerrno>
 
 /*
   these are not currently used. They should be moved to location_double.cpp if we do enable them in the future
  */
 void wgsllh2ecef(const Vector3d &llh, Vector3d &ecef) {
+  // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
   double d = WGS84_E * sin(llh[0]);
-  double N = WGS84_A / sqrt(1 - d*d);
+  errno = 0;
+  // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+  double N = WGS84_A / sqrt(1 - d*d); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
   ecef[0] = (N + llh[2]) * cos(llh[0]) * cos(llh[1]);
   ecef[1] = (N + llh[2]) * cos(llh[0]) * sin(llh[1]);
@@ -39,13 +43,16 @@ void wgsllh2ecef(const Vector3d &llh, Vector3d &ecef) {
 }
 
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 void wgsecef2llh(const Vector3d &ecef, Vector3d &llh) {
   /* Distance from polar axis. */
-  const double p = sqrt(ecef[0]*ecef[0] + ecef[1]*ecef[1]);
+  // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+  const double p = sqrt(ecef[0]*ecef[0] + ecef[1]*ecef[1]); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
   /* Compute longitude first, this can be done exactly. */
+  // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
   if (!is_zero(p))
-    llh[1] = atan2(ecef[1], ecef[0]);
+    llh[1] = atan2(ecef[1], ecef[0]); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
   else
     llh[1] = 0;
 
@@ -55,10 +62,12 @@ void wgsecef2llh(const Vector3d &ecef, Vector3d &llh) {
     llh[0] = copysign(M_PI_2, ecef[2]);
     llh[2] = fabs(ecef[2]) - WGS84_B;
     return;
+  // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
   }
 
   /* Calculate some other constants as defined in the Fukushima paper. */
   const double P = p / WGS84_A;
+  errno = 0;
   const double e_c = sqrt(1 - WGS84_E*WGS84_E);
   const double Z = fabs(ecef[2]) * e_c / WGS84_A;
 

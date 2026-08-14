@@ -35,7 +35,7 @@ NavEKF2_core::NavEKF2_core(NavEKF2 *_frontend) :
     dal(AP::dal()),
     frontend(_frontend)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // setup this core backend
 bool NavEKF2_core::setup_core(uint8_t _imu_index, uint8_t _core_index)

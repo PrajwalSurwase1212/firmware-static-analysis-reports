@@ -37,7 +37,7 @@ class AP_Airspeed_SDP3X : public AP_Airspeed_Backend
 {
 public:
 
-    using AP_Airspeed_Backend::AP_Airspeed_Backend;
+    using AP_Airspeed_Backend::AP_Airspeed_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     ~AP_Airspeed_SDP3X() {
         delete _dev;

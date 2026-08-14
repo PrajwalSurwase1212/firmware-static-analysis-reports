@@ -122,11 +122,11 @@ AP_VisualOdom::AP_VisualOdom() :
 {
     AP_Param::setup_object_defaults(this, var_info);
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_VisualOdom must be singleton");
     }
 #endif
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // detect and initialise any sensors
@@ -190,7 +190,7 @@ void AP_VisualOdom::handle_vision_position_delta_msg(const mavlink_message_t &ms
     }
 
     // call backend
-    if (_driver != nullptr) {
+    if (_driver) {
         _driver->handle_vision_position_delta_msg(msg);
     }
 }
@@ -207,7 +207,7 @@ void AP_VisualOdom::handle_pose_estimate(uint64_t remote_time_us, uint32_t time_
     }
 
     // call backend
-    if (_driver != nullptr) {
+    if (_driver) {
         // convert attitude to quaternion and call backend
         Quaternion attitude;
         attitude.from_euler(roll, pitch, yaw);
@@ -225,7 +225,7 @@ void AP_VisualOdom::handle_pose_estimate(uint64_t remote_time_us, uint32_t time_
     }
 
     // call backend
-    if (_driver != nullptr) {
+    if (_driver) {
         _driver->handle_pose_estimate(remote_time_us, time_ms, x, y, z, attitude, posErr, angErr, reset_counter, quality);
     }
 }
@@ -241,7 +241,7 @@ void AP_VisualOdom::handle_vision_speed_estimate(uint64_t remote_time_us, uint32
     }
 
     // call backend
-    if (_driver != nullptr) {
+    if (_driver) {
         _driver->handle_vision_speed_estimate(remote_time_us, time_ms, vel, reset_counter, quality);
     }
 }
@@ -255,7 +255,7 @@ void AP_VisualOdom::request_align_yaw_to_ahrs()
     }
 
     // call backend
-    if (_driver != nullptr) {
+    if (_driver) {
         _driver->request_align_yaw_to_ahrs();
     }
 }
@@ -269,7 +269,7 @@ void AP_VisualOdom::align_position_to_ahrs(bool align_xy, bool align_z)
     }
 
     // call backend
-    if (_driver != nullptr) {
+    if (_driver) {
         _driver->align_position_to_ahrs(align_xy, align_z);
     }
 }

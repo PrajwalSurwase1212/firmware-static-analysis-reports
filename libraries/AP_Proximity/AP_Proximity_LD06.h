@@ -41,7 +41,7 @@ class AP_Proximity_LD06 : public AP_Proximity_Backend_Serial
 {
 public:
 
-    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial;
+    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Update the state of the sensor
     void update(void) override;

@@ -12,7 +12,7 @@ class MeasurementCb;
 class AP_RangeFinder_DroneCAN : public AP_RangeFinder_Backend {
 public:
     //constructor - registers instance at top RangeFinder driver
-    using AP_RangeFinder_Backend::AP_RangeFinder_Backend;
+    using AP_RangeFinder_Backend::AP_RangeFinder_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update() override;
 

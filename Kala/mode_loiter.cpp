@@ -77,7 +77,7 @@ void ModeLoiter::precision_loiter_xy()
 
 // loiter_run - runs the loiter controller
 // should be called at 100hz or more
-void ModeLoiter::run()
+void ModeLoiter::run() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float target_roll_rad, target_pitch_rad;
     float target_yaw_rate_rads = 0.0f;
@@ -133,7 +133,7 @@ void ModeLoiter::run()
     case AltHoldModeState::Takeoff:
         // initiate take-off
         if (!takeoff.running()) {
-            takeoff.start_m(constrain_float(g.pilot_takeoff_alt_cm * 0.01, 0.0, 10.0));
+            takeoff.start_m(constrain_float(g.pilot_takeoff_alt_cm * 0.01, 0.0, 10.0)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
 
         // get avoidance adjusted climb rate

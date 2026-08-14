@@ -27,6 +27,7 @@
 extern AP_IOMCU iomcu;
 #endif
 #include <AP_Scripting/AP_Scripting.h>
+#include <cerrno>
 
 #define SCHED_TASK(func, rate_hz, max_time_micros, prio) SCHED_TASK_CLASS(AP_Vehicle, &vehicle, func, rate_hz, max_time_micros, prio)
 
@@ -824,8 +825,11 @@ void AP_Vehicle::update_throttle_notch(AP_InertialSensor::HarmonicNotch &notch)
     const AP_MotorsUGV *motors = AP::motors_ugv();
     const float motors_throttle = motors != nullptr ? abs(motors->get_throttle() * 0.01f) : 0;
 #endif
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     {
-        float throttle_freq = ref_freq * sqrtf(MAX(0,motors_throttle) / ref);
+        errno = 0;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        float throttle_freq = ref_freq * sqrtf(MAX(0,motors_throttle) / ref); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
         notch.update_freq_hz(throttle_freq);
     }

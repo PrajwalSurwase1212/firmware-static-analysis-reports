@@ -30,7 +30,7 @@ namespace SITL {
 
 class JSON_Master {
 public:
-    JSON_Master() {};
+    JSON_Master() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // setup sockets
     void init(const int32_t num_slaves);

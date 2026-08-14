@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 Mode::_TakeOff Mode::takeoff;
 _AutoTakeoff Mode::auto_takeoff;
@@ -70,7 +71,7 @@ void Mode::_TakeOff::stop()
 // do_pilot_takeoff_ms - controls the vertical position controller during the process of taking off
 //  take off is complete when the vertical target reaches the take off altitude.
 //  climb is cancelled if pilot_climb_rate_ms becomes negative
-//  sets take off to complete when target altitude is within 1% of the take off altitude
+//  sets take off to complete when target altitude is within 1% of the take off altitude // coverity[RW.ROUTINE_NOT_EMITTED]
 void Mode::_TakeOff::do_pilot_takeoff_ms(float& pilot_climb_rate_ms)
 {
     // return pilot_climb_rate if take-off inactive
@@ -83,7 +84,7 @@ void Mode::_TakeOff::do_pilot_takeoff_ms(float& pilot_climb_rate_ms)
         float throttle_norm = constrain_float(copter.attitude_control->get_throttle_in() + copter.G_Dt / copter.g2.takeoff_throttle_slew_time, 0.0, 1.0);
         copter.attitude_control->set_throttle_out(throttle_norm, true, 0.0);
         // tell position controller to reset alt target and reset I terms
-        copter.pos_control->init_U_controller();
+        copter.pos_control->init_U_controller(); // coverity[RW.NO_MATCHING_FUNCTION]
         if (throttle_norm >= MIN(copter.g2.takeoff_throttle_max, 0.9) || 
             (copter.pos_control->get_measured_accel_U_mss() >= 0.5 * copter.pos_control->get_max_accel_U_mss()) ||
             (copter.pos_control->get_vel_desired_NEU_ms().z >= constrain_float(pilot_climb_rate_ms, copter.pos_control->get_max_speed_up_ms() * 0.1, copter.pos_control->get_max_speed_up_ms() * 0.5)) || 
@@ -111,7 +112,7 @@ void Mode::_TakeOff::do_pilot_takeoff_ms(float& pilot_climb_rate_ms)
 }
 
 // auto_takeoff_run - controls the vertical position controller during the process of taking off in auto modes
-// auto_takeoff_complete set to true when target altitude is within 10% of the take off altitude and less than 50% max climb rate
+// auto_takeoff_complete set to true when target altitude is within 10% of the take off altitude and less than 50% max climb rate // coverity[RW.ROUTINE_NOT_EMITTED]
 void _AutoTakeoff::run()
 {
     const auto &g2 = copter.g2;
@@ -123,7 +124,8 @@ void _AutoTakeoff::run()
     // if not armed set throttle to zero and exit immediately
     if (!motors->armed() || !copter.ap.auto_armed) {
         // do not spool down tradheli when on the ground with motor interlock enabled
-        copter.flightmode->make_safe_ground_handling(copter.is_tradheli() && motors->get_interlock());
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        copter.flightmode->make_safe_ground_handling(copter.is_tradheli() && motors->get_interlock()); // parasoft-suppress BD-PB-CC "Reviewed and safe" // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // update auto_takeoff_no_nav_alt_m
         no_nav_alt_m = pos_control->get_pos_estimate_NEU_m().z + g2.wp_navalt_min_m;
         return;
@@ -149,7 +151,7 @@ void _AutoTakeoff::run()
         pos_control->update_U_controller();
         attitude_control->reset_yaw_target_and_rate();
         attitude_control->reset_rate_controller_I_terms();
-        attitude_control->input_thrust_vector_rate_heading_rads(pos_control->get_thrust_vector(), 0.0);
+        attitude_control->input_thrust_vector_rate_heading_rads(pos_control->get_thrust_vector(), 0.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // update auto_takeoff_no_nav_alt_m
         no_nav_alt_m = pos_control->get_pos_estimate_NEU_m().z + g2.wp_navalt_min_m;
         return;
@@ -164,7 +166,7 @@ void _AutoTakeoff::run()
         copter.pos_control->init_U_controller();
         pos_control->relax_velocity_controller_NE();
         pos_control->update_NE_controller();
-        attitude_control->reset_rate_controller_I_terms();
+        attitude_control->reset_rate_controller_I_terms(); // coverity[RW.NO_MATCHING_FUNCTION]
         attitude_control->input_thrust_vector_rate_heading_rads(pos_control->get_thrust_vector(), 0.0);
         if (throttle >= MIN(copter.g2.takeoff_throttle_max, 0.9) || 
             (copter.pos_control->get_measured_accel_U_mss() >= 0.5 * copter.pos_control->get_max_accel_U_mss()) ||
@@ -218,7 +220,7 @@ void _AutoTakeoff::run()
         const Vector3p& _complete_pos_neu_m = copter.pos_control->get_pos_desired_NEU_m();
         complete_pos_neu_m = Vector3p{_complete_pos_neu_m.x, _complete_pos_neu_m.y, pos_u_m};
     }
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void _AutoTakeoff::start_m(float _complete_alt_m, bool _is_terrain_alt)
 {
@@ -226,8 +228,8 @@ void _AutoTakeoff::start_m(float _complete_alt_m, bool _is_terrain_alt)
     complete_alt_m = _complete_alt_m;
     is_terrain_alt = _is_terrain_alt;
     complete = false;
-    // initialise auto_takeoff_no_nav_alt_m
-    const auto &g2 = copter.g2;
+    // initialise auto_takeoff_no_nav_alt_m // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const auto &g2 = copter.g2; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     no_nav_alt_m = copter.pos_control->get_pos_estimate_NEU_m().z + g2.wp_navalt_min_m;
     if ((g2.wp_navalt_min_m > 0) && (copter.flightmode->is_disarmed_or_landed() || !copter.motors->get_interlock())) {
         // we are not flying, climb with no navigation to current alt-above-ekf-origin + wp_navalt_min_m

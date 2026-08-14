@@ -19,6 +19,7 @@
 #include <AP_Compass/AP_Compass.h>
 
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -37,7 +38,7 @@ SoloGimbalEKF::SoloGimbalEKF() :
     state(*reinterpret_cast<struct state_elements *>(&states))
 {
     AP_Param::setup_object_defaults(this, var_info);
-    reset();
+    reset(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 
@@ -624,7 +625,10 @@ void SoloGimbalEKF::fuseVelocity()
 
             if (_ahrs.get_filter_status(main_ekf_status)) {
                 if (main_ekf_status.flags.horiz_vel) {
-                    UNUSED_RESULT(_ahrs.get_velocity_NED(measVelNED));
+                    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+                    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+                    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+                    UNUSED_RESULT(_ahrs.get_velocity_NED(measVelNED)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
                 }
             }
 

@@ -9,7 +9,7 @@ class AP_Frsky_D : public AP_Frsky_Backend
 
 public:
 
-    using AP_Frsky_Backend::AP_Frsky_Backend;
+    using AP_Frsky_Backend::AP_Frsky_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 protected:
 

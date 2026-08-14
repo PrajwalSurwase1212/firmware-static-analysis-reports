@@ -9,7 +9,7 @@
  *   6) If the time lapsed since the last timecheck is greater than 0.2 seconds, return false and reset the timer
  *   NOTE : This function relies on the TECS 50Hz processing for its acceleration measure.
  */
-bool Plane::auto_takeoff_check(void)
+bool Plane::auto_takeoff_check(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // this is a more advanced check that relies on TECS
     uint32_t now = millis();
@@ -80,7 +80,7 @@ bool Plane::auto_takeoff_check(void)
                 takeoff_state.accel_event_counter = 0;
             }
             bool odd_event = ((takeoff_state.accel_event_counter & 1) != 0);
-            bool got_event = (odd_event?xaccel < -g.takeoff_throttle_min_accel : xaccel > g.takeoff_throttle_min_accel);
+            bool got_event = (odd_event?xaccel < -g.takeoff_throttle_min_accel : xaccel > g.takeoff_throttle_min_accel); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             if (got_event) {
                 takeoff_state.accel_event_counter++;
                 takeoff_state.accel_event_ms = now;
@@ -186,11 +186,11 @@ void Plane::takeoff_calc_roll(void)
 /*
   calculate desired pitch angle during takeoff, setting nav_pitch_cd
  */
-void Plane::takeoff_calc_pitch(void)
+void Plane::takeoff_calc_pitch(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // First see if TKOFF_ROTATE_SPD applies.
     // This will set the pitch for the first portion of the takeoff, up until cruise speed is reached.
-    if (!auto_state.rotation_complete && g.takeoff_rotate_speed > 0) {
+    if (!auto_state.rotation_complete && g.takeoff_rotate_speed > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // A non-zero rotate speed is recommended for ground takeoffs.
         if (auto_state.highest_airspeed < g.takeoff_rotate_speed) {
             // We have not reached rotate speed, use the specified takeoff target pitch angle.
@@ -255,7 +255,7 @@ void Plane::takeoff_calc_pitch(void)
  * Calculate the throttle limits to run at during a takeoff.
  * These limits are meant to be used exclusively by Plane::apply_throttle_limits().
  */
-void Plane::takeoff_calc_throttle() {
+void Plane::takeoff_calc_throttle() { // coverity[RW.ROUTINE_NOT_EMITTED]
     // Initialize the maximum throttle limit.
     if (aparm.takeoff_throttle_max != 0) {
         takeoff_state.throttle_lim_max = aparm.takeoff_throttle_max;
@@ -274,7 +274,7 @@ void Plane::takeoff_calc_throttle() {
     // It only applies if the timer has been started externally.
     if (takeoff_state.throttle_max_timer_ms != 0) {
         const uint32_t dt = AP_HAL::millis() - takeoff_state.throttle_max_timer_ms;
-        if (dt*0.001 < aparm.takeoff_throttle_max_t) {
+        if (dt*0.001 < aparm.takeoff_throttle_max_t) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             takeoff_state.throttle_lim_min = takeoff_state.throttle_lim_max;
         } else {
             // Reset the timer for future use.
@@ -299,7 +299,7 @@ void Plane::takeoff_calc_throttle() {
 
 /* get the pitch min used during takeoff. This matches the mission pitch until near the end where it allows it to levels off
  */
-int16_t Plane::get_takeoff_pitch_min_cd(void)
+int16_t Plane::get_takeoff_pitch_min_cd(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (flight_stage != AP_FixedWing::FlightStage::TAKEOFF) {
         return auto_state.takeoff_pitch_cd;
@@ -309,7 +309,7 @@ int16_t Plane::get_takeoff_pitch_min_cd(void)
     int32_t remaining_height_to_target_cm = (auto_state.takeoff_altitude_rel_cm - relative_alt_cm);
 
     // seconds to target alt method
-    if (g.takeoff_pitch_limit_reduction_sec > 0) {
+    if (g.takeoff_pitch_limit_reduction_sec > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // if height-below-target has been initialized then use it to create and apply a scaler to the pitch_min
         if (auto_state.height_below_takeoff_to_level_off_cm != 0) {
             float scalar = remaining_height_to_target_cm / (float)auto_state.height_below_takeoff_to_level_off_cm;
@@ -412,12 +412,12 @@ bool Plane::check_takeoff_timeout(void)
 /*
  check if the pitch level-off time has expired; returns true if timeout has occurred
 */
-bool Plane::check_takeoff_timeout_level_off(void)
+bool Plane::check_takeoff_timeout_level_off(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (takeoff_state.level_off_start_time_ms > 0) {
         // A takeoff is in progress.
         uint32_t now = AP_HAL::millis();
-        if ((now - takeoff_state.level_off_start_time_ms) > (uint32_t)(1000U * g.takeoff_pitch_limit_reduction_sec)) {
+        if ((now - takeoff_state.level_off_start_time_ms) > (uint32_t)(1000U * g.takeoff_pitch_limit_reduction_sec)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             return true;
         }
     }

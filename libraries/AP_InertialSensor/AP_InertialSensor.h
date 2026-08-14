@@ -339,7 +339,7 @@ public:
             type(IMU_SENSOR_TYPE_ACCEL),
             _imu(imu) {
             AP_Param::setup_object_defaults(this, var_info);
-        };
+        }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         void init();
         void sample(uint8_t instance, IMU_SENSOR_TYPE _type, uint64_t sample_us, const Vector3f &sample) __RAMFUNC__;

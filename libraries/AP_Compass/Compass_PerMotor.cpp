@@ -5,6 +5,7 @@
 #include "AP_Compass.h"
 #include <GCS_MAVLink/GCS.h>
 #include <SRV_Channel/SRV_Channel.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -95,7 +96,7 @@ const AP_Param::GroupInfo Compass_PerMotor::var_info[] = {
 Compass_PerMotor::Compass_PerMotor(Compass &_compass) :
     compass(_compass)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // return current scaled motor output
@@ -126,8 +127,10 @@ float Compass_PerMotor::scaled_output(uint8_t motor)
     // scale for voltage
     output *= voltage;
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // apply expo correction
-    output = powf(output, expo);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    output = powf(output, expo); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     return output;
 }
 

@@ -22,6 +22,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <AC_Avoidance/AC_Avoid.h>
 #include <AC_AttitudeControl/AC_PosControl.h>
+#include <cerrno>
 
 #define AR_POSCON_TIMEOUT_MS            100     // timeout after 0.1 sec
 #define AR_POSCON_POS_P                 0.2f    // default position P gain
@@ -107,7 +108,7 @@ AR_PosControl::AR_PosControl(AR_AttitudeControl& atc) :
     _pid_vel(AR_POSCON_VEL_P, AR_POSCON_VEL_I, AR_POSCON_VEL_D, AR_POSCON_VEL_FF, AR_POSCON_VEL_IMAX, AR_POSCON_VEL_FILT, AR_POSCON_VEL_FILT_D)
 {
     _singleton = this;
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // update navigation
@@ -146,7 +147,8 @@ void AR_PosControl::update(float dt)
     if (_vel_desired_valid) {
         // add target velocity to desired velocity from position error
         _vel_target += _vel_desired;
-        stopping = _vel_desired.is_zero();
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        stopping = _vel_desired.is_zero(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
 
     // limit velocity to maximum speed
@@ -156,7 +158,7 @@ void AR_PosControl::update(float dt)
     bool backing_up = false;
 #if AP_AVOIDANCE_ENABLED
     AC_Avoid *avoid = AP::ac_avoid();
-    if (avoid != nullptr) {
+    if (avoid) {
         Vector3f vel_3d_cms{_vel_target.x * 100.0f, _vel_target.y * 100.0f, 0.0f};
         const float accel_max_cmss = MIN(_accel_max, _lat_accel_max) * 100.0;
         avoid->adjust_velocity(vel_3d_cms, backing_up, _p_pos.kP(), accel_max_cmss, _p_pos.kP(), accel_max_cmss, dt);

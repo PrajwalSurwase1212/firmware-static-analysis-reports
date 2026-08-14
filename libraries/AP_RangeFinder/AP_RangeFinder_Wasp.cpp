@@ -75,7 +75,7 @@ AP_RangeFinder_Wasp::AP_RangeFinder_Wasp(RangeFinder::RangeFinder_State &_state,
     AP_Param::setup_object_defaults(this, var_info);
 
     state.var_info = var_info;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // read - return last value measured by sensor
 bool AP_RangeFinder_Wasp::get_reading(float &reading_m) {

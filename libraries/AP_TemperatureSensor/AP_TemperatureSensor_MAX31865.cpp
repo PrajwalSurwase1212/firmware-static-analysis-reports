@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <AP_Math/AP_Math.h>
 #include <AP_HAL/utility/sparse-endian.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -127,9 +128,9 @@ void AP_TemperatureSensor_MAX31865::init()
 }
 
 // Convert raw value in to temperature in deg celsius
-// https://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
+// https://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf // coverity[RW.ROUTINE_NOT_EMITTED]
 float AP_TemperatureSensor_MAX31865::calculate_temperature(const uint16_t raw) const
-{
+{ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float measured_resistance = (raw / 32768.0) * reference_resistance;
 
     // direct mathmatical method, valid for positive temperature
@@ -137,7 +138,7 @@ float AP_TemperatureSensor_MAX31865::calculate_temperature(const uint16_t raw) c
     const float B = -5.775e-7;
 
     const float Z1 = -A;
-    const float Z2 = A*A - (4.0 * B);
+    const float Z2 = A*A - (4.0 * B); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float Z3 = (4.0 * B) / nominal_resistance;
     const float Z4 = 2.0 * B;
 
@@ -179,7 +180,8 @@ void AP_TemperatureSensor_MAX31865::thread_tick()
     }
 
     // 16bit byte swap
-    const uint16_t data = htobe16(raw_data);
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    const uint16_t data = htobe16(raw_data); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
 
     // fault is LSB bit, temperature data is upper 15 bits
     const bool is_fault = (data & 0x0001) != 0;

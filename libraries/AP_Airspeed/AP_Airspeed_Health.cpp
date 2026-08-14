@@ -55,7 +55,7 @@ void AP_Airspeed::check_sensor_ahrs_wind_max_failures(uint8_t i)
     uint32_t age_ms;
     float innovation, innovationVariance;
     if (AP::ahrs().airspeed_health_data(innovation, innovationVariance, age_ms) && age_ms < 1000 && is_positive(innovationVariance)) {
-        const float sqrt_variance = safe_sqrt(innovationVariance);
+        const float sqrt_variance = safe_sqrt(innovationVariance); // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
         if (sqrt_variance > 0.0f) {
             state[i].failures.test_ratio = fabsf(innovation) / sqrt_variance;
         } else {

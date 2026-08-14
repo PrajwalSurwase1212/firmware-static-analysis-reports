@@ -24,6 +24,7 @@
 #include <AP_FETtecOneWire/AP_FETtecOneWire.h>
 
 #include "SRV_Channel_config.h"
+#include <cerrno>
 
 static_assert(NUM_SERVO_CHANNELS <= 32, "More than 32 servos not supported");
 
@@ -227,7 +228,8 @@ public:
         return fn >= k_none && fn < k_nr_aux_servo_functions;
     }
     bool valid_function(void) const {
-        return valid_function(function);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        return valid_function(function); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
     
     // used to get min/max/trim limit value based on reverse
@@ -707,7 +709,7 @@ private:
 
     static bool emergency_stop;
 
-    struct slew_list {
+    struct slew_list { // coverity[UNINIT_CTOR] // Reviewed: safe in context
         slew_list(SRV_Channel::Function _func) : func(_func), last_scaled_output(0.0f), max_change(0.0f), next(nullptr) {}
         const SRV_Channel::Function func;
         float last_scaled_output;

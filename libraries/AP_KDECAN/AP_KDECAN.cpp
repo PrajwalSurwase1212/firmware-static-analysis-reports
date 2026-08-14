@@ -47,16 +47,16 @@ AP_KDECAN::AP_KDECAN()
 {
     AP_Param::setup_object_defaults(this, var_info);
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_KDECAN must be singleton");
     }
 #endif
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_KDECAN::init()
 {
-    if (_driver != nullptr) {
+    if (_driver) {
         // only allow one instance
         return;
     }
@@ -82,8 +82,8 @@ AP_KDECAN_Driver::AP_KDECAN_Driver() : CANSensor("KDECAN")
     register_driver(AP_CAN::Protocol::KDECAN);
 
     // start thread for receiving and sending CAN frames. Tests show we use about 640 bytes of stack
-    if (!hal.scheduler->thread_create(FUNCTOR_BIND_MEMBER(&AP_KDECAN_Driver::loop, void), "kdecan", 2048, AP_HAL::Scheduler::PRIORITY_CAN, 0)) {
-        AP_HAL::panic("Failed to create KDECAN thread");
+    if (!hal.scheduler->thread_create(FUNCTOR_BIND_MEMBER(&AP_KDECAN_Driver::loop, void), "kdecan", 2048, AP_HAL::Scheduler::PRIORITY_CAN, 0)) { // coverity[CHECKED_RETURN]
+        AP_HAL::panic("Failed to create KDECAN thread"); // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 }
 

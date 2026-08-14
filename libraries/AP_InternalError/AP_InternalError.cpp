@@ -8,6 +8,7 @@
 #include <AP_HAL/Util.h>
 
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -76,8 +77,11 @@ static const char * const error_bit_descriptions[] {
 static_assert((1U<<(ARRAY_SIZE(error_bit_descriptions))) == uint32_t(AP_InternalError::error_t::__LAST__), "too few descriptions for bits");
 
 void AP_InternalError::error_to_string(char *buffer, const uint16_t len, error_t error_code) const
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    uint32_t temp = log2f(int(error_code));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    uint32_t temp = log2f(int(error_code)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     strncpy(buffer, error_bit_descriptions[temp], len - 1);
 }
 

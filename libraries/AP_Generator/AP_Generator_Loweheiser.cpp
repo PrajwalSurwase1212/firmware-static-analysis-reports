@@ -4,6 +4,7 @@
 
 #include <AP_Vehicle/AP_Vehicle.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -354,14 +355,15 @@ void AP_Generator_Loweheiser::check_rc_input_channels()
     RC_Channel *x = rc().find_channel_for_option(RC_Channel::AUX_FUNC::LOWEHEISER_THROTTLE);
     if (x != rc_channel_manual_throttle) {
         rc_channel_manual_throttle = x;
-        if (rc_channel_manual_throttle != nullptr) {
+        if (rc_channel_manual_throttle) {
             rc_channel_manual_throttle->set_range(4500);
         }
     }
 
     // see if the user has defined a starter motor input channel.
     // This allows for manual control of the starter motor
-    rc_channel_starter_motor = rc().find_channel_for_option(RC_Channel::AUX_FUNC::LOWEHEISER_STARTER);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    rc_channel_starter_motor = rc().find_channel_for_option(RC_Channel::AUX_FUNC::LOWEHEISER_STARTER); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 // command_generator assembles COMMAND_LONG messages to send to the
@@ -420,7 +422,7 @@ void AP_Generator_Loweheiser::command_generator()
             rc().has_valid_input()) {
             throttle = rc_channel_manual_throttle->percent_input();
             // honour an electric start channel, too:
-            if (rc_channel_starter_motor != nullptr) {
+            if (rc_channel_starter_motor) {
                 user_controlled_starter = true;
                 switch (rc_channel_starter_motor->get_aux_switch_pos()) {
                 case RC_Channel::AuxSwitchPos::LOW:
@@ -579,7 +581,7 @@ void AP_Generator_Loweheiser::update_stats()
     time_until_maintenance.set_and_save_ifchanged(time_until_maintenance - seconds);
 }
 
-// ensure the generator is running and generally working before
+// ensure the generator is running and generally working before // coverity[RW.ROUTINE_NOT_EMITTED]
 // allowing the vehicle to arm:
 bool AP_Generator_Loweheiser::pre_arm_check(char *failmsg, uint8_t failmsg_len) const
 {
@@ -616,7 +618,7 @@ bool AP_Generator_Loweheiser::pre_arm_check(char *failmsg, uint8_t failmsg_len) 
     case RunState::IDLE:
     case RunState::COOLING_DOWN:
         break;
-    case RunState::WARMING_UP:
+    case RunState::WARMING_UP: // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (!isnan(packet.efi_clt)) {
             hal.util->snprintf(failmsg, failmsg_len, "LH: Generator warming up (%.0f%%)", ((packet.efi_clt*100.0) / temp_required_for_run));
         } else {

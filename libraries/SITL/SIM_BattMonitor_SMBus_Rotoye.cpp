@@ -20,7 +20,7 @@ SITL::Rotoye::Rotoye() :
     set_block(SMBusBattDevReg::DEVICE_NAME, device_name);
 
     set_register(SMBusBattGenericDevReg::SERIAL, (uint16_t) 278);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void SITL::Rotoye::update(const class Aircraft &aircraft)
 {

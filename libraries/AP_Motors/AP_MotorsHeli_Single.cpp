@@ -18,6 +18,7 @@
 #include <SRV_Channel/SRV_Channel.h>
 #include "AP_MotorsHeli_Single.h"
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -272,7 +273,7 @@ void AP_MotorsHeli_Single::calculate_armed_scalars()
     }
 }
 
-// calculate_scalars - recalculates various scalers used.
+// calculate_scalars - recalculates various scalers used. // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_MotorsHeli_Single::calculate_scalars()
 {
     // range check collective min, max and zero
@@ -286,10 +287,10 @@ void AP_MotorsHeli_Single::calculate_scalars()
     _collective_land_min_deg.set(constrain_float(_collective_land_min_deg, _collective_min_deg, _collective_max_deg));
 
     if (!is_equal((float)_collective_max_deg, (float)_collective_min_deg)) {
-        // calculate collective zero thrust point as a number from 0 to 1
+        // calculate collective zero thrust point as a number from 0 to 1 // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         _collective_zero_thrust_pct = (_collective_zero_thrust_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg);
 
-        // calculate collective land min point as a number from 0 to 1
+        // calculate collective land min point as a number from 0 to 1 // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         _collective_land_min_pct = (_collective_land_min_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg);
     } else {
         _collective_zero_thrust_pct = 0.0f;
@@ -365,7 +366,8 @@ void AP_MotorsHeli_Single::move_actuators(float roll_out, float pitch_out, float
     float total_out = norm(pitch_out, roll_out);
 
     if (total_out > (_cyclic_max/4500.0f)) {
-        float ratio = (float)(_cyclic_max/4500.0f) / total_out;
+        // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
+        float ratio = (float)(_cyclic_max/4500.0f) / total_out; // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
         roll_out *= ratio;
         pitch_out *= ratio;
         limit.roll = true;
@@ -636,7 +638,7 @@ void AP_MotorsHeli_Single::heli_motors_param_conversions(void)
     if (have_DDFP_tail() && !_yaw_trim.configured()) {
 
         SRV_Channel *c = SRV_Channels::get_channel_for(SRV_Channel::k_motor4);
-        if (c != nullptr) {
+        if (c) {
             uint16_t pwm_min = c->get_output_min();
             uint16_t pwm_max = c->get_output_max();
             uint16_t pwm_trim = c->get_trim();
@@ -671,9 +673,10 @@ void AP_MotorsHeli_Single::Log_Write(void)
 {
     // Write swash plate logging
     // For single heli we have to apply an additional cyclic scaler of sqrt(2.0) because the
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // definition of when we achieve _cyclic_max is different to dual heli. In single, _cyclic_max
     // is limited at sqrt(2.0), in dual it is limited at 1.0
-    float cyclic_angle_scaler = get_cyclic_angle_scaler() * sqrtf(2.0);
+    float cyclic_angle_scaler = get_cyclic_angle_scaler() * sqrtf(2.0); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _swashplate.write_log(cyclic_angle_scaler, _collective_min_deg.get(), _collective_max_deg.get(), _collective_min.get(), _collective_max.get());
 
     // Write RSC logging

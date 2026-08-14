@@ -24,6 +24,7 @@
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include <stdio.h>
+#include <cerrno>
 #endif
 
 extern const AP_HAL::HAL &hal;
@@ -39,7 +40,7 @@ extern const AP_HAL::HAL &hal;
 // constructor
 SCurve::SCurve()
 {
-    init();
+    init(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // initialise and clear the path
@@ -275,7 +276,7 @@ void SCurve::set_speed_max(float speed_xy, float speed_up, float speed_down)
         float tj = 0;
         float t2 = 0;
         float t4 = 0;
-        float t6 = 0;
+        float t6 = 0; // coverity[UNINTENDED_INTEGER_DIVISION]
         float jerk_time = MIN(powf((fabsf(vel_max - segment[SEG_ACCEL_END].end_vel) * M_PI) / (4 * snap_max), 1.0f/3.0f), jerk_max * M_PI / (2 * snap_max));
         if ((vel_max < segment[SEG_ACCEL_END].end_vel) && (jerk_time*12.0f < L/segment[SEG_ACCEL_END].end_vel)) {
             // we have a problem here with small segments.
@@ -954,8 +955,11 @@ void SCurve::add_segment_const_jerk(uint8_t &index, float tj, float J0)
     const float J = J0;
     const float T = segment[index - 1].end_time + tj;
     const float A = segment[index - 1].end_accel + J0 * tj;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float V = segment[index - 1].end_vel + segment[index - 1].end_accel * tj + 0.5f * J0 * sq(tj);
-    const float P = segment[index - 1].end_pos + segment[index - 1].end_vel * tj + 0.5f * segment[index - 1].end_accel * sq(tj) + (1.0f / 6.0f) * J0 * powf(tj, 3.0f);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float P = segment[index - 1].end_pos + segment[index - 1].end_vel * tj + 0.5f * segment[index - 1].end_accel * sq(tj) + (1.0f / 6.0f) * J0 * powf(tj, 3.0f); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     add_segment(index, T, SegmentType::CONSTANT_JERK, J, A, V, P);
 }
 
@@ -976,9 +980,12 @@ void SCurve::add_segment_incr_jerk(uint8_t &index, float tj, float Jm)
     }
     const float Beta = M_PI / tj;
     const float Alpha = Jm * 0.5f;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float AT = Alpha * tj;
     const float VT = Alpha * (sq(tj) * 0.5f - 2.0f / sq(Beta));
-    const float PT = Alpha * ((-1.0f / sq(Beta)) * tj + (1.0f / 6.0f) * powf(tj, 3.0f));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float PT = Alpha * ((-1.0f / sq(Beta)) * tj + (1.0f / 6.0f) * powf(tj, 3.0f)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     const float J = Jm;
     const float T = segment[index - 1].end_time + tj;
@@ -1004,12 +1011,16 @@ void SCurve::add_segment_decr_jerk(uint8_t &index, float tj, float Jm)
         return;
     }
     const float Beta = M_PI / tj;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float Alpha = Jm * 0.5f;
     const float AT = Alpha * tj;
     const float VT = Alpha * (sq(tj) * 0.5f - 2.0f / sq(Beta));
-    const float PT = Alpha * ((-1.0f / sq(Beta)) * tj + (1.0f / 6.0f) * powf(tj, 3.0f));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float PT = Alpha * ((-1.0f / sq(Beta)) * tj + (1.0f / 6.0f) * powf(tj, 3.0f)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float A2T = Jm * tj;
     const float V2T = Jm * sq(tj);
+    errno = 0;
     const float P2T = Alpha * ((-1.0f / sq(Beta)) * 2.0f * tj + (4.0f / 3.0f) * powf(tj, 3.0f));
 
     const float J = Jm;

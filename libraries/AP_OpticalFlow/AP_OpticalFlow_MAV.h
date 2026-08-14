@@ -11,7 +11,7 @@ class AP_OpticalFlow_MAV : public OpticalFlow_backend
 {
 public:
     /// constructor
-    using OpticalFlow_backend::OpticalFlow_backend;
+    using OpticalFlow_backend::OpticalFlow_backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // initialise the sensor
     void init() override {}

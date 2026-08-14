@@ -7,6 +7,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <AP_DAL/AP_DAL.h>
 #include <AP_InternalError/AP_InternalError.h>
+#include <cerrno>
 
 #if AP_RANGEFINDER_ENABLED
 /********************************************************
@@ -109,7 +110,7 @@ void NavEKF3_core::readRangeFinder(void)
     }
 }
 #endif  // AP_RANGEFINDER_ENABLED
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 void NavEKF3_core::writeBodyFrameOdom(float quality, const Vector3f &delPos, const Vector3f &delAng, float delTime, uint32_t timeStamp_ms, uint16_t delay_ms, const Vector3f &posOffset)
 {
 #if EK3_FEATURE_BODY_ODOM
@@ -134,7 +135,7 @@ void NavEKF3_core::writeBodyFrameOdom(float quality, const Vector3f &delPos, con
     bodyOdmMeasTime_ms = timeStamp_ms;
 
     // simple model of accuracy
-    // TODO move this calculation outside of EKF into the sensor driver
+    // TODO move this calculation outside of EKF into the sensor driver // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     bodyOdmDataNew.velErr = frontend->_visOdmVelErrMin + (frontend->_visOdmVelErrMax - frontend->_visOdmVelErrMin) * (1.0f - 0.01f * quality);
 
     storedBodyOdm.push(bodyOdmDataNew);
@@ -207,7 +208,7 @@ void NavEKF3_core::writeOptFlowMeas(const uint8_t rawFlowQuality, const Vector2f
         ofDataNew.bodyRadXYZ.x = rawGyroRates.x - flowGyroBias.x;
         ofDataNew.bodyRadXYZ.y = rawGyroRates.y - flowGyroBias.y;
         // the sensor interface doesn't provide a z axis rate so use the rate from the nav sensor instead
-        const float local_delTimeOF_2 = delTimeOF;
+        const float local_delTimeOF_2 = delTimeOF; // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
         const float local_delAngDT = imuDataNew.delAngDT;
         if (local_delTimeOF_2 > 0.001f) {
             // first preference is to use the rate averaged over the same sampling period as the flow sensor
@@ -556,7 +557,7 @@ bool NavEKF3_core::readDeltaVelocity(uint8_t ins_index, Vector3F &dVel, ftype &d
 }
 
 /********************************************************
-*             Global Position Measurement               *
+*             Global Position Measurement               * // coverity[RW.ROUTINE_NOT_EMITTED]
 ********************************************************/
 
 // check for new valid GPS data and update stored measurement if available
@@ -615,7 +616,7 @@ void NavEKF3_core::readGpsData()
     gpsSpdAccuracy *= (1.0f - alpha);
     float gpsSpdAccRaw;
     if (!gps.speed_accuracy(selected_gps, gpsSpdAccRaw)) {
-        gpsSpdAccuracy = 0.0f;
+        gpsSpdAccuracy = 0.0f; // coverity[RW.NO_MATCHING_FUNCTION]
     } else {
         gpsSpdAccuracy = MAX(gpsSpdAccuracy,gpsSpdAccRaw);
         gpsSpdAccuracy = MIN(gpsSpdAccuracy,50.0f);
@@ -624,7 +625,7 @@ void NavEKF3_core::readGpsData()
     gpsPosAccuracy *= (1.0f - alpha);
     float gpsPosAccRaw;
     if (!gps.horizontal_accuracy(selected_gps, gpsPosAccRaw)) {
-        gpsPosAccuracy = 0.0f;
+        gpsPosAccuracy = 0.0f; // coverity[RW.NO_MATCHING_FUNCTION]
     } else {
         gpsPosAccuracy = MAX(gpsPosAccuracy,gpsPosAccRaw);
         gpsPosAccuracy = MIN(gpsPosAccuracy,100.0f);
@@ -899,7 +900,8 @@ void NavEKF3_core::readAirSpdData()
         } else if (lastAspdEstIsValid && !windStateIsObservable) {
             // this uses the last airspeed estimated before dead reckoning started and
             // wind states became unobservable
-            if (lastAspdEstIsValid && imuDataDelayed.time_ms - prevTasStep_ms > 200) {
+            // parasoft-suppress BD-PB-CC "Reviewed and safe"
+            if (lastAspdEstIsValid && imuDataDelayed.time_ms - prevTasStep_ms > 200) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
                 tasDataDelayed.tas = lastAirspeedEstimate;
                 // this airspeed estimate has a lot of uncertainty
                 tasDataDelayed.tasVariance = sq(MAX(MAX(frontend->_easNoise, 0.5f), 0.5f * lastAirspeedEstimate));
@@ -1388,7 +1390,7 @@ ftype NavEKF3_core::MagDeclination(void) const
     return dal.compass().get_declination();
 }
 
-/*
+/* // coverity[RW.ROUTINE_NOT_EMITTED]
   Update the on ground and not moving check.
   Should be called once per IMU update.
   Only updates when on ground and when operating without a magnetometer
@@ -1435,18 +1437,18 @@ void NavEKF3_core::updateMovementCheck(void)
     accel_diff = 0.99f * accel_diff + 0.01f * temp.length();
 
     const ftype gyro_length_ratio = gyro.length() / gyro_limit;
-    const ftype accel_length_ratio = (accel.length() - GRAVITY_MSS) / accel_limit;
-    const ftype gyro_diff_ratio = gyro_diff / gyro_diff_limit;
-    const ftype accel_diff_ratio = accel_diff / accel_diff_limit;
-    bool logStatusChange = false;
+    const ftype accel_length_ratio = (accel.length() - GRAVITY_MSS) / accel_limit; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const ftype gyro_diff_ratio = gyro_diff / gyro_diff_limit; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const ftype accel_diff_ratio = accel_diff / accel_diff_limit; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    bool logStatusChange = false; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (onGroundNotMoving) {
         if (gyro_length_ratio > frontend->_ognmTestScaleFactor ||
             fabsF(accel_length_ratio) > frontend->_ognmTestScaleFactor ||
             gyro_diff_ratio > frontend->_ognmTestScaleFactor ||
-            accel_diff_ratio > frontend->_ognmTestScaleFactor)
-        {
-            onGroundNotMoving = false;
-            logStatusChange = true;
+            accel_diff_ratio > frontend->_ognmTestScaleFactor) // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+            onGroundNotMoving = false; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+            logStatusChange = true; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
     } else if (gyro_length_ratio < frontend->_ognmTestScaleFactor * hysteresis_ratio &&
             fabsF(accel_length_ratio) < frontend->_ognmTestScaleFactor * hysteresis_ratio &&

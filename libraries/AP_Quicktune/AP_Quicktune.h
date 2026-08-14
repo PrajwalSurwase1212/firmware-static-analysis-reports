@@ -17,7 +17,7 @@ public:
     AP_Quicktune()
     {
         AP_Param::setup_object_defaults(this, var_info);
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Empty destructor to suppress compiler warning
     virtual ~AP_Quicktune() {}

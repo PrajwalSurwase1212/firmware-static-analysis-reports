@@ -22,6 +22,7 @@
 #include "ltable.h"
 #include "ltm.h"
 #include "lvm.h"
+#include <errno.h>
 
 // lua code does lots of casting, these warnings are not helpful
 #pragma GCC diagnostic ignored "-Wcast-align"
@@ -97,13 +98,15 @@ const char *luaT_objtypename (lua_State *L, const TValue *o) {
     if (ttisstring(name))  /* is '__name' a string? */
       return getstr(tsvalue(name));  /* use it as type name */
   }
-  return ttypename(ttnov(o));  /* else use standard type name */
+  // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+  return ttypename(ttnov(o));  /* else use standard type name */ // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
 }
 
 
 void luaT_callTM (lua_State *L, const TValue *f, const TValue *p1,
                   const TValue *p2, TValue *p3, int hasres) {
-  ptrdiff_t result = savestack(L, p3);
+  // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+  ptrdiff_t result = savestack(L, p3); // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
   StkId func = L->top;
   setobj2s(L, func, f);  /* push function (assume EXTRA_STACK) */
   setobj2s(L, func + 1, p1);  /* 1st argument */

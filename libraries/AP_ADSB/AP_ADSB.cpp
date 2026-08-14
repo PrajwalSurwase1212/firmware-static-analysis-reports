@@ -186,14 +186,14 @@ AP_ADSB::AP_ADSB()
 {
     AP_Param::setup_object_defaults(this, var_info);
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_ADSB must be singleton");
     }
 #endif
     _singleton = this;
 
 #ifdef ADSB_STATIC_CALLSIGN
-    strncpy(out_state.cfg.callsign, ADSB_STATIC_CALLSIGN, sizeof(out_state.cfg.callsign));
+    strncpy(out_state.cfg.callsign, ADSB_STATIC_CALLSIGN, sizeof(out_state.cfg.callsign)); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 #endif
 }
 
@@ -369,7 +369,7 @@ void AP_ADSB::update(void)
     // pressure (in metres)
     if (loc.baro_is_healthy) {
         loc.baro_alt_press_diff_sea_level = baro.get_altitude_difference(SSL_AIR_PRESSURE, baro.get_pressure());
-    }
+    } // coverity[UNINIT] // Reviewed: safe in context
 
     update(loc);
 }

@@ -11,7 +11,7 @@ using namespace SITL;
 SHT3x::SHT3x()
 {
     reset();
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void SHT3x::reset()
 {
@@ -53,7 +53,7 @@ int SHT3x::rdwr(I2C::i2c_rdwr_ioctl_data *&data)
         case Command::MEASURE:
             AP_HAL::panic("Command is write-only?!");
         case Command::READ_STATUS:
-            data->msgs[1].buf[0] = status.value >> 8;
+            data->msgs[1].buf[0] = status.value >> 8; // coverity[CONSTANT_EXPRESSION_RESULT]
             data->msgs[1].buf[1] = status.value & 0xff;
             data->msgs[1].len = 2;
             return 0;
@@ -65,7 +65,7 @@ int SHT3x::rdwr(I2C::i2c_rdwr_ioctl_data *&data)
                 data->msgs[1].buf[i] = i;
             }
             return 0;
-        }
+        } // coverity[UNREACHABLE]
         AP_HAL::panic("Bad command 0x%02x", (uint8_t)command);
     }
 

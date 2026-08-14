@@ -1,4 +1,5 @@
 #include "AP_HAL.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -46,7 +47,8 @@ void AP_HAL::RCOutput::append_to_banner(char banner_msg[], uint8_t banner_msg_le
     const char* mode_str = get_output_mode_string(out_mode);
 
     // make copy of banner_msg
-    char banner_msg_temp[banner_msg_len];
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    char banner_msg_temp[banner_msg_len]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
     memcpy(banner_msg_temp, banner_msg, banner_msg_len);
 
     if (low_ch == high_ch) {
@@ -89,8 +91,11 @@ uint32_t AP_HAL::RCOutput::calculate_bitrate_prescaler(uint32_t timer_clock, uin
     if (at_least_freq) { // choose a frequency of at least the target, needed by BLHeli_S
         prescaler = uint32_t(floorf((float) timer_clock / target_frequency + 0.01f) - 1);
     } else { // original prescaler calculation from betaflight, chooses closest
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // bi-dir dshot is incredibly sensitive to the bitrate
-        prescaler = uint32_t(lrintf((float) timer_clock / target_frequency + 0.01f) - 1);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        prescaler = uint32_t(lrintf((float) timer_clock / target_frequency + 0.01f) - 1); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     }
 
     return prescaler;

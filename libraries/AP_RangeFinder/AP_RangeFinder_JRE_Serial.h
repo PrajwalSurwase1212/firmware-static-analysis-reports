@@ -75,7 +75,7 @@ public:
 
 protected:
 
-    using AP_RangeFinder_Backend_Serial::AP_RangeFinder_Backend_Serial;
+    using AP_RangeFinder_Backend_Serial::AP_RangeFinder_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     MAV_DISTANCE_SENSOR _get_mav_distance_sensor_type() const override
     {

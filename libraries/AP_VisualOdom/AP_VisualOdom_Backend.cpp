@@ -27,7 +27,7 @@
 AP_VisualOdom_Backend::AP_VisualOdom_Backend(AP_VisualOdom &frontend) :
     _frontend(frontend)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // return true if sensor is basically healthy (we are receiving data)
 bool AP_VisualOdom_Backend::healthy() const

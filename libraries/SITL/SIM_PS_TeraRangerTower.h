@@ -65,7 +65,7 @@ public:
 private:
     const float MAX_RANGE = 4.5;  // metres
 
-    uint32_t last_output_time_ms{0};
+    uint32_t last_output_time_ms{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 };

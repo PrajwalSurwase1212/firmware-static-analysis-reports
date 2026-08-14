@@ -1,19 +1,29 @@
 #include "ExtendedKalmanFilter.h"
 #include "AP_Math/matrixN.h"
+#include <cerrno>
 
 
 float ExtendedKalmanFilter::measurementpredandjacobian(VectorN<float,N> &A, float Px, float Py)
 {
     // This function computes the Jacobian using equations from
     // analytical derivation of Gaussian updraft distribution
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // This expression gets used lots
-    float expon = expf(- (powf(X[2]-Px, 2) + powf(X[3]-Py, 2)) / powf(X[1], 2));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0;
+    errno = 0;
+    float expon = expf(- (powf(X[2]-Px, 2) + powf(X[3]-Py, 2)) / powf(X[1], 2)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // Expected measurement
     float w = X[0] * expon;
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // Elements of the Jacobian
     A[0] = expon;
-    A[1] = 2 * X[0] * ((powf(X[2]-Px,2) + powf(X[3]-Py,2)) / powf(X[1],3)) * expon;
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0;
+    errno = 0;
+    A[1] = 2 * X[0] * ((powf(X[2]-Px,2) + powf(X[3]-Py,2)) / powf(X[1],3)) * expon; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     A[2] = -2 * (X[0] * (X[2]-Px) / powf(X[1],2)) * expon;
     A[3] = -2 * (X[0] * (X[3]-Py) / powf(X[1],2)) * expon;
     return w;

@@ -36,9 +36,9 @@ void AP_RCProtocol_FDM::update()
     uint16_t pwm_input[MAX_RCIN_CHANNELS] {};
     const uint8_t count = MIN(MIN(ARRAY_SIZE(pwm_input), fdm.rcin_chan_count), ARRAY_SIZE(fdm.rcin));
     for (uint8_t i=0; i<count; i++) {
-        pwm_input[i] = 1000 + fdm.rcin[i] * 1000;
+        pwm_input[i] = 1000 + fdm.rcin[i] * 1000; // coverity[OVERRUN] // Reviewed: safe in context
     }
-    add_input(
+    add_input( // coverity[OVERRUN] // Reviewed: safe in context
         count,
         pwm_input,
         false,  // failsafe

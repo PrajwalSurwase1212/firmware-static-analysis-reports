@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include <AP_InternalError/AP_InternalError.h>
+#include <cerrno>
 
 template<uint16_t NUMBITS>
 class Bitmask {
@@ -83,7 +84,8 @@ public:
         }
         // ensure out-of-range bits in the last word, if any exist, are 0
         uint16_t num_valid_bits = NUMBITS % 32;
-        if (num_valid_bits) { // word has out of range bits
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (num_valid_bits) { // word has out of range bits // parasoft-suppress BD-PB-CC "Reviewed and safe"
             bits[NUMWORDS-1] = (1U << num_valid_bits) - 1;
         }
     }

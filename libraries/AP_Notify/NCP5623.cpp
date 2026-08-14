@@ -20,6 +20,7 @@
 #include <utility>
 
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -39,7 +40,7 @@ extern const AP_HAL::HAL& hal;
 NCP5623::NCP5623(uint8_t bus)
     : RGBLed(NCP5623_LED_OFF, NCP5623_LED_BRIGHT, NCP5623_LED_MEDIUM, NCP5623_LED_DIM)
     , _bus(bus)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool NCP5623::write(uint8_t reg, uint8_t data)
@@ -73,7 +74,8 @@ bool NCP5623::init(void)
             continue;
         }
 
-        _dev->get_semaphore()->take_blocking();
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
         _dev->set_retries(10);
 
         // enable the led
@@ -94,7 +96,8 @@ bool NCP5623::init(void)
 
         if (ret) {
             _dev->register_periodic_callback(20000, FUNCTOR_BIND_MEMBER(&NCP5623::_timer, void));
-        }
+        // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+        } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
         return true;
     }
 

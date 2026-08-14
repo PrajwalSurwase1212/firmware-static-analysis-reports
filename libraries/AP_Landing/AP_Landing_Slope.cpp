@@ -53,7 +53,7 @@ void AP_Landing::type_slope_verify_abort_landing(const Location &prev_WP_loc, Lo
   update navigation for landing. Called when on landing approach or
   final flare
  */
-bool AP_Landing::type_slope_verify_land(const Location &prev_WP_loc, Location &next_WP_loc, const Location &current_loc,
+bool AP_Landing::type_slope_verify_land(const Location &prev_WP_loc, Location &next_WP_loc, const Location &current_loc, // coverity[RW.ROUTINE_NOT_EMITTED]
         const float height, const float sink_rate, const float wp_proportion, const uint32_t last_flying_ms, const bool is_armed, const bool is_flying, const bool rangefinder_state_in_range)
 {
     // we don't 'verify' landing in the sense that it never completes,
@@ -91,7 +91,7 @@ bool AP_Landing::type_slope_verify_land(const Location &prev_WP_loc, Location &n
 
     const bool on_approach_stage = type_slope_is_on_approach();
     const bool below_flare_alt = (height <= flare_alt);
-    const bool below_flare_sec = (flare_sec > 0 && height <= sink_rate * flare_sec);
+    const bool below_flare_sec = (flare_sec > 0 && height <= sink_rate * flare_sec); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const bool probably_crashed = (aparm.crash_detection_enable && fabsf(sink_rate) < 0.2f && !is_flying);
 
     height_flare_log = height;
@@ -136,9 +136,9 @@ bool AP_Landing::type_slope_verify_land(const Location &prev_WP_loc, Location &n
             aparm.min_groundspeed.load();
             aparm.throttle_cruise.load();
         }
-    } else if (type_slope_stage == SlopeStage::APPROACH && pre_flare_airspeed > 0) {
-        bool reached_pre_flare_alt = pre_flare_alt > 0 && (height <= pre_flare_alt);
-        bool reached_pre_flare_sec = pre_flare_sec > 0 && (height <= sink_rate * pre_flare_sec);
+    } else if (type_slope_stage == SlopeStage::APPROACH && pre_flare_airspeed > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        bool reached_pre_flare_alt = pre_flare_alt > 0 && (height <= pre_flare_alt); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        bool reached_pre_flare_sec = pre_flare_sec > 0 && (height <= sink_rate * pre_flare_sec); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (reached_pre_flare_alt || reached_pre_flare_sec) {
             type_slope_stage = SlopeStage::PREFLARE;
         }
@@ -187,14 +187,14 @@ bool AP_Landing::type_slope_verify_land(const Location &prev_WP_loc, Location &n
     return false;
 }
 
-void AP_Landing::type_slope_adjust_landing_slope_for_rangefinder_bump(AP_FixedWing::Rangefinder_State &rangefinder_state, Location &prev_WP_loc, Location &next_WP_loc, const Location &current_loc, const float wp_distance, int32_t &target_altitude_offset_cm)
+void AP_Landing::type_slope_adjust_landing_slope_for_rangefinder_bump(AP_FixedWing::Rangefinder_State &rangefinder_state, Location &prev_WP_loc, Location &next_WP_loc, const Location &current_loc, const float wp_distance, int32_t &target_altitude_offset_cm) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // check the rangefinder correction for a large change. When found, recalculate the glide slope. This is done by
     // determining the slope from your current location to the land point then following that back up to the approach
     // altitude and moving the prev_wp to that location. From there
     float correction_delta = fabsf(rangefinder_state.last_stable_correction) - fabsf(rangefinder_state.correction);
 
-    if (slope_recalc_shallow_threshold <= 0 ||
+    if (slope_recalc_shallow_threshold <= 0 || // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             fabsf(correction_delta) < slope_recalc_shallow_threshold) {
         return;
     }
@@ -213,7 +213,7 @@ void AP_Landing::type_slope_adjust_landing_slope_for_rangefinder_bump(AP_FixedWi
         // correction positive means we're too low so we should continue on with
         // the newly computed shallower slope instead of pitching/throttling up
 
-    } else if (slope_recalc_steep_threshold_to_abort > 0 && !type_slope_flags.has_aborted_due_to_slope_recalc) {
+    } else if (slope_recalc_steep_threshold_to_abort > 0 && !type_slope_flags.has_aborted_due_to_slope_recalc) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // correction negative means we're too high and need to point down (and speed up) to re-align
         // to land on target. A large negative correction means we would have to dive down a lot and will
         // generating way too much speed that we can not bleed off in time. It is better to remember
@@ -250,7 +250,7 @@ bool AP_Landing::type_slope_request_go_around(void)
   itself as that leads to discontinuities close to the landing point,
   which can lead to erratic pitch control
  */
-void AP_Landing::type_slope_setup_landing_glide_slope(const Location &prev_WP_loc, const Location &next_WP_loc, const Location &current_loc, int32_t &target_altitude_offset_cm)
+void AP_Landing::type_slope_setup_landing_glide_slope(const Location &prev_WP_loc, const Location &next_WP_loc, const Location &current_loc, int32_t &target_altitude_offset_cm) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float total_distance = prev_WP_loc.get_distance(next_WP_loc);
 
@@ -285,8 +285,8 @@ void AP_Landing::type_slope_setup_landing_glide_slope(const Location &prev_WP_lo
     }
 
     // don't allow the aim height to be too far above LAND_FLARE_ALT
-    if (flare_alt > 0 && aim_height > flare_alt*2) {
-        aim_height = flare_alt*2;
+    if (flare_alt > 0 && aim_height > flare_alt*2) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        aim_height = flare_alt*2; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 
     // calculate time spent in flare assuming the sink rate reduces over time from sink_rate at aim_height
@@ -340,29 +340,29 @@ void AP_Landing::type_slope_setup_landing_glide_slope(const Location &prev_WP_lo
     constrain_target_altitude_location_fn(loc, prev_WP_loc);
 }
 
-int32_t AP_Landing::type_slope_get_target_airspeed_cm(void)
+int32_t AP_Landing::type_slope_get_target_airspeed_cm(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // we're landing, check for custom approach and
     // pre-flare airspeeds. Also increase for head-winds
 
     const float land_airspeed = tecs_Controller->get_land_airspeed();
-    int32_t target_airspeed_cm = aparm.airspeed_cruise*100;
+    int32_t target_airspeed_cm = aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (land_airspeed >= 0) {
         target_airspeed_cm = land_airspeed * 100;
     } else {
-        target_airspeed_cm = 100 * 0.5 * (aparm.airspeed_cruise + aparm.airspeed_min);
+        target_airspeed_cm = 100 * 0.5 * (aparm.airspeed_cruise + aparm.airspeed_min); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     switch (type_slope_stage) {
     case SlopeStage::NORMAL:
-        target_airspeed_cm = aparm.airspeed_cruise*100;
+        target_airspeed_cm = aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         break;
     case SlopeStage::APPROACH:
         break;
     case SlopeStage::PREFLARE:
     case SlopeStage::FINAL:
-        if (pre_flare_airspeed > 0) {
+        if (pre_flare_airspeed > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             // if we just preflared then continue using the pre-flare airspeed during final flare
-            target_airspeed_cm = pre_flare_airspeed * 100;
+            target_airspeed_cm = pre_flare_airspeed * 100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
         break;
     }
@@ -371,7 +371,7 @@ int32_t AP_Landing::type_slope_get_target_airspeed_cm(void)
     const float head_wind_comp = constrain_float(wind_comp, 0.0f, 100.0f)*0.01;
     const int32_t head_wind_compensation_cm = ahrs.head_wind() * head_wind_comp * 100;
 
-    const uint32_t max_airspeed_cm = AP_Landing::allow_max_airspeed_on_land() ? aparm.airspeed_max*100 : aparm.airspeed_cruise*100;
+    const uint32_t max_airspeed_cm = AP_Landing::allow_max_airspeed_on_land() ? aparm.airspeed_max*100 : aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     
     return constrain_int32(target_airspeed_cm + head_wind_compensation_cm, target_airspeed_cm, max_airspeed_cm);
     

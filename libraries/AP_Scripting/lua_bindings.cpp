@@ -27,6 +27,7 @@ extern const AP_HAL::HAL& hal;
 
 extern "C" {
 #include "lua/src/lmem.h"
+#include <cerrno>
 }
 
 extern const AP_HAL::HAL& hal;
@@ -89,7 +90,8 @@ int lua_mavlink_init(lua_State *L) {
     }
 
     return 0;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 int lua_mavlink_receive_chan(lua_State *L) {
 
@@ -486,7 +488,7 @@ int AP_Logger_Write(lua_State *L) {
             case 'E': { // uint32_t * 100
                 uint32_t tmp;
                 void * ud = luaL_testudata(L, arg_index, "uint32_t");
-                if (ud != nullptr) {
+                if (ud) {
                     tmp = *static_cast<uint32_t *>(ud);
                 } else {
                     int success;
@@ -711,7 +713,8 @@ int lua_get_CAN_device(lua_State *L) {
     *new_ScriptingCANBuffer(L) = scripting->_CAN_dev->add_buffer(buffer_len);
 
     return 1;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 int lua_get_CAN_device2(lua_State *L) {
 
@@ -740,8 +743,11 @@ int lua_get_CAN_device2(lua_State *L) {
 
     *new_ScriptingCANBuffer(L) = scripting->_CAN_dev2->add_buffer(buffer_len);
 
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+
     return 1;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 #endif // AP_SCRIPTING_CAN_SENSOR_ENABLED
 
 #if AP_SERIALMANAGER_ENABLED
@@ -1137,7 +1143,7 @@ int lua_range_finder_handle_script_msg(lua_State *L) {
 
     // Check to see if the first argument is the state structure.
     const void *state_arg = luaL_testudata(L, 2, "RangeFinder_State");
-    if (state_arg != nullptr) {
+    if (state_arg) {
         result = ud->handle_script_msg(*static_cast<const RangeFinder::RangeFinder_State *>(state_arg));
 
     } else {

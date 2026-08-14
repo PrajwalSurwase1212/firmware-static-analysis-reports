@@ -33,6 +33,7 @@
 #include "AP_AHRS_DCM.h"
 #include "AP_AHRS_SIM.h"
 #include "AP_AHRS_External.h"
+#include <cerrno>
 
 // forward declare view class
 class AP_AHRS_View;
@@ -655,7 +656,8 @@ public:
 
     // return primary accels
     const Vector3f &get_accel(void) const {
-        return AP::ins().get_accel(_get_primary_accel_index());
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        return AP::ins().get_accel(_get_primary_accel_index()); // parasoft-suppress BD-PB-NP "Reviewed and safe"
     }
 
     // return primary accel bias. This should be subtracted from

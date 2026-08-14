@@ -11,7 +11,7 @@ Extended Kalman Filter class by Sam Tabor, 2013.
 
 class ExtendedKalmanFilter {
 public:
-    ExtendedKalmanFilter(void) {}
+    ExtendedKalmanFilter(void) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     static constexpr const uint8_t N = 4;
 

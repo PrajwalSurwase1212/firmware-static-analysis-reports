@@ -17,7 +17,7 @@ class AP_Mount_Alexmos : public AP_Mount_Backend
 {
 public:
     //constructor
-    using AP_Mount_Backend::AP_Mount_Backend;
+    using AP_Mount_Backend::AP_Mount_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // init - performs any required initialisation for this instance
     void init() override;

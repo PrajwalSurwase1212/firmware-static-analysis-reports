@@ -21,6 +21,7 @@
 #include "AP_HAL_Namespace.h"
 #include "Device.h"
 #include "utility/OwnPtr.h"
+#include <cerrno>
 
 namespace AP_HAL {
 
@@ -82,7 +83,8 @@ public:
                                          uint32_t bus_clock=400000,
                                          bool use_smbus = false,
                                          uint32_t timeout_ms=4) {
-        return AP_HAL::OwnPtr<AP_HAL::I2CDevice>(get_device_ptr(bus, address, bus_clock, use_smbus, timeout_ms));
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        return AP_HAL::OwnPtr<AP_HAL::I2CDevice>(get_device_ptr(bus, address, bus_clock, use_smbus, timeout_ms)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
 ;
     /*

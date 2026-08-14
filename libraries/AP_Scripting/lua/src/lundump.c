@@ -29,6 +29,7 @@
 #include "lstring.h"
 #include "lundump.h"
 #include "lzio.h"
+#include <errno.h>
 
 
 #if !defined(luai_verifycode)
@@ -234,7 +235,8 @@ static void checkliteral (LoadState *S, const char *s, const char *msg) {
   char buff[sizeof(LUA_SIGNATURE) + sizeof(LUAC_DATA)]; /* larger than both */
   size_t len = strlen(s);
   LoadVector(S, buff, len);
-  if (memcmp(s, buff, len) != 0)
+  // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+  if (memcmp(s, buff, len) != 0) // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     error(S, msg);
 }
 

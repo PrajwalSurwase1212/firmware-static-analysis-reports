@@ -18,7 +18,7 @@ extern const AP_HAL::HAL& hal;
 AP_Baro_Backend::AP_Baro_Backend(AP_Baro &baro) : 
     _frontend(baro) 
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Baro_Backend::update_healthy_flag(uint8_t instance)
 {

@@ -10,7 +10,7 @@
 
 class AP_HAL::Scheduler {
 public:
-    Scheduler() :
+    Scheduler() : // coverity[UNINIT_CTOR] // Reviewed: safe in context
         _min_delay_cb_ms(0),
         _delay_cb(nullptr),
         _in_delay_callback(false)

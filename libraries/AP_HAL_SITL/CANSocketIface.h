@@ -37,7 +37,7 @@ public:
       , _frames_in_socket_tx_queue(0)
     {
         _num_interfaces++;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
     CANIface() : CANIface(_num_interfaces) {}
     static uint8_t _num_interfaces;
 

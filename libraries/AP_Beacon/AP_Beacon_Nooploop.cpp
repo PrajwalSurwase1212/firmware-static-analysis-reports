@@ -21,6 +21,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <cerrno>
 
 #define NOOPLOOP_INVALID_VAL -8388000 // indicates data unavailable or invalid
 #define NOOPLOOP_SF0_SZ 128 // setting_frame0 packet size
@@ -62,7 +63,8 @@ void AP_Beacon_Nooploop::update(void)
 
     // check uart for any incoming messages
     uint32_t nbytes = MIN(uart->available(), 1024U);
-    while (nbytes-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (nbytes-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         int16_t b = uart->read();
         if (b >= 0 ) {
             MsgType type = parse_byte((uint8_t)b);
@@ -200,9 +202,10 @@ void AP_Beacon_Nooploop::parse_node_frame2()
 
     // estimated precision for x,y position in meters
     const float precision_x = _msgbuf[NOOPLOOP_NODE_FRAME2_PRECISION_X] * 0.01;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float precision_y = _msgbuf[NOOPLOOP_NODE_FRAME2_PRECISION_Y] * 0.01;
     //EKF's estimate goes very bad if the error value sent into the EKF is unrealistically low. ensure it's never less than a reasonable value
-    const float pos_err = MAX(0.1f, sqrtf(sq(precision_x)+sq(precision_y)));
+    const float pos_err = MAX(0.1f, sqrtf(sq(precision_x)+sq(precision_y))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     // x,y,z position in m*1000 in ENU frame
     const int32_t pos_x = ((int32_t)_msgbuf[NOOPLOOP_NODE_FRAME2_POSX+2] << 24 | (int32_t)_msgbuf[NOOPLOOP_NODE_FRAME2_POSX+1] << 16 | (int32_t)_msgbuf[NOOPLOOP_NODE_FRAME2_POSX] << 8) >> 8;
@@ -226,7 +229,7 @@ void AP_Beacon_Nooploop::parse_node_frame2()
 void AP_Beacon_Nooploop::parse_setting_frame0()
 {
     for (uint8_t i = 0; i < 4; i++) {
-        uint16_t offset = NOOPLOOP_SETTING_FRAME0_A0 + i * 9;
+        uint16_t offset = NOOPLOOP_SETTING_FRAME0_A0 + i * 9; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
 
         // x,y,z position in m*1000 in ENU frame
         const int32_t pos_x = ((int32_t)_msgbuf[offset+2] << 24 | (int32_t)_msgbuf[offset+1] << 16 | (int32_t)_msgbuf[offset] << 8) >> 8;

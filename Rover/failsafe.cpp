@@ -44,7 +44,7 @@ void Rover::failsafe_check()
 /*
   called to set/unset a failsafe event.
  */
-void Rover::failsafe_trigger(uint8_t failsafe_type, const char* type_str, bool on)
+void Rover::failsafe_trigger(uint8_t failsafe_type, const char* type_str, bool on) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     uint8_t old_bits = failsafe.bits;
     if (on) {
@@ -65,7 +65,7 @@ void Rover::failsafe_trigger(uint8_t failsafe_type, const char* type_str, bool o
 
     if ((failsafe.triggered == 0) &&
         (failsafe.bits != 0) &&
-        (millis() - failsafe.start_time > g.fs_timeout * 1000) &&
+        (millis() - failsafe.start_time > g.fs_timeout * 1000) && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         (control_mode != &mode_rtl) &&
         ((control_mode != &mode_hold || (g2.fs_options & (uint32_t)Failsafe_Options::Failsafe_Option_Active_In_Hold)))) {
         failsafe.triggered = failsafe.bits;

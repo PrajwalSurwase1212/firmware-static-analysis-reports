@@ -38,7 +38,7 @@ private:
         RC_PROTOCOL,
         RC_OUTPUT,
     };
-    Stage stage = Stage::FIRMWARE_STRING;
+    Stage stage = Stage::FIRMWARE_STRING; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class LoggerMessageWriter_WriteEntireMission : public LoggerMessageWriter {
@@ -55,7 +55,7 @@ private:
     };
 
     uint16_t _mission_number_to_send = 0;
-    Stage stage = Stage::WRITE_NEW_MISSION_MESSAGE;
+    Stage stage = Stage::WRITE_NEW_MISSION_MESSAGE; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class LoggerMessageWriter_WriteAllRallyPoints : public LoggerMessageWriter {
@@ -71,7 +71,7 @@ private:
         DONE
     };
 
-    uint16_t _rally_number_to_send = 0;
+    uint16_t _rally_number_to_send = 0; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     Stage stage = Stage::WRITE_NEW_RALLY_MESSAGE;
 };
 
@@ -90,7 +90,7 @@ private:
     };
 
     uint16_t _fence_number_to_send = 0;
-    Stage stage = Stage::WRITE_NEW_FENCE_MESSAGE;
+    Stage stage = Stage::WRITE_NEW_FENCE_MESSAGE; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 #endif // HAL_LOGGER_FENCE_ENABLED
 
@@ -108,7 +108,7 @@ public:
         , _writeallpolyfence()
 #endif
         {
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void set_logger_backend(class AP_Logger_Backend *backend) override final {
         LoggerMessageWriter::set_logger_backend(backend);

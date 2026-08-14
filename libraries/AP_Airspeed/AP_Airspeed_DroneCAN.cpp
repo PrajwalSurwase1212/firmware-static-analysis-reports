@@ -104,7 +104,7 @@ void AP_Airspeed_DroneCAN::handle_airspeed(AP_DroneCAN *ap_dronecan, const Canar
 
     AP_Airspeed_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
 
-    if (driver != nullptr) {
+    if (driver) {
         WITH_SEMAPHORE(driver->_sem_airspeed);
         driver->_pressure = msg.differential_pressure;
         if (!isnan(msg.static_air_temperature) &&
@@ -123,7 +123,7 @@ void AP_Airspeed_DroneCAN::handle_hygrometer(AP_DroneCAN *ap_dronecan, const Can
 
     AP_Airspeed_DroneCAN* driver = get_dronecan_backend(ap_dronecan, transfer.source_node_id);
 
-    if (driver != nullptr) {
+    if (driver) {
         WITH_SEMAPHORE(driver->_sem_airspeed);
         driver->_hygrometer.temperature = KELVIN_TO_C(msg.temperature);
         driver->_hygrometer.humidity = msg.humidity;

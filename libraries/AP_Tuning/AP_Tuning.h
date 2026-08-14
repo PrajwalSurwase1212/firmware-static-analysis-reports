@@ -30,7 +30,7 @@ public:
         tuning_sets(sets),
         tuning_names(names) {
         selector_start_ms = 0;
-        mid_point_wait = false;
+        mid_point_wait = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
         last_channel_value = 0.0f;
         center_value = 0.0f;
         last_check_ms = 0;

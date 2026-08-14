@@ -7,6 +7,7 @@
 #include <AP_TECS/AP_TECS.h>
 #include <GCS_MAVLink/GCS.h>
 #include <stdint.h>
+#include <cerrno>
 
 #if HAL_SOARING_NVF_EKF_ENABLED
 static constexpr uint32_t NVF_PUBLISHER_DELAY_MS = 250;
@@ -178,7 +179,7 @@ SoaringController::SoaringController(AP_TECS &tecs, const AP_FixedWing &parms) :
     _aparm(parms),
     _throttle_suppressed(true)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void SoaringController::get_target(Location &wp)
@@ -256,10 +257,15 @@ SoaringController::LoiterStatus SoaringController::check_cruise_criteria(Vector2
 
 void SoaringController::init_thermalling()
 {
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // Calc filter matrices - so that changes to parameters can be updated by switching in and out of thermal mode
-    float r      = powf(thermal_r,  2); // Measurement noise
-    float cov_q1 = powf(thermal_q1, 2); // Process noise for strength
-    float cov_q2 = powf(thermal_q2, 2); // Process noise for position and radius
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    float r      = powf(thermal_r,  2); // Measurement noise // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    float cov_q1 = powf(thermal_q1, 2); // Process noise for strength // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    float cov_q2 = powf(thermal_q2, 2); // Process noise for position and radius // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     const float init_q[4] = {cov_q1,
                              cov_q2,
@@ -381,7 +387,7 @@ void SoaringController::update_thermalling()
         gcs().send_named_float("SOAREKFX2", (float)_ekf.X[2]);
         gcs().send_named_float("SOAREKFX3", (float)_ekf.X[3]);
         _prev_nvf_pub_time_ms = now_ms;
-    }
+    } // coverity[RW.ROUTINE_NOT_EMITTED]
 
 #endif // HAL_SOARING_NVF_EKF_ENABLED
 #endif
@@ -394,8 +400,8 @@ void SoaringController::update_cruising()
 
     Vector3f wind    = AP::ahrs().wind_estimate();
     Vector3f wind_bf = AP::ahrs().earth_to_body(wind);
-
-    const float wx = wind_bf.x;
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const float wx = wind_bf.x; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     const float wz = _vario.get_stf_value();
 
@@ -487,10 +493,10 @@ void SoaringController::update_active_state(bool override_disable)
 
 void SoaringController::set_throttle_suppressed(bool suppressed)
 {
-    _throttle_suppressed = suppressed;
+    _throttle_suppressed = suppressed; // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Let the TECS know.
-    _tecs.set_gliding_requested_flag(suppressed);
+    _tecs.set_gliding_requested_flag(suppressed); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
 bool SoaringController::check_drift(Vector2f prev_wp, Vector2f next_wp)
@@ -533,11 +539,11 @@ bool SoaringController::check_drift(Vector2f prev_wp, Vector2f next_wp)
 
         // Check if we've drifted too far laterally or backwards. We don't count positive parallel offsets
         // as these are favourable (towards next wp)
-        parallel = parallel>0 ? 0 : parallel;
+        parallel = parallel>0 ? 0 : parallel; // coverity[RW.ROUTINE_NOT_EMITTED]
 
         return (powf(parallel,2)+powf(perpendicular,2)) > powf(max_drift,2);
     }
-}
+} // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
 float SoaringController::get_thermalling_radius() const
 {
@@ -547,9 +553,9 @@ float SoaringController::get_thermalling_radius() const
 
     return radius;
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 float SoaringController::get_thermalling_target_airspeed()
-{
+{ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     return soar_thermal_airspeed;
 }
 

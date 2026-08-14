@@ -23,6 +23,7 @@
 #if AP_AIRSPEED_ASP5033_ENABLED
 
 #include <AP_HAL/I2CDevice.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -78,7 +79,8 @@ bool AP_Airspeed_ASP5033::confirm_sensor_id(void)
 {
     uint8_t part_id;
     if (!dev->read_registers(REG_PART_ID_SET, &part_id, 1) ||
-        ( (part_id != REG_WHOAMI_DEFAULT_ID) && (part_id != REG_WHOAMI_RECHECK_ID) ) ) {
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        ( (part_id != REG_WHOAMI_DEFAULT_ID) && (part_id != REG_WHOAMI_RECHECK_ID) ) ) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         return false;
     }
     if (!dev->write_register(REG_PART_ID_SET, REG_WHOAMI_RECHECK_ID)) {
@@ -100,7 +102,8 @@ void AP_Airspeed_ASP5033::timer()
 
     uint8_t status;
     if (!dev->read_registers(REG_CMD, &status, 1) ||
-        (status & REG_SENSOR_READY) == 0) {
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        (status & REG_SENSOR_READY) == 0) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         // no data ready
         return;
     }

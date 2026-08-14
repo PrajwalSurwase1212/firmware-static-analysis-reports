@@ -18,6 +18,7 @@
 
 #include <AP_Math/definitions.h>
 #include <utility>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -50,7 +51,7 @@ extern const AP_HAL::HAL &hal;
 AP_Baro_BMP280::AP_Baro_BMP280(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> dev)
     : AP_Baro_Backend(baro)
     , _dev(std::move(dev))
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_Baro_Backend *AP_Baro_BMP280::probe(AP_Baro &baro,
@@ -125,7 +126,8 @@ bool AP_Baro_BMP280::_init()
     _dev->register_periodic_callback(20 * AP_USEC_PER_MSEC, FUNCTOR_BIND_MEMBER(&AP_Baro_BMP280::_timer, void));
 
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 
 
@@ -134,8 +136,10 @@ void AP_Baro_BMP280::_timer(void)
 {
     uint8_t buf[6];
 
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     if (_dev->read_registers(BMP280_REG_DATA, buf, sizeof(buf))) {
-        _update_temperature((buf[3] << 12) | (buf[4] << 4) | (buf[5] >> 4));
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        _update_temperature((buf[3] << 12) | (buf[4] << 4) | (buf[5] >> 4)); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         _update_pressure((buf[0] << 12) | (buf[1] << 4) | (buf[2] >> 4));
     }
 

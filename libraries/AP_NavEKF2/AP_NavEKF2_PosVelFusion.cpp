@@ -12,7 +12,7 @@ extern const AP_HAL::HAL& hal;
 
 // Reset XY velocity states to last GPS measurement if available or to zero if in constant position mode or if PV aiding is not absolute
 // Do not reset vertical velocity using GPS as there is baro alt available to constrain drift
-void NavEKF2_core::ResetVelocity(void)
+void NavEKF2_core::ResetVelocity(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Store the position before the reset so that we can record the reset delta
     velResetNE.x = stateStruct.velocity.x;
@@ -35,7 +35,7 @@ void NavEKF2_core::ResetVelocity(void)
             stateStruct.velocity.x  = gps_corrected.vel.x;
             stateStruct.velocity.y  = gps_corrected.vel.y;
             // set the variances using the reported GPS speed accuracy
-            P[4][4] = P[3][3] = sq(MAX(frontend->_gpsHorizVelNoise,gpsSpdAccuracy));
+            P[4][4] = P[3][3] = sq(MAX(frontend->_gpsHorizVelNoise,gpsSpdAccuracy)); // coverity[RW.NO_MATCHING_FUNCTION]
         } else if (imuSampleTime_ms - extNavVelMeasTime_ms < 250) {
             // use external nav data as the 2nd preference
             stateStruct.velocity = extNavVelDelayed.vel;
@@ -70,7 +70,7 @@ void NavEKF2_core::ResetVelocity(void)
 }
 
 // resets position states to last GPS measurement or to zero if in constant position mode
-void NavEKF2_core::ResetPosition(void)
+void NavEKF2_core::ResetPosition(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Store the position before the reset so that we can record the reset delta
     posResetNE.x = stateStruct.position.x;
@@ -98,7 +98,7 @@ void NavEKF2_core::ResetPosition(void)
             stateStruct.position.x = gps_corrected.pos.x  + 0.001f*gps_corrected.vel.x*(float(imuDataDelayed.time_ms) - float(gps_corrected.time_ms));
             stateStruct.position.y = gps_corrected.pos.y  + 0.001f*gps_corrected.vel.y*(float(imuDataDelayed.time_ms) - float(gps_corrected.time_ms));
             // set the variances using the position measurement noise parameter
-            P[6][6] = P[7][7] = sq(MAX(gpsPosAccuracy,frontend->_gpsHorizPosNoise));
+            P[6][6] = P[7][7] = sq(MAX(gpsPosAccuracy,frontend->_gpsHorizPosNoise)); // coverity[RW.NO_MATCHING_FUNCTION]
             // clear the timeout flags and counters
             posTimeout = false;
             lastPosPassTime_ms = imuSampleTime_ms;
@@ -940,7 +940,7 @@ void NavEKF2_core::FuseVelPosNED()
 ********************************************************/
 
 // select the height measurement to be fused from the available baro, range finder and GPS sources
-void NavEKF2_core::selectHeightForFusion()
+void NavEKF2_core::selectHeightForFusion() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
 #if AP_RANGEFINDER_ENABLED
     // Read range finder data and check for new data in the buffer
@@ -954,7 +954,7 @@ void NavEKF2_core::selectHeightForFusion()
     const auto *_rng = dal.rangefinder();
     if (_rng && rangeDataToFuse) {
         const auto *sensor = _rng->get_backend(rangeDataDelayed.sensor_idx);
-        if (sensor != nullptr) {
+        if (sensor) {
             Vector3F posOffsetBody = sensor->get_pos_offset().toftype() - accelPosOffset;
             if (!posOffsetBody.is_zero()) {
                 Vector3F posOffsetEarth = prevTnb.mul_transpose(posOffsetBody);
@@ -987,7 +987,7 @@ void NavEKF2_core::selectHeightForFusion()
         // used as a height reference in combination with a range finder
         // apply a hysteresis to the speed check to prevent rapid switching
         ftype horizSpeed = stateStruct.velocity.xy().length();
-        bool dontTrustTerrain = ((horizSpeed > frontend->_useRngSwSpd) && filterStatus.flags.horiz_vel) || !terrainHgtStable;
+        bool dontTrustTerrain = ((horizSpeed > frontend->_useRngSwSpd) && filterStatus.flags.horiz_vel) || !terrainHgtStable; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         ftype trust_spd_trigger = MAX((frontend->_useRngSwSpd - 1.0f),(frontend->_useRngSwSpd * 0.5f));
         bool trustTerrain = (horizSpeed < trust_spd_trigger) && terrainHgtStable;
 
@@ -1069,7 +1069,7 @@ void NavEKF2_core::selectHeightForFusion()
             // set the observation noise
             posDownObsNoise = sq(constrain_ftype(frontend->_rngNoise, 0.1f, 10.0f));
             // add uncertainty created by terrain gradient and vehicle tilt
-            posDownObsNoise += sq(rangeDataDelayed.rng * frontend->_terrGradMax) * MAX(0.0f , (1.0f - sq(prevTnb.c.z)));
+            posDownObsNoise += sq(rangeDataDelayed.rng * frontend->_terrGradMax) * MAX(0.0f , (1.0f - sq(prevTnb.c.z))); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         } else {
             // disable fusion if tilted too far
             fuseHgtData = false;

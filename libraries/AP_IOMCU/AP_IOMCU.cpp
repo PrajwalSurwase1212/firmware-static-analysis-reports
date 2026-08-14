@@ -827,7 +827,7 @@ void AP_IOMCU::write_channel(uint8_t chan, uint16_t pwm)
 // trigger an ioevent
 void AP_IOMCU::trigger_event(uint8_t event)
 {
-    if (thread_ctx != nullptr) {
+    if (thread_ctx) {
         chEvtSignal(thread_ctx, EVENT_MASK(event));
     } else {
         // thread isn't started yet, trigger this event once it is started

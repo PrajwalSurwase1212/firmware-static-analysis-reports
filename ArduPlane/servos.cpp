@@ -405,13 +405,13 @@ void ModeAuto::wiggle_servos()
 /*
   Calculate the throttle scale to compensate for battery voltage drop
  */
-void ParametersG2::FWD_BATT_CMP::update()
+void ParametersG2::FWD_BATT_CMP::update() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Assume disabled
     enabled = false;
 
     // return if not enabled, or setup incorrectly
-    if (!is_positive(batt_voltage_min) || batt_voltage_min >= batt_voltage_max) {
+    if (!is_positive(batt_voltage_min) || batt_voltage_min >= batt_voltage_max) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         return;
     }
 

@@ -193,7 +193,7 @@ void GCS_MAVLINK::handle_request_data_stream(const mavlink_message_t &msg)
 
     AP_Int16 *rate = &streamRates[stream_id];
 
-    if (rate != nullptr) {
+    if (rate) {
         if (persist_streamrates()) {
             rate->set_and_save_ifchanged(freq);
         } else {
@@ -328,7 +328,7 @@ void GCS_MAVLINK::handle_param_set(const mavlink_message_t &msg)
 
 #if HAL_LOGGING_ENABLED
     AP_Logger *logger = AP_Logger::get_singleton();
-    if (logger != nullptr) {
+    if (logger) {
         logger->Write_Parameter(key, vp->cast_to_float(var_type));
     }
 #endif
@@ -367,7 +367,7 @@ void GCS::send_parameter_value(const char *param_name, ap_var_type param_type, f
 #if HAL_LOGGING_ENABLED
     // also log to AP_Logger
     AP_Logger *logger = AP_Logger::get_singleton();
-    if (logger != nullptr) {
+    if (logger) {
         logger->Write_Parameter(param_name, param_value);
     }
 #endif
@@ -406,7 +406,7 @@ void GCS_MAVLINK::param_io_timer(void)
         }
         vp->copy_name_token(token, reply.param_name, AP_MAX_NAME_SIZE, true);
     } else {
-        strncpy(reply.param_name, req.param_name, AP_MAX_NAME_SIZE);
+        strncpy(reply.param_name, req.param_name, AP_MAX_NAME_SIZE); // coverity[BUFFER_SIZE] // Reviewed: safe in context
         reply.param_name[AP_MAX_NAME_SIZE] = '\0';
         vp = AP_Param::find(req.param_name, &reply.p_type);
         if (vp == nullptr) {

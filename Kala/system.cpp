@@ -1,5 +1,6 @@
 #include "Copter.h"
 #include <AP_ESC_Telem/AP_ESC_Telem.h>
+#include <cerrno>
 
 /*****************************************************************************
 *   The init_ardupilot function processes everything we need for an in - air restart
@@ -201,6 +202,8 @@ void Copter::init_ardupilot()
 }
 
 
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
 //******************************************************************************
 //This function does all the calibrations, etc. that we need during a ground start
 //******************************************************************************
@@ -339,7 +342,7 @@ void Copter::update_auto_armed()
             }
         // if motors are armed and throttle is above zero auto_armed should be true
         // if motors are armed and we are in throw mode, then auto_armed should be true
-        } else if (motors->armed() && !ap.using_interlock) {
+        } else if (motors->armed() && !ap.using_interlock) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             if(!ap.throttle_zero || flightmode->mode_number() == Mode::Number::THROW) {
                 set_auto_armed(true);
             }

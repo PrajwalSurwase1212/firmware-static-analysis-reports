@@ -1,4 +1,5 @@
 #include "Blimp.h"
+#include <cerrno>
 
 bool AP_Arming_Blimp::pre_arm_checks(bool display_failure)
 {
@@ -131,7 +132,8 @@ bool AP_Arming_Blimp::parameter_checks(bool display_failure)
 bool AP_Arming_Blimp::motor_checks(bool display_failure)
 {
     // check motors initialised  correctly
-    if (!blimp.motors->initialised_ok()) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!blimp.motors->initialised_ok()) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         check_failed(display_failure, "Check firmware or FRAME_CLASS");
         return false;
     }

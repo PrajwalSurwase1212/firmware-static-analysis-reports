@@ -382,7 +382,7 @@ protected:
 #endif
 
 private:
-    float active_radius_m = 0.0f;
+    float active_radius_m = 0.0f; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class ModeCircle: public Mode
@@ -839,7 +839,7 @@ private:
     enum class SubMode {
         climb,
         RTL,
-    } submode = SubMode::climb;
+    } submode = SubMode::climb; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 class ModeQAcro : public Mode

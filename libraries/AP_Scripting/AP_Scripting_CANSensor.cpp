@@ -30,7 +30,7 @@ bool ScriptingCANSensor::write_frame(AP_HAL::CANFrame &out_frame, const uint32_t
 void ScriptingCANSensor::handle_frame(AP_HAL::CANFrame &frame)
 {
     WITH_SEMAPHORE(sem);
-    if (buffer_list != nullptr) {
+    if (buffer_list) {
         buffer_list->handle_frame(frame);
     }
 }
@@ -82,7 +82,7 @@ void ScriptingCANBuffer::handle_frame(AP_HAL::CANFrame &frame)
     }
 
     // filtering is not applied to other buffers
-    if (next != nullptr) {
+    if (next) {
         next->handle_frame(frame);
     }
 }

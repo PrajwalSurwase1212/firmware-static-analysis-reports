@@ -121,7 +121,7 @@ void AP_Tuning::check_selector_switch(void)
 void AP_Tuning::re_center(void)
 {
     AP_Float *f = get_param_pointer(current_parm);
-    if (f != nullptr) {
+    if (f) {
         center_value = f->get();
         old_value = 0.0;
     }

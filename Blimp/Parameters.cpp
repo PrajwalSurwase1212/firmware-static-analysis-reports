@@ -27,7 +27,7 @@ const AP_Param::Info Blimp::var_info[] = {
     // @DisplayName: Eeprom format version number
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
-    GSCALAR(format_version, "FORMAT_VERSION",   0),
+    GSCALAR(format_version, "FORMAT_VERSION",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // SYSID_THISMAV was here
 
@@ -40,14 +40,14 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Units: Hz
     // @Range: 0 10
     // @Increment: 0.5
-    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0),
+    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_THR_BHV
     // @DisplayName: Throttle stick behavior
     // @Description: Bitmask containing various throttle stick options. TX with sprung throttle can set PILOT_THR_BHV to "1" so motor feedback when landed starts from mid-stick instead of bottom of stick.
     // @User: Standard
     // @Bitmask: 0:Feedback from mid stick,1:High throttle cancels landing,2:Disarm on land detection
-    GSCALAR(throttle_behavior, "PILOT_THR_BHV", 0),
+    GSCALAR(throttle_behavior, "PILOT_THR_BHV", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // SerialManager was here
 
@@ -56,28 +56,28 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for
     // @User: Advanced
     // @Bitmask: 0:VELX,1:VELY,2:VELZ,3:VELYAW,4:POSX,5:POSY,6:POZ,7:POSYAW
-    GSCALAR(gcs_pid_mask, "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask, "GCS_PID_MASK",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_GCS_ENABLE
     // @DisplayName: Ground Station Failsafe Enable
     // @Description: Controls whether failsafe will be invoked (and what action to take) when connection with Ground station is lost for at least 5 seconds. See FS_OPTIONS param for additional actions, or for cases allowing Mission continuation, when GCS failsafe is enabled.
     // @Values: 0:Disabled/NoAction,5:Land
     // @User: Standard
-    GSCALAR(failsafe_gcs, "FS_GCS_ENABLE", FS_GCS_DISABLED),
+    GSCALAR(failsafe_gcs, "FS_GCS_ENABLE", FS_GCS_DISABLED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: GPS_HDOP_GOOD
     // @DisplayName: GPS Hdop Good
     // @Description: GPS Hdop value at or below this value represent a good position.  Used for pre-arm checks
     // @Range: 100 900
     // @User: Advanced
-    GSCALAR(gps_hdop_good, "GPS_HDOP_GOOD", GPS_HDOP_GOOD_DEFAULT),
+    GSCALAR(gps_hdop_good, "GPS_HDOP_GOOD", GPS_HDOP_GOOD_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_ENABLE
     // @DisplayName: Throttle Failsafe Enable
     // @Description: The throttle failsafe allows you to configure a software failsafe activated by a setting on the throttle input channel
     // @Values:  0:Disabled,3:Enabled always Land
     // @User: Standard
-    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   FS_THR_ENABLED_ALWAYS_RTL),
+    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   FS_THR_ENABLED_ALWAYS_RTL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_VALUE
     // @DisplayName: Throttle Failsafe Value
@@ -86,7 +86,7 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Units: PWM
     // @Increment: 1
     // @User: Standard
-    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",      FS_THR_VALUE_DEFAULT),
+    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",      FS_THR_VALUE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_DZ
     // @DisplayName: Throttle deadzone
@@ -95,65 +95,65 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Range: 0 300
     // @Units: PWM
     // @Increment: 1
-    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT),
+    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE1
     // @DisplayName: Flight Mode 1
     // @Description: Flight mode when Channel 5 pwm is <= 1230
     // @Values: 0:LAND,1:MANUAL,2:VELOCITY,3:LOITER
     // @User: Standard
-    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1),
+    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE2
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 2
     // @Description: Flight mode when Channel 5 pwm is >1230, <= 1360
-    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2),
+    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE3
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 3
     // @Description: Flight mode when Channel 5 pwm is >1360, <= 1490
-    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3),
+    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE4
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 4
     // @Description: Flight mode when Channel 5 pwm is >1490, <= 1620
-    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4),
+    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE5
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 5
     // @Description: Flight mode when Channel 5 pwm is >1620, <= 1749
-    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5),
+    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE6
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 6
     // @Description: Flight mode when Channel 5 pwm is >=1750
-    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6),
+    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE_CH
     // @DisplayName: Flightmode channel
     // @Description: RC Channel to use for flight mode control
     // @Values: 0:Disabled,5:Channel5,6:Channel6,7:Channel7,8:Channel8
     // @User: Advanced
-    GSCALAR(flight_mode_chan, "FLTMODE_CH",         CH_MODE_DEFAULT),
+    GSCALAR(flight_mode_chan, "FLTMODE_CH",         CH_MODE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: INITIAL_MODE
     // @DisplayName: Initial flight mode
     // @Description: This selects the mode to start in on boot.
     // @CopyValuesFrom: FLTMODE1
     // @User: Advanced
-    GSCALAR(initial_mode,        "INITIAL_MODE",     (uint8_t)Mode::Number::MANUAL),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     (uint8_t)Mode::Number::MANUAL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
     // @Description: Bitmap of what log types to enable in on-board logger. This value is made up of the sum of each of the log types you want to be saved. On boards supporting microSD cards or other large block-storage devices it is usually best just to enable all basic log types by setting this to 65535.
     // @Bitmask: 0:Fast Attitude,1:Medium Attitude,2:GPS,3:System Performance,4:Control Tuning,6:RC Input,7:IMU,9:Battery Monitor,10:RC Output,12:PID,13:Compass
     // @User: Standard
-    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK), // coverity[PW.NARROWING_CONVERSION]
 
     // @Group: ARMING_
     // @Path: ../libraries/AP_Arming/AP_Arming.cpp
@@ -165,84 +165,84 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Units: s
     // @Range: 0 127
     // @User: Advanced
-    GSCALAR(disarm_delay, "DISARM_DELAY",           AUTO_DISARMING_DELAY),
+    GSCALAR(disarm_delay, "DISARM_DELAY",           AUTO_DISARMING_DELAY), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_ACTION
     // @DisplayName: EKF Failsafe Action
     // @Description: Controls the action that will be taken when an EKF failsafe is invoked
     // @Values: 1:Land, 3:Land even in MANUAL
     // @User: Advanced
-    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT),
+    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass and velocity variance
     // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed
     // @User: Advanced
-    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT),
+    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_CRASH_CHECK
     // @DisplayName: Crash check enable
     // @Description: This enables automatic crash checking. When enabled the motors will disarm if a crash is detected.
     // @Values: 0:Disabled, 1:Enabled
     // @User: Advanced
-    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    1),
+    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAX_VEL_XY
     // @DisplayName: Max XY Velocity
     // @Description: Sets the maximum XY velocity, in m/s
     // @Range: 0.2 5
     // @User: Standard
-    GSCALAR(max_vel_xy, "MAX_VEL_XY", 0.5),
+    GSCALAR(max_vel_xy, "MAX_VEL_XY", 0.5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAX_VEL_Z
     // @DisplayName: Max Z Velocity
     // @Description: Sets the maximum Z velocity, in m/s
     // @Range: 0.2 5
     // @User: Standard
-    GSCALAR(max_vel_z, "MAX_VEL_Z", 0.4),
+    GSCALAR(max_vel_z, "MAX_VEL_Z", 0.4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAX_VEL_YAW
     // @DisplayName: Max yaw Velocity
     // @Description: Sets the maximum yaw velocity, in rad/s
     // @Range: 0.2 5
     // @User: Standard
-    GSCALAR(max_vel_yaw, "MAX_VEL_YAW", 0.5),
+    GSCALAR(max_vel_yaw, "MAX_VEL_YAW", 0.5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAX_POS_XY
     // @DisplayName: Max XY Position change
     // @Description: Sets the maximum XY position change, in m/s
     // @Range: 0.1 5
     // @User: Standard
-    GSCALAR(max_pos_xy, "MAX_POS_XY", 0.2),
+    GSCALAR(max_pos_xy, "MAX_POS_XY", 0.2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAX_POS_Z
     // @DisplayName: Max Z Position change
     // @Description: Sets the maximum Z position change, in m/s
     // @Range: 0.1 5
     // @User: Standard
-    GSCALAR(max_pos_z, "MAX_POS_Z", 0.15),
+    GSCALAR(max_pos_z, "MAX_POS_Z", 0.15), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAX_POS_YAW
     // @DisplayName: Max Yaw Position change
     // @Description: Sets the maximum Yaw position change, in rad/s
     // @Range: 0.1 5
     // @User: Standard
-    GSCALAR(max_pos_yaw, "MAX_POS_YAW", 0.3),
+    GSCALAR(max_pos_yaw, "MAX_POS_YAW", 0.3), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SIMPLE_MODE
     // @DisplayName: Simple mode
     // @Description: Simple mode for Position control - "forward" moves blimp in +ve X direction world-frame
     // @Values: 0:Disabled, 1:Enabled
     // @User: Standard
-    GSCALAR(simple_mode, "SIMPLE_MODE", 0),
+    GSCALAR(simple_mode, "SIMPLE_MODE", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: DIS_MASK
     // @DisplayName: Disable output mask
     // @Description: Mask for disabling (setting to zero) one or more of the 4 output axis in mode Velocity or Loiter
     // @Bitmask: 0:Right,1:Front,2:Down,3:Yaw
     // @User: Standard
-    GSCALAR(dis_mask, "DIS_MASK", 0),
+    GSCALAR(dis_mask, "DIS_MASK", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PID_DZ
     // @DisplayName: Deadzone for the position PIDs
@@ -250,7 +250,7 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Units: m
     // @Range: 0.1 1
     // @User: Standard
-    GSCALAR(pid_dz, "PID_DZ", 0),
+    GSCALAR(pid_dz, "PID_DZ", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: RC_SPEED
     // @DisplayName: ESC Update Speed
@@ -259,7 +259,7 @@ const AP_Param::Info Blimp::var_info[] = {
     // @Range: 50 490
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(rc_speed, "RC_SPEED",              RC_FAST_SPEED),
+    GSCALAR(rc_speed, "RC_SPEED",              RC_FAST_SPEED), // coverity[PW.NARROWING_CONVERSION]
 
     // variables not in the g class which contain EEPROM saved variables
 

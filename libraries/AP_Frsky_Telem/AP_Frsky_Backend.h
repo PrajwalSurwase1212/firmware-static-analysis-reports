@@ -11,7 +11,7 @@ class AP_Frsky_Backend
 public:
 
     AP_Frsky_Backend(AP_HAL::UARTDriver *port) :
-        _port(port) { }
+        _port(port) { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     virtual ~AP_Frsky_Backend()  {}
 

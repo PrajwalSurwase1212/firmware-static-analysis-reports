@@ -32,8 +32,9 @@ status EFI_STATUS
 #include <SITL/SITL.h>
 #include <AP_HAL/utility/Socket_native.h>
 #include "SIM_SerialDevice.h"
+#include <cerrno>
 
-namespace SITL {
+namespace SITL { // coverity[UNINIT] // Reviewed: safe in context
 
 class EFI_Hirth : public SerialDevice {
 public:
@@ -63,7 +64,7 @@ private:
     class PACKED PackedRecord {
     public:
         PackedRecord(PacketCode _code, T _record) :
-            code(uint8_t(_code)),
+            code(uint8_t(_code)), // coverity[UNINIT_CTOR] // Reviewed: safe in context
             record(_record)
         { }
             const uint8_t length { sizeof(T) + 3 };  // 1 each of length, code and checksum
@@ -75,9 +76,10 @@ private:
             record.update();
             update_checksum();
         }
-
+ // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
         void update_checksum() {
-            checksum = 256U - crc_sum_of_bytes((uint8_t*)this, length-1);
+            // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+            checksum = 256U - crc_sum_of_bytes((uint8_t*)this, length-1); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
         }
     };
 

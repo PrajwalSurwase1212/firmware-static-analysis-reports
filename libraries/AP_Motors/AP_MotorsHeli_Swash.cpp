@@ -93,7 +93,7 @@ AP_MotorsHeli_Swash::AP_MotorsHeli_Swash(uint8_t mot_0, uint8_t mot_1, uint8_t m
     _instance(instance)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // configure - configure the swashplate settings for any updated parameters
 void AP_MotorsHeli_Swash::configure()

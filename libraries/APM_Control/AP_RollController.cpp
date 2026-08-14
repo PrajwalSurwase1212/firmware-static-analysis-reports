@@ -161,7 +161,7 @@ AP_RollController::AP_RollController(const AP_FixedWing &parms)
     AP_AutoTune::ATType::AUTOTUNE_ROLL)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 float AP_RollController::get_measured_rate() const
 {

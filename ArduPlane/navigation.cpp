@@ -112,7 +112,7 @@ void Plane::navigate()
 }
 
 // method intended for use in calc_airspeed_errors only
-float Plane::mode_auto_target_airspeed_cm()
+float Plane::mode_auto_target_airspeed_cm() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
 #if HAL_QUADPLANE_ENABLED
     if (quadplane.landing_with_fixed_wing_spiral_approach() &&
@@ -123,7 +123,7 @@ float Plane::mode_auto_target_airspeed_cm()
             return land_airspeed * 100;
         }
         // fallover to normal airspeed
-        return aparm.airspeed_cruise*100;
+        return aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     if (quadplane.in_vtol_land_approach()) {
         return quadplane.get_land_airspeed_ms() * 100;
@@ -137,10 +137,10 @@ float Plane::mode_auto_target_airspeed_cm()
     }
 
     // fallover to normal airspeed
-    return aparm.airspeed_cruise*100;
+    return aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
-void Plane::calc_airspeed_errors()
+void Plane::calc_airspeed_errors() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Get the airspeed_estimate, update smoothed airspeed estimate
     // NOTE:  we use the airspeed estimate function not direct sensor
@@ -160,7 +160,7 @@ void Plane::calc_airspeed_errors()
     // FBW_B/cruise airspeed target
     if (!failsafe.rc_failsafe && (control_mode == &mode_fbwb || control_mode == &mode_cruise)) {
         if (flight_option_enabled(FlightOptions::CRUISE_TRIM_AIRSPEED)) {
-            target_airspeed_cm = aparm.airspeed_cruise*100;
+            target_airspeed_cm = aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         } else if (flight_option_enabled(FlightOptions::CRUISE_TRIM_THROTTLE)) {
             float control_min = 0.0f;
             float control_mid = 0.0f;
@@ -175,11 +175,11 @@ void Plane::calc_airspeed_errors()
                     break;
             }
             if (control_in <= control_mid) {
-                target_airspeed_cm = linear_interpolate(aparm.airspeed_min * 100, aparm.airspeed_cruise*100,
+                target_airspeed_cm = linear_interpolate(aparm.airspeed_min * 100, aparm.airspeed_cruise*100, // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                                                         control_in,
                                                         control_min, control_mid);
             } else {
-                target_airspeed_cm = linear_interpolate(aparm.airspeed_cruise*100, aparm.airspeed_max * 100,
+                target_airspeed_cm = linear_interpolate(aparm.airspeed_cruise*100, aparm.airspeed_max * 100, // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                                                         control_in,
                                                         control_mid, control_max);
             }
@@ -213,7 +213,7 @@ void Plane::calc_airspeed_errors()
             if (arspd > 0) {
                 target_airspeed_cm = arspd * 100;
             } else {
-                target_airspeed_cm = aparm.airspeed_cruise*100;
+                target_airspeed_cm = aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
         } else if (control_mode == &mode_auto) {
             float arspd = g2.soaring_controller.get_cruising_target_airspeed();
@@ -221,7 +221,7 @@ void Plane::calc_airspeed_errors()
             if (arspd > 0) {
                 target_airspeed_cm = arspd * 100;
             } else {
-                target_airspeed_cm = aparm.airspeed_cruise*100;
+                target_airspeed_cm = aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
         }
 #endif
@@ -239,7 +239,7 @@ void Plane::calc_airspeed_errors()
 #endif
     } else {
         // Normal airspeed target for all other cases
-        target_airspeed_cm = aparm.airspeed_cruise*100;
+        target_airspeed_cm = aparm.airspeed_cruise*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 
     // Set target to current airspeed + ground speed undershoot,
@@ -287,7 +287,7 @@ void Plane::calc_airspeed_errors()
 
     // coverity[RW.ROUTINE_NOT_EMITTED]
     // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
-    float airspeed_lower_bound = is_positive(aparm.airspeed_stall)
+    float airspeed_lower_bound = is_positive(aparm.airspeed_stall) // coverity[RW.INCOMPATIBLE_OPERANDS]
                                      // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                                      ? aparm.airspeed_stall
                                      : aparm.airspeed_min;
@@ -297,7 +297,7 @@ void Plane::calc_airspeed_errors()
 
     // use the TECS view of the target airspeed for reporting, to take
     // account of the landing speed
-    airspeed_error = TECS_controller.get_target_airspeed() - airspeed_measured;
+    airspeed_error = TECS_controller.get_target_airspeed() - airspeed_measured; // coverity[RW.ROUTINE_NOT_EMITTED]
 }
 
 void Plane::calc_gndspeed_undershoot()
@@ -308,8 +308,8 @@ void Plane::calc_gndspeed_undershoot()
     if (ahrs.have_inertial_nav() && ahrs.get_velocity_NED(velNED)) {
         const Matrix3f &rotMat = ahrs.get_rotation_body_to_ned();
         Vector2f yawVect = Vector2f(rotMat.a.x,rotMat.b.x);
-        if (!yawVect.is_zero()) {
-            yawVect.normalize();
+        if (!yawVect.is_zero()) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+            yawVect.normalize(); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             float gndSpdFwd = yawVect * velNED.xy();
             groundspeed_undershoot_is_valid = aparm.min_groundspeed > 0;
             groundspeed_undershoot = groundspeed_undershoot_is_valid ? (aparm.min_groundspeed*100 - gndSpdFwd*100) : 0;

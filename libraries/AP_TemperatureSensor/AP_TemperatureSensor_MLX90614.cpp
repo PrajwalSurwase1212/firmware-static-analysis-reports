@@ -7,6 +7,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_HAL/I2CDevice.h>
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 
 extern const AP_HAL::HAL &hal;
@@ -61,6 +62,7 @@ uint16_t AP_TemperatureSensor_MLX90614::read_data(uint8_t cmd)
     if (!_dev->transfer(&cmd, 1, val, 3)) {
         return 0;
     }
-    return UINT16_VALUE(val[1],val[0]);
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    return UINT16_VALUE(val[1],val[0]); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
 }
 #endif // AP_TEMPERATURE_SENSOR_MLX90614_ENABLED

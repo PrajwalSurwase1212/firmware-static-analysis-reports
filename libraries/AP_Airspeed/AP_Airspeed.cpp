@@ -202,11 +202,11 @@ AP_Airspeed::AP_Airspeed()
     param[0].pin.set_default(ARSPD_DEFAULT_PIN);
 #endif
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_Airspeed must be singleton");
     }
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Airspeed::set_fixedwing_parameters(const AP_FixedWing *_fixed_wing_parameters)
 {
@@ -564,7 +564,7 @@ void AP_Airspeed::update_calibration(uint8_t i, float raw_pressure)
         } else {
             float calibrated_offset = state[i].cal.sum / state[i].cal.count;
             // check if new offset differs too greatly from last calibration, indicating pitot uncovered in wind
-            if (fixed_wing_parameters != nullptr) {
+            if (fixed_wing_parameters) {
                 float airspeed_min = fixed_wing_parameters->airspeed_min.get();
                 // use percentage of AIRSPEED_MIN as criteria for max allowed change in offset
                 float max_change = 0.5*(sq((1 + (max_speed_pcnt * 0.01))*airspeed_min) - sq(airspeed_min));

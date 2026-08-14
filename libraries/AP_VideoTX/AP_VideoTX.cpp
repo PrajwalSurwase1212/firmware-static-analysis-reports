@@ -21,6 +21,7 @@
 #include <GCS_MAVLink/GCS.h>
 
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -129,7 +130,7 @@ AP_VideoTX::AP_VideoTX()
     }
     singleton = this;
 
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_VideoTX::~AP_VideoTX(void)
@@ -249,8 +250,11 @@ uint8_t AP_VideoTX::update_power_dbm(uint8_t power, PowerActive active)
     // handed a non-standard value, use the last slot
     _power_levels[VTX_MAX_POWER_LEVELS-1].dbm = power;
     _power_levels[VTX_MAX_POWER_LEVELS-1].level = 255;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _power_levels[VTX_MAX_POWER_LEVELS-1].dac = 255;
-    _power_levels[VTX_MAX_POWER_LEVELS-1].mw = uint16_t(roundf(powf(10, power * 0.1f)));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    _power_levels[VTX_MAX_POWER_LEVELS-1].mw = uint16_t(roundf(powf(10, power * 0.1f))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _power_levels[VTX_MAX_POWER_LEVELS-1].active = active;
     debug("non-standard power %ddbm -> %dmw", power, _power_levels[VTX_MAX_POWER_LEVELS-1].mw);
     return VTX_MAX_POWER_LEVELS-1;

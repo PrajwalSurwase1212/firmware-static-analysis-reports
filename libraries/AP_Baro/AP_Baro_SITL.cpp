@@ -23,8 +23,8 @@ AP_Baro_SITL::AP_Baro_SITL(AP_Baro &baro) :
     _last_altitude(0.0f),
     last_drift_delta_t_ms(0),
     total_alt_drift(0.0f)
-{
-    if (_sitl != nullptr) {
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
+    if (_sitl) {
         _instance = _frontend.register_sensor();
 #if APM_BUILD_TYPE(APM_BUILD_ArduSub)
         _frontend.set_type(_instance, AP_Baro::BARO_TYPE_WATER);
@@ -49,7 +49,7 @@ void AP_Baro_SITL::temperature_adjustment(float &p, float &T)
     }
 
     const float baro_factor = AP::sitl()->temp_baro_factor;
-    const float Tzero = 30.0f;  // start baro adjustment at 30C
+    const float Tzero = 30.0f;  // start baro adjustment at 30C // coverity[RW.ROUTINE_NOT_EMITTED]
     if (is_positive(baro_factor)) {
         // this produces a pressure change with temperature that
         // closely matches what has been observed with a ICM-20789
@@ -68,7 +68,7 @@ void AP_Baro_SITL::_timer()
     }
     _last_sample_time = now;
 
-    float sim_alt = _sitl->state.altitude;
+    float sim_alt = _sitl->state.altitude; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     if (_sitl->baro[_instance].disable) {
         // barometer is disabled

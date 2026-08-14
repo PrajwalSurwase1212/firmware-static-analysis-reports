@@ -82,7 +82,7 @@ bool AP_Filesystem_Backend::file_op_allowed(void) const
  */
 FileData::~FileData()
 {
-    if (backend != nullptr) {
+    if (backend) {
         ((AP_Filesystem_Backend *)backend)->unload_file(this);
     }
 }

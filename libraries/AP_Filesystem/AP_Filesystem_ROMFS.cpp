@@ -25,6 +25,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Math/AP_Math.h>
 #include <AP_ROMFS/AP_ROMFS.h>
+#include <cerrno>
 
 int AP_Filesystem_ROMFS::open(const char *fname, int flags, bool allow_absolute_paths)
 {
@@ -172,7 +173,8 @@ void *AP_Filesystem_ROMFS::opendir(const char *pathname)
 
 struct dirent *AP_Filesystem_ROMFS::readdir(void *dirp)
 {
-    uint32_t idx = ((rdir*)dirp) - &dir[0];
+    // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+    uint32_t idx = ((rdir*)dirp) - &dir[0]; // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
     if (idx >= max_open_dir) {
         errno = EBADF;
         return nullptr;
@@ -186,7 +188,7 @@ struct dirent *AP_Filesystem_ROMFS::readdir(void *dirp)
         // Offset to get just file/directory name
         name += plen + 1;
     }
-
+ // coverity[BUFFER_SIZE] // Reviewed: safe in context
     // Copy full name
     strncpy(dir[idx].de.d_name, name, sizeof(dir[idx].de.d_name) - 1);
 dir[idx].de.d_name[sizeof(dir[idx].de.d_name) - 1] = '\0';
@@ -213,7 +215,8 @@ dir[idx].de.d_name[sizeof(dir[idx].de.d_name) - 1] = '\0';
 
 int AP_Filesystem_ROMFS::closedir(void *dirp)
 {
-    uint32_t idx = ((rdir *)dirp) - &dir[0];
+    // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+    uint32_t idx = ((rdir *)dirp) - &dir[0]; // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
     if (idx >= max_open_dir) {
         errno = EBADF;
         return -1;

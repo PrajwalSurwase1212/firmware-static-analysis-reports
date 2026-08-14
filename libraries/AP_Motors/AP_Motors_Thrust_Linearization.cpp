@@ -95,20 +95,20 @@ Thrust_Linearization::Thrust_Linearization(AP_Motors& _motors) :
 #if APM_BUILD_TYPE(APM_BUILD_Heli)
     AP_Param::setup_object_defaults(this, var_info);
 #endif
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // converts desired thrust to linearized actuator output in a range of 0~1
-float Thrust_Linearization::thrust_to_actuator(float thrust_in) const
+float Thrust_Linearization::thrust_to_actuator(float thrust_in) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     thrust_in = constrain_float(thrust_in, 0.0, 1.0);
-    return spin_min + (spin_max - spin_min) * apply_thrust_curve_and_volt_scaling(thrust_in);
+    return spin_min + (spin_max - spin_min) * apply_thrust_curve_and_volt_scaling(thrust_in); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
 // inverse of above, tested with AP_Motors/examples/expo_inverse_test
 // used to calculate equivelent motor throttle level to direct ouput, used in tailsitter transtions
-float Thrust_Linearization::actuator_to_thrust(float actuator) const
+float Thrust_Linearization::actuator_to_thrust(float actuator) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    actuator = (actuator - spin_min) /  (spin_max - spin_min);
+    actuator = (actuator - spin_min) /  (spin_max - spin_min); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     return constrain_float(remove_thrust_curve_and_volt_scaling(actuator), 0.0, 1.0);
 }
 
@@ -150,20 +150,20 @@ float Thrust_Linearization::remove_thrust_curve_and_volt_scaling(float throttle)
 }
 
 // update_lift_max from battery voltage - used for voltage compensation
-void Thrust_Linearization::update_lift_max_from_batt_voltage()
+void Thrust_Linearization::update_lift_max_from_batt_voltage() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
 #if AP_BATTERY_ENABLED
     // sanity check battery_voltage_min is not too small
     // if disabled or misconfigured exit immediately
     float _batt_voltage = motors.has_option(AP_Motors::MotorOptions::BATT_RAW_VOLTAGE) ? AP::battery().voltage(batt_idx) : AP::battery().voltage_resting_estimate(batt_idx);
 
-    if ((batt_voltage_max <= 0) || (batt_voltage_min >= batt_voltage_max) || (_batt_voltage < 0.25 * batt_voltage_min)) {
+    if ((batt_voltage_max <= 0) || (batt_voltage_min >= batt_voltage_max) || (_batt_voltage < 0.25 * batt_voltage_min)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         batt_voltage_filt.reset(1.0);
         lift_max = 1.0;
         return;
     }
 
-    batt_voltage_min.set(MAX(batt_voltage_min, batt_voltage_max * 0.6));
+    batt_voltage_min.set(MAX(batt_voltage_min, batt_voltage_max * 0.6)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // constrain resting voltage estimate (resting voltage is actual voltage with sag removed based on current draw and resistance)
     _batt_voltage = constrain_float(_batt_voltage, batt_voltage_min, batt_voltage_max);

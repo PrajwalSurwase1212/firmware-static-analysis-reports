@@ -14,13 +14,13 @@
   Do we think we are flying?
   Probabilistic method where a bool is low-passed and considered a probability.
 */
-void Plane::update_is_flying_5Hz(void)
+void Plane::update_is_flying_5Hz(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float aspeed=0;
     bool is_flying_bool = false;
     uint32_t now_ms = AP_HAL::millis();
 
-    uint32_t ground_speed_thresh_cm = (aparm.min_groundspeed > 0) ? ((uint32_t)(aparm.min_groundspeed*(100*0.9))) : GPS_IS_FLYING_SPEED_CMS;
+    uint32_t ground_speed_thresh_cm = (aparm.min_groundspeed > 0) ? ((uint32_t)(aparm.min_groundspeed*(100*0.9))) : GPS_IS_FLYING_SPEED_CMS; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     bool gps_confirmed_movement = (gps.status() >= AP_GPS::GPS_OK_FIX_3D) &&
                                     (gps.ground_speed_cm() >= ground_speed_thresh_cm);
 
@@ -207,7 +207,7 @@ bool Plane::is_flying(void)
 /*
  * Determine if we have crashed
  */
-void Plane::crash_detection_update(void)
+void Plane::crash_detection_update(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (control_mode != &mode_auto || !aparm.crash_detection_enable)
     {
@@ -261,7 +261,7 @@ void Plane::crash_detection_update(void)
             switch (flight_stage)
             {
             case AP_FixedWing::FlightStage::TAKEOFF:
-                if (g2.takeoff_throttle_accel_count == 1 && g.takeoff_throttle_min_accel > 0 &&
+                if (g2.takeoff_throttle_accel_count == 1 && g.takeoff_throttle_min_accel > 0 && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                     !throttle_suppressed) {
                     // if launching requires a single acceleration event and it
                     // has already happened but the aircraft is still not

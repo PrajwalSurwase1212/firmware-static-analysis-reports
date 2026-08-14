@@ -259,7 +259,7 @@ AP_BattMonitor::Failsafe AP_BattMonitor_Generator_Elec::update_failsafes()
 
     // Only check for failsafes on the electrical monitor
     // no point in having the same failsafe on two battery monitors
-    if (generator != nullptr) {
+    if (generator) {
         failsafe = generator->update_failsafes();
     }
     return MAX(AP_BattMonitor_Backend::update_failsafes(), failsafe);

@@ -183,9 +183,9 @@ AP_YawController::AP_YawController(const AP_FixedWing &parms)
     _pid_info.FF = 0;
     _pid_info.P = 0;
     rate_pid.set_slew_limit_scale(45);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
-int32_t AP_YawController::get_servo_out(float scaler, bool disable_integrator)
+int32_t AP_YawController::get_servo_out(float scaler, bool disable_integrator) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     uint32_t tnow = AP_HAL::millis();
     uint32_t dt = tnow - _last_t;
@@ -241,12 +241,12 @@ int32_t AP_YawController::get_servo_out(float scaler, bool disable_integrator)
     _last_rate_hp_in = rate_hp_in;
 
     //Calculate input to integrator
-    float integ_in = - _K_I * (_K_A * accel_y + rate_hp_out);
+    float integ_in = - _K_I * (_K_A * accel_y + rate_hp_out); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // Apply integrator, but clamp input to prevent control saturation and freeze integrator below min FBW speed
     // Don't integrate if in stabilise mode as the integrator will wind up against the pilots inputs
     // Don't integrate if _K_D is zero as integrator will keep winding up
-    if (!disable_integrator && _K_D > 0) {
+    if (!disable_integrator && _K_D > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         //only integrate if airspeed above min value
         if (aspeed > float(aspd_min)) {
             // prevent the integrator from increasing if surface defln demand is above the upper limit
@@ -276,7 +276,7 @@ int32_t AP_YawController::get_servo_out(float scaler, bool disable_integrator)
 
     // Protect against increases to _K_D during in-flight tuning from creating large control transients
     // due to stored integrator values
-    if (_K_D > _K_D_last && _K_D > 0) {
+    if (_K_D > _K_D_last && _K_D > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         _integrator = _K_D_last/_K_D * _integrator;
     }
     _K_D_last = _K_D;
@@ -400,7 +400,7 @@ void AP_YawController::autotune_start(void)
             failed_autotune_alloc = true;
         }
     }
-    if (autotune != nullptr) {
+    if (autotune) {
         autotune->start();
     }
 }
@@ -410,7 +410,7 @@ void AP_YawController::autotune_start(void)
  */
 void AP_YawController::autotune_restore(void)
 {
-    if (autotune != nullptr) {
+    if (autotune) {
         autotune->stop();
     }
 }

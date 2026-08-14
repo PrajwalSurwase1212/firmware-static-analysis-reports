@@ -1,7 +1,7 @@
 #include "mode.h"
 #include "Plane.h"
 
-void ModeTraining::update()
+void ModeTraining::update() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     plane.training_manual_roll = false;
     plane.training_manual_pitch = false;
@@ -20,8 +20,8 @@ void ModeTraining::update()
 
     // if the pitch is past the set pitch limits, then
     // we set target pitch to the limit
-    if (ahrs.pitch_sensor >= plane.aparm.pitch_limit_max*100) {
-        plane.nav_pitch_cd = plane.aparm.pitch_limit_max*100;
+    if (ahrs.pitch_sensor >= plane.aparm.pitch_limit_max*100) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        plane.nav_pitch_cd = plane.aparm.pitch_limit_max*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else if (ahrs.pitch_sensor <= plane.pitch_limit_min*100) {
         plane.nav_pitch_cd = plane.pitch_limit_min*100;
     } else {

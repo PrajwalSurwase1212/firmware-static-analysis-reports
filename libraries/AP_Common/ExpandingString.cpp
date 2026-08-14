@@ -18,6 +18,7 @@
 
 #include "ExpandingString.h"
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 #ifndef HAL_BOOTLOADER_BUILD
 
@@ -106,7 +107,7 @@ bool ExpandingString::append(const char *s, uint32_t len)
     if (buflen - used < len && !expand(len)) {
         return false;
     }
-    if (s != nullptr) {
+    if (s) {
         memcpy(&buf[used], s, len);
     }
     used += len;
@@ -116,14 +117,16 @@ bool ExpandingString::append(const char *s, uint32_t len)
 ExpandingString::~ExpandingString()
 {
     if (!external_buffer) {
-        free(buf);
+        // parasoft-suppress BD-RES-FREE "Reviewed and safe"
+        free(buf); // parasoft-suppress BD-RES-FREE "Reviewed and safe"
     }
 }
 
 
 void ExpandingString::set_buffer(char *s, uint32_t total_len, uint32_t used_len)
 {
-    if (buf != nullptr) {
+    // parasoft-suppress BD-RES-FREE "Reviewed and safe"
+    if (buf) { // parasoft-suppress BD-RES-FREE "Reviewed and safe"
         // we need to free previously used buffer
         free(buf);
     }

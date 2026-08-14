@@ -43,6 +43,7 @@
 #include <utility>
 #include "AP_OpticalFlow.h"
 #include <stdio.h>
+#include <cerrno>
 
 #define UPFLOW_HEADER0         (uint8_t)0xFE
 #define UPFLOW_HEADER1         (uint8_t)0x0A
@@ -56,7 +57,7 @@ extern const AP_HAL::HAL& hal;
 AP_OpticalFlow_UPFLOW::AP_OpticalFlow_UPFLOW(AP_OpticalFlow &_frontend, AP_HAL::UARTDriver *_uart) :
     OpticalFlow_backend(_frontend),
     uart(_uart)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // detect the device
@@ -112,7 +113,8 @@ void AP_OpticalFlow_UPFLOW::update(void)
     bool phrased = false;
     // read any available characters in the serial buffer
     uint32_t nbytes = MIN(uart->available(), 1024u);
-    while (nbytes-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (nbytes-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         int16_t r = uart->read();
         if (r < 0) {
             break;

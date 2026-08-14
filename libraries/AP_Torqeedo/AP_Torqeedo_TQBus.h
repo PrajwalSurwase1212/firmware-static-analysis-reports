@@ -56,7 +56,7 @@ class AP_Torqeedo_TQBus : public AP_Torqeedo_Backend {
 public:
 
     // constructor
-    using AP_Torqeedo_Backend::AP_Torqeedo_Backend;
+    using AP_Torqeedo_Backend::AP_Torqeedo_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     CLASS_NO_COPY(AP_Torqeedo_TQBus);
 

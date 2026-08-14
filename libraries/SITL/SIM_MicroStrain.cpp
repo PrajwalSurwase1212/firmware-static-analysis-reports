@@ -35,7 +35,7 @@ using namespace SITL;
 
 MicroStrain::MicroStrain() :SerialDevice::SerialDevice()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 void MicroStrain::simulation_timeval(struct timeval *tv)
@@ -73,7 +73,7 @@ void MicroStrain::generate_checksum(MicroStrain_Packet& packet)
     packet.checksum[1] = checksumByte2;
 }
 
-void MicroStrain::send_packet(MicroStrain_Packet &packet)
+void MicroStrain::send_packet(MicroStrain_Packet &packet) // coverity[PASS_BY_VALUE]
 {
     generate_checksum(packet);
 

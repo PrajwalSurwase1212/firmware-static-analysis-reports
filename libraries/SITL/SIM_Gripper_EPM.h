@@ -28,7 +28,7 @@ class Gripper_EPM {
 public:
     Gripper_EPM() {
         AP_Param::setup_object_defaults(this, var_info);
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     float payload_mass() const { return 0.0f; } // kg
 

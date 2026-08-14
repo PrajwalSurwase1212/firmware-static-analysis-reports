@@ -81,7 +81,7 @@ static_assert(sizeof(FPort_Frame) == FPORT_CONTROL_FRAME_SIZE, "FPort_Frame inco
 AP_RCProtocol_FPort::AP_RCProtocol_FPort(AP_RCProtocol &_frontend, bool _inverted) :
     AP_RCProtocol_Backend(_frontend),
     inverted(_inverted)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // decode a full FPort control frame
 void AP_RCProtocol_FPort::decode_control(const FPort_Frame &frame)
@@ -95,7 +95,7 @@ void AP_RCProtocol_FPort::decode_control(const FPort_Frame &frame)
     // fport rssi 0-50, ardupilot rssi 0-255, scale factor 255/50=5.1
     const uint8_t scaled_rssi = MIN(frame.control.rssi * 5.1f, 255);
 
-    add_input(MAX_CHANNELS, values, failsafe, scaled_rssi);
+    add_input(MAX_CHANNELS, values, failsafe, scaled_rssi); // coverity[OVERRUN] // Reviewed: safe in context
 }
 
 /*

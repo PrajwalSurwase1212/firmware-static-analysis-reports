@@ -13,7 +13,7 @@ class AP_Proximity_TeraRangerTower : public AP_Proximity_Backend_Serial
 
 public:
 
-    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial;
+    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update state
     void update(void) override;

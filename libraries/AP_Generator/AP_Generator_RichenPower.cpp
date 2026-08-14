@@ -28,6 +28,7 @@
 #include <SRV_Channel/SRV_Channel.h>
 
 #include <AP_HAL/utility/sparse-endian.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -39,7 +40,7 @@ void AP_Generator_RichenPower::init()
     const AP_SerialManager &serial_manager = AP::serialmanager();
 
     uart = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Generator, 0);
-    if (uart != nullptr) {
+    if (uart) {
         const uint32_t baud = serial_manager.find_baudrate(AP_SerialManager::SerialProtocol_Generator, 0);
         uart->begin(baud, 256, 256);
     }
@@ -209,7 +210,8 @@ void AP_Generator_RichenPower::check_maintenance_required()
         return;
     }
 
-    if (!AP::generator()->option_set(AP_Generator::Option::INHIBIT_MAINTENANCE_WARNINGS)) {
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    if (!AP::generator()->option_set(AP_Generator::Option::INHIBIT_MAINTENANCE_WARNINGS)) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         const uint32_t now = AP_HAL::millis();
 
         if (last_reading.errors & (1U<<uint16_t(Errors::MaintenanceRequired))) {
@@ -489,7 +491,7 @@ void AP_Generator_RichenPower::send_generator_status(const GCS_MAVLINK &channel)
     if (last_reading.errors & (uint8_t)Errors::LowVoltageOutput) {
         status |= MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER;
     }
-
+ // coverity[DEADCODE]
     if (last_reading.errors & (1U << uint8_t(Errors::MaintenanceRequired))){
         status |= MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED;
     }

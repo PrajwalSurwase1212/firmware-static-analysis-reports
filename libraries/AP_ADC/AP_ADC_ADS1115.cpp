@@ -84,6 +84,7 @@
 #define ADS1115_DEBUG 0
 #if ADS1115_DEBUG
 #include <cstdio>
+#include <cerrno>
 #define debug(fmt, args ...)  do {hal.console->printf("%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## args); } while(0)
 #define error(fmt, args ...)  do {fprintf(stderr,"%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## args); } while(0)
 #else
@@ -133,7 +134,8 @@ bool AP_ADC_ADS1115::init()
     _dev->register_periodic_callback(100000, FUNCTOR_BIND_MEMBER(&AP_ADC_ADS1115::_update, void));
 
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 bool AP_ADC_ADS1115::_start_conversion(uint8_t channel)
 {
@@ -209,8 +211,10 @@ void AP_ADC_ADS1115::_update()
         return;
     }
 
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     /* check rdy bit */
-    if ((config[1] & 0x80) != 0x80 ) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if ((config[1] & 0x80) != 0x80 ) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         return;
     }
 

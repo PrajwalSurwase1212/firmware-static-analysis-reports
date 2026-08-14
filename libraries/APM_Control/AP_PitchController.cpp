@@ -245,7 +245,7 @@ float AP_PitchController::_get_coordination_rate_offset(const float &aspeed, boo
 // 4) minimum FBW airspeed (metres/sec)
 // 5) maximum FBW airspeed (metres/sec)
 //
-float AP_PitchController::get_servo_out(int32_t angle_err, float scaler, bool disable_integrator, bool ground_mode)
+float AP_PitchController::get_servo_out(int32_t angle_err, float scaler, bool disable_integrator, bool ground_mode) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Calculate offset to pitch rate demand required to maintain pitch angle whilst banking
     // Calculate ideal turn rate from bank angle and airspeed assuming a level coordinated turn
@@ -294,7 +294,7 @@ float AP_PitchController::get_servo_out(int32_t angle_err, float scaler, bool di
     if (roll_wrapped > 9000) {
         roll_wrapped = 18000 - roll_wrapped;
     }
-    const float roll_limit_margin = MIN(aparm.roll_limit*100 + 500.0, 8500.0);
+    const float roll_limit_margin = MIN(aparm.roll_limit*100 + 500.0, 8500.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (roll_wrapped > roll_limit_margin && labs(_ahrs.pitch_sensor) < 7000) {
         float roll_prop = (roll_wrapped - roll_limit_margin) / (float)(9000 - roll_limit_margin);
         desired_rate *= (1 - roll_prop);

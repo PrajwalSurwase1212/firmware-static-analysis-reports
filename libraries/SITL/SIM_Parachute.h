@@ -29,7 +29,7 @@ class Parachute {
 public:
     Parachute() {
         AP_Param::setup_object_defaults(this, var_info);
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update parachute state
     void update(const struct sitl_input &input);

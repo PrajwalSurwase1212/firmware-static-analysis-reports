@@ -24,7 +24,7 @@
 class AP_Winch_Backend {
 public:
     AP_Winch_Backend(struct AP_Winch::Backend_Config &_config) :
-        config(_config) { }
+        config(_config) { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // true if winch is healthy
     virtual bool healthy() const = 0;

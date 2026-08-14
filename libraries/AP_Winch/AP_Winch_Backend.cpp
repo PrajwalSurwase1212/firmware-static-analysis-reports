@@ -12,7 +12,7 @@ void AP_Winch_Backend::init()
     SRV_Channels::set_angle(SRV_Channel::k_winch,  1000);
 
     RC_Channel *rc_input = rc().find_channel_for_option(RC_Channel::AUX_FUNC::WINCH_CONTROL);
-    if (rc_input != nullptr) {
+    if (rc_input) {
         // rc input deadzone is required or pilot input will always override autonomous control of winch
         rc_input->set_default_dead_zone(30);
     }

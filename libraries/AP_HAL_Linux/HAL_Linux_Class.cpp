@@ -476,7 +476,7 @@ void HAL_Linux::run(int argc, char* const argv[], Callbacks* callbacks) const
 
     // possibly load external modules
 #if AP_MODULE_SUPPORTED
-    if (module_path != nullptr) {
+    if (module_path) {
         AP_Module::init(module_path);
     }
 #endif

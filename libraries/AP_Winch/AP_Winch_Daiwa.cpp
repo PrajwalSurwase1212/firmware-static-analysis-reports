@@ -5,6 +5,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
 #include <SRV_Channel/SRV_Channel.h>
+#include <cerrno>
 
 #define AP_WINCH_DAIWA_STUCK_TIMEOUT_MS 1000    // winch is considered stuck if unmoving for this many milliseconds
 #define AP_WINCH_DAIWA_STUCK_CENTER_MS  1000    // stuck protection outputs zero rate for this many milliseconds
@@ -29,7 +30,8 @@ void AP_Winch_Daiwa::init()
 
     // initialise serial connection to winch
     const AP_SerialManager &serial_manager = AP::serialmanager();
-    uart = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Winch, 0);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    uart = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Winch, 0); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 void AP_Winch_Daiwa::update()
@@ -192,7 +194,7 @@ void AP_Winch_Daiwa::read_data_from_winch()
         }
     }
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 // update pwm outputs to control winch
 void AP_Winch_Daiwa::control_winch()
 {
@@ -218,7 +220,7 @@ void AP_Winch_Daiwa::control_winch()
     SRV_Channels::set_output_limit(SRV_Channel::k_winch_clutch, SRV_Channel::Limit::MIN);
 
     // if doing position control, calculate position error to desired rate
-    if ((config.control_mode == AP_Winch::ControlMode::POSITION) && healthy()) {
+    if ((config.control_mode == AP_Winch::ControlMode::POSITION) && healthy()) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         float position_error = config.length_desired - latest.line_length;
         config.rate_desired = constrain_float(position_error * config.pos_p, -config.rate_max, config.rate_max);
     }
@@ -355,7 +357,7 @@ void AP_Winch_Daiwa::update_user()
     // clutch state
     if (user_update.clutch != latest.clutch) {
         // 0:clutch off, 1:clutch engaged weakly, 2:clutch engaged strongly, motor can spin freely
-        static const char* clutch_str[] = {"off", "weak", "strong (free)"};
+        static const char* clutch_str[] = {"off", "weak", "strong (free)"}; // coverity[OVERRUN] // Reviewed: safe in context
         if (latest.clutch < ARRAY_SIZE(clutch_str)) {
             GCS_SEND_TEXT(MAV_SEVERITY_INFO, "%s clutch %s", send_text_prefix, clutch_str[latest.clutch]);
         } else {

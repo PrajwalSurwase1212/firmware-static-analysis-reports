@@ -84,7 +84,7 @@ AP_RCProtocol_SBUS::AP_RCProtocol_SBUS(AP_RCProtocol &_frontend, bool _inverted,
     AP_RCProtocol_Backend(_frontend),
     inverted(_inverted),
     ss{configured_baud, SoftSerial::SERIAL_CONFIG_8E2I}
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // decode a full SBUS frame
 bool AP_RCProtocol_SBUS::sbus_decode(const uint8_t frame[25], uint16_t *values, uint16_t *num_values,

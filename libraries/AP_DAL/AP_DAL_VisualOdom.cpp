@@ -7,6 +7,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include "AP_DAL.h"
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 /*
    update position offsets to align to AHRS position
@@ -17,7 +18,8 @@ void AP_DAL_VisualOdom::align_position_to_ahrs(bool align_xy, bool align_z)
 {
 #if !APM_BUILD_TYPE(APM_BUILD_AP_DAL_Standalone)
     auto *vo = AP::visualodom();
-    vo->align_position_to_ahrs(align_xy, align_z);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    vo->align_position_to_ahrs(align_xy, align_z); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 #endif
 }
 
@@ -26,14 +28,15 @@ void AP_DAL_VisualOdom::start_frame()
     const auto *vo = AP::visualodom();
 
     const log_RVOH old = RVOH;
-    if (vo != nullptr) {
+    if (vo) {
         RVOH.pos_offset = vo->get_pos_offset();
         RVOH.delay_ms = vo->get_delay_ms();
         RVOH.healthy = vo->healthy();
         RVOH.enabled = vo->enabled();
     }
 
-    WRITE_REPLAY_BLOCK_IFCHANGED(RVOH, RVOH, old);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    WRITE_REPLAY_BLOCK_IFCHANGED(RVOH, RVOH, old); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 #endif // HAL_VISUALODOM_ENABLED

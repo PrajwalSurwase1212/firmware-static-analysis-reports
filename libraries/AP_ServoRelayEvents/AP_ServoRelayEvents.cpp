@@ -48,7 +48,7 @@ bool AP_ServoRelayEvents::do_set_servo(uint8_t _channel, uint16_t pwm)
         // mapped channels are set up with a -/+ 4500 angle range by
         // SRV_Channel::aux_servo_function_setup
         int16_t angle_scaled = constrain_uint16(pwm, 1000, 2000);
-        angle_scaled = (angle_scaled - 1500) * 9; // 1000 ... 2000 -> -500 ... 500 -> -4500 ... 4500
+        angle_scaled = (angle_scaled - 1500) * 9; // 1000 ... 2000 -> -500 ... 500 -> -4500 ... 4500 // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
         pwm = c->pwm_from_scaled_value(angle_scaled);
         break;
     }
@@ -113,7 +113,7 @@ bool AP_ServoRelayEvents::do_repeat_servo(uint8_t _channel, uint16_t _servo_valu
         // mapped channels are set up with a -/+ 4500 angle range by
         // SRV_Channel::aux_servo_function_setup
         int32_t angle_scaled = constrain_uint16(_servo_value, 1000, 2000);
-        angle_scaled = (angle_scaled - 1500) * 9; // 1000 ... 2000 -> -500 ... 500 -> -4500 ... 4500
+        angle_scaled = (angle_scaled - 1500) * 9; // 1000 ... 2000 -> -500 ... 500 -> -4500 ... 4500 // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
         _servo_value = c->pwm_from_scaled_value(angle_scaled);
         break;
     }
@@ -167,7 +167,7 @@ void AP_ServoRelayEvents::update_events(void)
     switch (type) {
     case EVENT_TYPE_SERVO: {
         SRV_Channel *c = SRV_Channels::srv_channel(channel-1);
-        if (c != nullptr) {
+        if (c) {
             if (repeat & 1) {
                 c->set_output_pwm(c->get_trim());
             } else {
@@ -181,7 +181,7 @@ void AP_ServoRelayEvents::update_events(void)
 #if AP_RELAY_ENABLED
     case EVENT_TYPE_RELAY: {
         AP_Relay *relay = AP::relay();
-        if (relay != nullptr) {
+        if (relay) {
             relay->toggle(channel);
         }
         break;

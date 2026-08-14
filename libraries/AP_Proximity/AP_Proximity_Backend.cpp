@@ -74,7 +74,7 @@ bool AP_Proximity_Backend::ignore_reading(float pitch, float yaw, float distance
         // check angle vs each ignore area
         for (uint8_t i=0; i < PROXIMITY_MAX_IGNORE; i++) {
             if (params.ignore_width_deg[i] != 0) {
-                if (abs(yaw - params.ignore_angle_deg[i]) <= (params.ignore_width_deg[i]/2.0f)) {
+                if (abs(yaw - params.ignore_angle_deg[i]) <= (params.ignore_width_deg[i]/2.0f)) { // coverity[UNINTENDED_INTEGER_DIVISION]
                     return true;
                 }
             }

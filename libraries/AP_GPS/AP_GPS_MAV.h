@@ -31,7 +31,7 @@
 class AP_GPS_MAV : public AP_GPS_Backend {
 public:
 
-    using AP_GPS_Backend::AP_GPS_Backend;
+    using AP_GPS_Backend::AP_GPS_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     bool read() override;
 

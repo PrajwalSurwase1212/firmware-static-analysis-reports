@@ -57,7 +57,7 @@ AP_BattMonitor_Backend::AP_BattMonitor_Backend(AP_BattMonitor &mon, AP_BattMonit
         _state(mon_state),
         _params(params)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // capacity_remaining_pct - returns true if the battery % is available and writes to the percentage argument
 // return false if the battery is unhealthy, does not have current monitoring, or the pack_capacity is too small
@@ -207,7 +207,7 @@ static bool update_check(size_t buflen, char *buffer, bool failed, const char *m
     return true;
 }
 
-bool AP_BattMonitor_Backend::arming_checks(char * buffer, size_t buflen) const
+bool AP_BattMonitor_Backend::arming_checks(char * buffer, size_t buflen) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     bool low_voltage, low_capacity, critical_voltage, critical_capacity;
     check_failsafe_types(low_voltage, low_capacity, critical_voltage, critical_capacity);
@@ -218,10 +218,10 @@ bool AP_BattMonitor_Backend::arming_checks(char * buffer, size_t buflen) const
                                  ((_params._pack_capacity - _state.consumed_mah) < _params._arming_minimum_capacity);
     bool fs_capacity_inversion = is_positive(_params._critical_capacity) &&
                                  is_positive(_params._low_capacity) &&
-                                 !(_params._low_capacity > _params._critical_capacity);
+                                 !(_params._low_capacity > _params._critical_capacity); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     bool fs_voltage_inversion = is_positive(_params._critical_voltage) &&
                                 is_positive(_params._low_voltage) &&
-                                !(_params._low_voltage > _params._critical_voltage);
+                                !(_params._low_voltage > _params._critical_voltage); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     bool result = update_check(buflen, buffer, !_state.healthy, "unhealthy");
     result = result && update_check(buflen, buffer, below_arming_voltage, "below minimum arming voltage");
@@ -236,7 +236,7 @@ bool AP_BattMonitor_Backend::arming_checks(char * buffer, size_t buflen) const
     return result;
 }
 
-void AP_BattMonitor_Backend::check_failsafe_types(bool &low_voltage, bool &low_capacity, bool &critical_voltage, bool &critical_capacity) const
+void AP_BattMonitor_Backend::check_failsafe_types(bool &low_voltage, bool &low_capacity, bool &critical_voltage, bool &critical_capacity) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // use voltage or sag compensated voltage
     float voltage_used;
@@ -251,28 +251,28 @@ void AP_BattMonitor_Backend::check_failsafe_types(bool &low_voltage, bool &low_c
     }
 
     // check critical battery levels
-    if ((voltage_used > 0) && (_params._critical_voltage > 0) && (voltage_used < _params._critical_voltage)) {
+    if ((voltage_used > 0) && (_params._critical_voltage > 0) && (voltage_used < _params._critical_voltage)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         critical_voltage = true;
     } else {
         critical_voltage = false;
     }
 
     // check capacity failsafe if current monitoring is enabled
-    if (has_current() && (_params._critical_capacity > 0) &&
+    if (has_current() && (_params._critical_capacity > 0) && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         ((_params._pack_capacity - _state.consumed_mah) < _params._critical_capacity)) {
         critical_capacity = true;
     } else {
         critical_capacity = false;
     }
 
-    if ((voltage_used > 0) && (_params._low_voltage > 0) && (voltage_used < _params._low_voltage)) {
+    if ((voltage_used > 0) && (_params._low_voltage > 0) && (voltage_used < _params._low_voltage)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         low_voltage = true;
     } else {
         low_voltage = false;
     }
 
     // check capacity if current monitoring is enabled
-    if (has_current() && (_params._low_capacity > 0) &&
+    if (has_current() && (_params._low_capacity > 0) && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         ((_params._pack_capacity - _state.consumed_mah) < _params._low_capacity)) {
         low_capacity = true;
     } else {

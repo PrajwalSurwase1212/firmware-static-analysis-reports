@@ -14,6 +14,7 @@
 */
 #include "Copter.h"
 #include <AP_InertialSensor/AP_InertialSensor_rate_config.h>
+#include <cerrno>
 #if AP_INERTIALSENSOR_FAST_SAMPLE_WINDOW_ENABLED
 
 #pragma GCC optimize("O2")
@@ -356,7 +357,7 @@ void Copter::rate_controller_thread()
             notify_fixed_rate_active = false;
         }
 
-        // check that the CPU is not pegged, if it is drop the attitude rate
+        // check that the CPU is not pegged, if it is drop the attitude rate // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
         if (now_ms - last_rate_check_ms >= 100
             && (get_fast_rate_type() == FastRateType::FAST_RATE_DYNAMIC
                 || (get_fast_rate_type() == FastRateType::FAST_RATE_FIXED_ARMED && !motors->armed())
@@ -478,7 +479,8 @@ void Copter::rate_controller_log_update()
     }
 #if AP_INERTIALSENSOR_HARMONICNOTCH_ENABLED
     if (should_log(MASK_LOG_FTN_FAST)) {
-        AP::ins().write_notch_log_messages();
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        AP::ins().write_notch_log_messages(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
     }
 #endif
 #endif

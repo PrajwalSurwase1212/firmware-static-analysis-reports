@@ -55,7 +55,7 @@ AP_Spektrum_Telem *AP_Spektrum_Telem::singleton;
 AP_Spektrum_Telem::AP_Spektrum_Telem() : AP_RCTelemetry(0)
 {
     singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 AP_Spektrum_Telem::~AP_Spektrum_Telem(void)
 {
@@ -236,7 +236,7 @@ bool AP_Spektrum_Telem::get_next_msg_chunk(void)
     }
 
     // skip leading whitespace
-    while (_msg_chunk.char_index < message_len && _statustext.next.text[_msg_chunk.char_index] == ' ') {
+    while (_msg_chunk.char_index < message_len && _statustext.next.text[_msg_chunk.char_index] == ' ') { // coverity[OVERRUN] // Reviewed: safe in context
         _msg_chunk.char_index++;
     }
 

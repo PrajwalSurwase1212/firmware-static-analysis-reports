@@ -28,6 +28,7 @@
 #include <AP_ExternalAHRS/AP_ExternalAHRS.h>
 
 #include "AP_InertialSensor.h"
+#include <cerrno>
 
 #ifndef HAL_INS_HIGHRES_SAMPLE
 #define HAL_INS_HIGHRES_SAMPLE 0
@@ -334,7 +335,8 @@ protected:
 
     // should highres sampling be enabled on this IMU?
     bool enable_highres_sampling(uint8_t instance) const {
-        return (HAL_INS_HIGHRES_SAMPLE & (1U<<instance)) != 0;
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        return (HAL_INS_HIGHRES_SAMPLE & (1U<<instance)) != 0; // parasoft-suppress BD-PB-CC "Reviewed and safe"
     }
 
     // if fast sampling is enabled, the rate to use in kHz

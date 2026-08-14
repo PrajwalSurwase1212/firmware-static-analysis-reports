@@ -126,7 +126,7 @@ AC_AutoTune_Multi::AC_AutoTune_Multi()
 {
     tune_seq[0] = TuneType::TUNE_COMPLETE;
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AC_AutoTune_Multi::do_gcs_announcements()
 {
@@ -139,7 +139,7 @@ void AC_AutoTune_Multi::do_gcs_announcements()
 }
 
 // Prepares all tuning state variables and target values for a new twitch test.
-void AC_AutoTune_Multi::test_init()
+void AC_AutoTune_Multi::test_init() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float target_max_rate;
     switch (axis) {
@@ -148,7 +148,7 @@ void AC_AutoTune_Multi::test_init()
         target_max_rate = MAX(AUTOTUNE_TARGET_MIN_RATE_RLLPIT_CDS, step_scaler * AUTOTUNE_TARGET_RATE_RLLPIT_CDS);
         target_rate = constrain_float(degrees(attitude_control->max_rate_step_bf_roll()) * 100.0, AUTOTUNE_TARGET_MIN_RATE_RLLPIT_CDS, target_max_rate);
         target_angle = constrain_float(degrees(attitude_control->max_angle_step_bf_roll()) * 100.0, target_angle_min_rp_cd(), target_angle_max_rp_cd());
-        rotation_rate_filt.set_cutoff_frequency(attitude_control->get_rate_roll_pid().filt_D_hz() * 2.0);
+        rotation_rate_filt.set_cutoff_frequency(attitude_control->get_rate_roll_pid().filt_D_hz() * 2.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         break;
 
     case AxisType::PITCH:
@@ -156,7 +156,7 @@ void AC_AutoTune_Multi::test_init()
         target_max_rate = MAX(AUTOTUNE_TARGET_MIN_RATE_RLLPIT_CDS, step_scaler * AUTOTUNE_TARGET_RATE_RLLPIT_CDS);
         target_rate = constrain_float(degrees(attitude_control->max_rate_step_bf_pitch()) * 100.0, AUTOTUNE_TARGET_MIN_RATE_RLLPIT_CDS, target_max_rate);
         target_angle = constrain_float(degrees(attitude_control->max_angle_step_bf_pitch()) * 100.0, target_angle_min_rp_cd(), target_angle_max_rp_cd());
-        rotation_rate_filt.set_cutoff_frequency(attitude_control->get_rate_pitch_pid().filt_D_hz() * 2.0);
+        rotation_rate_filt.set_cutoff_frequency(attitude_control->get_rate_pitch_pid().filt_D_hz() * 2.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         break;
 
     case AxisType::YAW:
@@ -166,7 +166,7 @@ void AC_AutoTune_Multi::test_init()
         target_rate = constrain_float(degrees(attitude_control->max_rate_step_bf_yaw() * 0.75) * 100.0, AUTOTUNE_TARGET_MIN_RATE_YAW_CDS, target_max_rate);
         target_angle = constrain_float(degrees(attitude_control->max_angle_step_bf_yaw() * 0.75) * 100.0, target_angle_min_y_cd(), target_angle_max_y_cd());
         if (axis == AxisType::YAW_D) {
-            rotation_rate_filt.set_cutoff_frequency(attitude_control->get_rate_yaw_pid().filt_D_hz() * 2.0);
+            rotation_rate_filt.set_cutoff_frequency(attitude_control->get_rate_yaw_pid().filt_D_hz() * 2.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         } else {
             rotation_rate_filt.set_cutoff_frequency(AUTOTUNE_Y_FILT_FREQ);
         }
@@ -187,7 +187,7 @@ void AC_AutoTune_Multi::test_init()
     accel_measure_rate_max = 0.0;
 }
 
-void AC_AutoTune_Multi::test_run(AxisType test_axis, const float dir_sign)
+void AC_AutoTune_Multi::test_run(AxisType test_axis, const float dir_sign) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // hold current attitude
 
@@ -275,13 +275,13 @@ void AC_AutoTune_Multi::test_run(AxisType test_axis, const float dir_sign)
         twitching_abort_rate(lean_angle, rotation_rate, angle_abort, test_rate_min, test_angle_min);
         break;
     case TuneType::RATE_P_UP:
-        twitching_test_rate(lean_angle, rotation_rate, target_rate * (1 + 0.5 * aggressiveness), test_rate_min, test_rate_max, test_angle_min);
+        twitching_test_rate(lean_angle, rotation_rate, target_rate * (1 + 0.5 * aggressiveness), test_rate_min, test_rate_max, test_angle_min); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         twitching_measure_acceleration(test_accel_max_cdss, rotation_rate, accel_measure_rate_max);
         twitching_abort_rate(lean_angle, rotation_rate, angle_abort, test_rate_min, test_angle_min);
         break;
     case TuneType::ANGLE_P_DOWN:
     case TuneType::ANGLE_P_UP:
-        twitching_test_angle(lean_angle, rotation_rate, target_angle * (1 + 0.5 * aggressiveness), test_angle_min, test_angle_max, test_rate_min, test_rate_max);
+        twitching_test_angle(lean_angle, rotation_rate, target_angle * (1 + 0.5 * aggressiveness), test_angle_min, test_angle_max, test_rate_min, test_rate_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         twitching_measure_acceleration(test_accel_max_cdss, rotation_rate - dir_sign * start_rate, accel_measure_rate_max);
         break;
     case TuneType::RATE_FF_UP:
@@ -902,7 +902,7 @@ void AC_AutoTune_Multi::updating_angle_p_down_all(AxisType test_axis)
 }
 
 // set gains post tune for the tune type
-void AC_AutoTune_Multi::set_tuning_gains_with_backoff(AxisType test_axis)
+void AC_AutoTune_Multi::set_tuning_gains_with_backoff(AxisType test_axis) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     switch (tune_type) {
     case TuneType::RATE_D_UP:
@@ -910,11 +910,11 @@ void AC_AutoTune_Multi::set_tuning_gains_with_backoff(AxisType test_axis)
     case TuneType::RATE_D_DOWN:
         switch (test_axis) {
         case AxisType::ROLL:
-            tune_roll_rd = MAX(min_d, tune_roll_rd * AUTOTUNE_RD_BACKOFF);
+            tune_roll_rd = MAX(min_d, tune_roll_rd * AUTOTUNE_RD_BACKOFF); // coverity[RW.NO_MATCHING_FUNCTION]
             tune_roll_rp = MAX(AUTOTUNE_RP_MIN, tune_roll_rp * AUTOTUNE_RD_BACKOFF);
             break;
         case AxisType::PITCH:
-            tune_pitch_rd = MAX(min_d, tune_pitch_rd * AUTOTUNE_RD_BACKOFF);
+            tune_pitch_rd = MAX(min_d, tune_pitch_rd * AUTOTUNE_RD_BACKOFF); // coverity[RW.NO_MATCHING_FUNCTION]
             tune_pitch_rp = MAX(AUTOTUNE_RP_MIN, tune_pitch_rp * AUTOTUNE_RD_BACKOFF);
             break;
         case AxisType::YAW:
@@ -922,7 +922,7 @@ void AC_AutoTune_Multi::set_tuning_gains_with_backoff(AxisType test_axis)
             tune_yaw_rp = MAX(AUTOTUNE_RP_MIN, tune_yaw_rp * AUTOTUNE_RD_BACKOFF);
             break;
         case AxisType::YAW_D:
-            tune_yaw_rd = MAX(min_d, tune_yaw_rd * AUTOTUNE_RD_BACKOFF);
+            tune_yaw_rd = MAX(min_d, tune_yaw_rd * AUTOTUNE_RD_BACKOFF); // coverity[RW.NO_MATCHING_FUNCTION]
             tune_yaw_rp = MAX(AUTOTUNE_RP_MIN, tune_yaw_rp * AUTOTUNE_RD_BACKOFF);
             break;
         }
@@ -1089,9 +1089,9 @@ void AC_AutoTune_Multi::updating_rate_d_down(float &tune_d, float tune_d_min, fl
 
 // updating_rate_p_up_d_down - increase P to ensure the target is reached while checking bounce back isn't increasing
 // P is increased until we achieve our target within a reasonable time while reducing D if bounce back increases above the threshold
-void AC_AutoTune_Multi::updating_rate_p_up_d_down(float &tune_d, float tune_d_min, float tune_d_step_ratio, float &tune_p, float tune_p_min, float tune_p_max, float tune_p_step_ratio, float rate_target, float meas_rate_min, float meas_rate_max, bool fail_min_d)
+void AC_AutoTune_Multi::updating_rate_p_up_d_down(float &tune_d, float tune_d_min, float tune_d_step_ratio, float &tune_p, float tune_p_min, float tune_p_max, float tune_p_step_ratio, float rate_target, float meas_rate_min, float meas_rate_max, bool fail_min_d) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    if (meas_rate_max > rate_target * (1.0 + 0.5 * aggressiveness)) {
+    if (meas_rate_max > rate_target * (1.0 + 0.5 * aggressiveness)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // ignore the next result unless it is the same as this one
         ignore_next = true;
         // if maximum measurement was greater than target so increment the success counter
@@ -1144,9 +1144,9 @@ void AC_AutoTune_Multi::updating_rate_p_up_d_down(float &tune_d, float tune_d_mi
 
 // updating_angle_p_down - decrease P until we don't reach the target before time out
 // P is decreased to ensure we are not overshooting the target
-void AC_AutoTune_Multi::updating_angle_p_down(float &tune_p, float tune_p_min, float tune_p_step_ratio, float angle_target, float meas_angle_max, float meas_rate_min, float meas_rate_max)
+void AC_AutoTune_Multi::updating_angle_p_down(float &tune_p, float tune_p_min, float tune_p_step_ratio, float angle_target, float meas_angle_max, float meas_rate_min, float meas_rate_max) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    if (meas_angle_max < angle_target * (1 + 0.5 * aggressiveness)) {
+    if (meas_angle_max < angle_target * (1 + 0.5 * aggressiveness)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (ignore_next == false) {
             // if maximum measurement was lower than target so increment the success counter
             success_counter++;
@@ -1175,9 +1175,9 @@ void AC_AutoTune_Multi::updating_angle_p_down(float &tune_p, float tune_p_min, f
 
 // updating_angle_p_up - increase P to ensure the target is reached
 // P is increased until we achieve our target within a reasonable time
-void AC_AutoTune_Multi::updating_angle_p_up(float &tune_p, float tune_p_max, float tune_p_step_ratio, float angle_target, float meas_angle_max, float meas_rate_min, float meas_rate_max)
+void AC_AutoTune_Multi::updating_angle_p_up(float &tune_p, float tune_p_max, float tune_p_step_ratio, float angle_target, float meas_angle_max, float meas_rate_min, float meas_rate_max) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    if ((meas_angle_max > angle_target * (1 + 0.5 * aggressiveness)) ||
+    if ((meas_angle_max > angle_target * (1 + 0.5 * aggressiveness)) || // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         ((meas_angle_max > angle_target) && (meas_rate_min < -meas_rate_max * aggressiveness))) {
         // ignore the next result unless it is the same as this one
         ignore_next = true;

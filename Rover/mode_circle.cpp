@@ -36,7 +36,7 @@ const AP_Param::GroupInfo ModeCircle::var_info[] = {
 ModeCircle::ModeCircle() : Mode()
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // get the distance at which the vehicle is considered to be on track along the circle
 float ModeCircle::get_reached_distance() const

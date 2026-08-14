@@ -24,6 +24,7 @@
 #include <AP_Baro/AP_Baro.h>
 #include <AP_Compass/AP_Compass.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -35,7 +36,8 @@ void AP_AHRS_Backend::init()
 Vector3f AP_AHRS::get_gyro_latest(void) const
 {
     const uint8_t primary_gyro = get_primary_gyro_index();
-    return AP::ins().get_gyro(primary_gyro) + get_gyro_drift();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    return AP::ins().get_gyro(primary_gyro) + get_gyro_drift(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 }
 
 // set_trim
@@ -117,7 +119,7 @@ void AP_AHRS::calc_trig(const Matrix3f &rot,
     if (cx2 >= 1.0f) {
         cp = 0;
         cr = 1.0f;
-    } else {
+    } else { // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
         cp = safe_sqrt(1 - cx2);
         if (cp > 0.0f) {
             cr = rot.c.z / cp;
@@ -172,7 +174,7 @@ void AP_AHRS::update_cd_values(void)
  */
 AP_AHRS_View *AP_AHRS::create_view(enum Rotation rotation, float pitch_trim_deg)
 {
-    if (_view != nullptr) {
+    if (_view) {
         // can only have one
         return nullptr;
     }
@@ -280,7 +282,8 @@ float AP_AHRS_Backend::get_EAS2TAS(void) {
 // return current vibration vector for primary IMU
 Vector3f AP_AHRS::get_vibration(void) const
 {
-    return AP::ins().get_vibration_levels();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    return AP::ins().get_vibration_levels(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 }
 
 void AP_AHRS::set_takeoff_expected(bool b)

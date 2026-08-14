@@ -1,6 +1,7 @@
 #include "AC_AttitudeControl_Sub.h"
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 // table of user settable parameters
 const AP_Param::GroupInfo AC_AttitudeControl_Sub::var_info[] = {
@@ -360,7 +361,11 @@ void AC_AttitudeControl_Sub::update_althold_lean_angle_max(float throttle_in)
         return;
     }
 
-    float althold_lean_angle_max = acosf(constrain_float(throttle_in/(AC_ATTITUDE_CONTROL_ANGLE_LIMIT_THROTTLE_MAX * thr_max), 0.0f, 1.0f));
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    float althold_lean_angle_max = acosf(constrain_float(throttle_in/(AC_ATTITUDE_CONTROL_ANGLE_LIMIT_THROTTLE_MAX * thr_max), 0.0f, 1.0f)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _althold_lean_angle_max_rad = _althold_lean_angle_max_rad + (_dt_s/(_dt_s+_angle_limit_tc))*(althold_lean_angle_max-_althold_lean_angle_max_rad);
 }
 
@@ -427,7 +432,7 @@ void AC_AttitudeControl_Sub::rate_controller_run()
     _rate_gyro_time_us = AP_HAL::micros64();
 
     _motors.set_roll(get_rate_roll_pid().update_all(_ang_vel_body_rads.x, _rate_gyro_rads.x, _dt_s, _motors.limit.roll));
-    _motors.set_pitch(get_rate_pitch_pid().update_all(_ang_vel_body_rads.y, _rate_gyro_rads.y, _dt_s, _motors.limit.pitch));
+    _motors.set_pitch(get_rate_pitch_pid().update_all(_ang_vel_body_rads.y, _rate_gyro_rads.y, _dt_s, _motors.limit.pitch)); // coverity[RW.ROUTINE_NOT_EMITTED]
     _motors.set_yaw(get_rate_yaw_pid().update_all(_ang_vel_body_rads.z, _rate_gyro_rads.z, _dt_s, _motors.limit.yaw));
 }
 
@@ -443,7 +448,7 @@ void AC_AttitudeControl_Sub::parameter_sanity_check()
     if (_thr_mix_min < 0.1f || _thr_mix_min > AC_ATTITUDE_CONTROL_MIN_LIMIT) {
         _thr_mix_min.set_and_save(constrain_float(_thr_mix_min, 0.1, AC_ATTITUDE_CONTROL_MIN_LIMIT));
     }
-    if (_thr_mix_max < 0.5f || _thr_mix_max > AC_ATTITUDE_CONTROL_MAX) {
+    if (_thr_mix_max < 0.5f || _thr_mix_max > AC_ATTITUDE_CONTROL_MAX) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // parameter description recommends thr-mix-max be no higher than 0.9 but we allow up to 5.0
         // which can be useful for very high powered copters with very low hover throttle
         _thr_mix_max.set_and_save(constrain_float(_thr_mix_max, 0.5, AC_ATTITUDE_CONTROL_MAX));

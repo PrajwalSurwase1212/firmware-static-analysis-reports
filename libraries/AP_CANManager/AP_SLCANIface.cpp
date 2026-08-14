@@ -479,7 +479,7 @@ inline void SLCAN::CANIface::addByte(const uint8_t byte)
         pos_ = 0;
 
         // Sending the response if provided
-        if (response != nullptr) {
+        if (response) {
 
             _port->write_locked(reinterpret_cast<const uint8_t*>(response),
                                 strlen(response), _serial_lock_key);
@@ -507,7 +507,7 @@ void SLCAN::CANIface::update_slcan_port()
     }
     if (!is_enabled() && !armed) {
         auto new_port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_SLCAN, 0);
-        if (new_port != nullptr) {
+        if (new_port) {
             _port = new_port;
             _port->lock_port(_serial_lock_key, _serial_lock_key);
             _enabled = true;

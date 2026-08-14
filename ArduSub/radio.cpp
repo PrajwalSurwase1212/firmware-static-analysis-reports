@@ -37,11 +37,11 @@ void Sub::init_rc_in()
 #if HAL_MOUNT_ENABLED
     // initialize camera mount RC inputs to centered
     RC_Channel *cam_pan_chan = rc().find_channel_for_option(RC_Channel::AUX_FUNC::MOUNT1_YAW);
-    if (cam_pan_chan != nullptr) {
+    if (cam_pan_chan) {
         cam_pan_chan->set_override(1500, tnow);
     }
     RC_Channel *cam_tilt_chan = rc().find_channel_for_option(RC_Channel::AUX_FUNC::MOUNT1_PITCH);
-    if (cam_tilt_chan != nullptr) {
+    if (cam_tilt_chan) {
         cam_tilt_chan->set_override(1500, tnow);
     }
 #endif  // HAL_MOUNT_ENABLED

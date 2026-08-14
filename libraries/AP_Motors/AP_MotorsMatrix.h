@@ -18,11 +18,11 @@ public:
     AP_MotorsMatrix(uint16_t speed_hz = AP_MOTORS_SPEED_DEFAULT) :
         AP_MotorsMulticopter(speed_hz)
     {
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("AP_MotorsMatrix must be singleton");
         }
         _singleton = this;
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // get singleton instance
     static AP_MotorsMatrix *get_singleton() {

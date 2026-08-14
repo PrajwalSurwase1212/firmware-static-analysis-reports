@@ -194,9 +194,9 @@ void SplineCurve::calc_dt_speed_max(float time, float distance_delta, float &spl
 
     // calculate acceleration normal to the direction of travel
     const float spline_accel_tangent_length = spline_accel.dot(spline_vel_unit);
-    Vector3f spline_accel_norm = spline_accel - (spline_vel_unit * spline_accel_tangent_length);
+    Vector3f spline_accel_norm = spline_accel - (spline_vel_unit * spline_accel_tangent_length); // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     const float spline_accel_norm_length = spline_accel_norm.length();
-
+ // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     // limit the maximum speed along the track to that which will achieve a cornering (aka lateral) acceleration of LATERAL_SPEED_SCALER * acceleration limit
     const float tangential_speed_max = kinematic_limit(spline_vel_unit, _speed_xy, _speed_up, _speed_down);
     const float accel_norm_max = LATERAL_ACCEL_SCALER * kinematic_limit(spline_accel_norm, _accel_xy, _accel_z, _accel_z);

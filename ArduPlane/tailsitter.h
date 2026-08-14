@@ -160,7 +160,7 @@ class Tailsitter_Transition : public Transition
 friend class Tailsitter;
 public:
 
-    Tailsitter_Transition(QuadPlane& _quadplane, AP_MotorsMulticopter*& _motors, Tailsitter& _tailsitter):Transition(_quadplane, _motors), tailsitter(_tailsitter) {};
+    Tailsitter_Transition(QuadPlane& _quadplane, AP_MotorsMulticopter*& _motors, Tailsitter& _tailsitter):Transition(_quadplane, _motors), tailsitter(_tailsitter) {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update() override;
 

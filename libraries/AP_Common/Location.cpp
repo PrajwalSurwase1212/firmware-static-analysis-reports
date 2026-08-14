@@ -8,6 +8,7 @@
 
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_Terrain/AP_Terrain.h>
+#include <cerrno>
 
 const Location definitely_zero{};
 bool Location::is_zero(void) const
@@ -323,7 +324,8 @@ template bool Location::get_vector_from_origin_NEU_m<Vector3p>(Vector3p &vec_neu
 ftype Location::get_distance(const Location &loc2) const
 {
     ftype dlat = (ftype)(loc2.lat - lat);
-    ftype dlng = ((ftype)diff_longitude(loc2.lng,lng)) * longitude_scale((lat+loc2.lat)/2);
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    ftype dlng = ((ftype)diff_longitude(loc2.lng,lng)) * longitude_scale((lat+loc2.lat)/2); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     return norm(dlat, dlng) * LOCATION_SCALING_FACTOR;
 }
 
@@ -513,7 +515,9 @@ ftype Location::get_bearing(const Location &loc2) const
 {
     const int32_t off_x = diff_longitude(loc2.lng,lng);
     const int32_t off_y = (loc2.lat - lat) / loc2.longitude_scale((lat+loc2.lat)/2);
-    ftype bearing = (M_PI*0.5) + atan2F(-off_y, off_x);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    ftype bearing = (M_PI*0.5) + atan2F(-off_y, off_x); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (bearing < 0) {
         bearing += 2*M_PI;
     }

@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 Mode::AutoYaw Mode::auto_yaw;
 
@@ -380,7 +381,8 @@ void Mode::AutoYaw::update_weathervane(const float pilot_yaw_rads)
     }
 
     float yaw_rate_cds;
-    if (copter.g2.weathervane.get_yaw_out(yaw_rate_cds, rad_to_cd(pilot_yaw_rads), copter.flightmode->get_alt_above_ground_m(),
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    if (copter.g2.weathervane.get_yaw_out(yaw_rate_cds, rad_to_cd(pilot_yaw_rads), copter.flightmode->get_alt_above_ground_m(), // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                                                                        copter.pos_control->get_roll_cd()-copter.attitude_control->get_roll_trim_cd(),
                                                                        copter.pos_control->get_pitch_cd(),
                                                                        copter.flightmode->is_taking_off(),

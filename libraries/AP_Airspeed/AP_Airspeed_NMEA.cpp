@@ -27,6 +27,7 @@
 
 #include "AP_Airspeed.h"
 #include <AP_SerialManager/AP_SerialManager.h>
+#include <cerrno>
 
 #define TIMEOUT_MS 2000
 
@@ -204,13 +205,19 @@ bool AP_Airspeed_NMEA::decode_latest_term()
 
     if (_sentence_type == TPYE_MTW) {
         // parse MTW messages
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         if (_term_number == 1) {
-            _temp = strtof(_term, NULL);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _temp = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
     } else if (_sentence_type == TYPE_VHW) {
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // parse VHW messages
         if (_term_number == 7) {
-            _speed = strtof(_term, NULL) * KM_PER_HOUR_TO_M_PER_SEC;
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _speed = strtof(_term, NULL) * KM_PER_HOUR_TO_M_PER_SEC; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
     }
 

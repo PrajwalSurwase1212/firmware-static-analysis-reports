@@ -43,7 +43,7 @@ void AP_Camera_Servo::update()
 }
 
 // entry point to actually take a picture.  returns true on success
-bool AP_Camera_Servo::trigger_pic()
+bool AP_Camera_Servo::trigger_pic() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // fail if have not completed previous picture
     if (trigger_counter > 0) {
@@ -53,7 +53,7 @@ bool AP_Camera_Servo::trigger_pic()
     SRV_Channels::set_output_pwm(SRV_Channel::k_cam_trigger, _params.servo_on_pwm);
 
     // set counter to move servo to off position after this many iterations of update (assumes 50hz update rate)
-    trigger_counter = constrain_float(_params.trigger_duration * 50, 0, UINT16_MAX);
+    trigger_counter = constrain_float(_params.trigger_duration * 50, 0, UINT16_MAX); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     return true;
 }
@@ -93,13 +93,13 @@ SetFocusResult AP_Camera_Servo::set_focus(FocusType focus_type, float focus_valu
 }
 
 // configure camera
-void AP_Camera_Servo::configure(float shooting_mode, float shutter_speed, float aperture, float ISO, int32_t exposure_type, int32_t cmd_id, float engine_cutoff_time)
+void AP_Camera_Servo::configure(float shooting_mode, float shutter_speed, float aperture, float ISO, int32_t exposure_type, int32_t cmd_id, float engine_cutoff_time) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // designed to control Blackmagic Micro Cinema Camera (BMMCC) cameras
     // if the message contains non zero values then use them for the below functions
     if (ISO > 0) {
         // set a trigger for the iso function that is flip controlled
-        iso_counter = constrain_float(_params.trigger_duration * 50, 0, UINT16_MAX);
+        iso_counter = constrain_float(_params.trigger_duration * 50, 0, UINT16_MAX); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         SRV_Channels::set_output_pwm(SRV_Channel::k_cam_iso, _params.servo_on_pwm);
     }
 

@@ -17,6 +17,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include "AP_MotorsUGV.h"
 #include <AP_Relay/AP_Relay.h>
+#include <cerrno>
 
 #define SERVO_MAX 4500  // This value represents 45 degrees and is just an arbitrary representation of servo max travel.
 
@@ -134,7 +135,7 @@ AP_MotorsUGV::AP_MotorsUGV(AP_WheelRateControl& rate_controller) :
     _rate_controller(rate_controller)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_MotorsUGV::init(uint8_t frtype)
@@ -415,7 +416,7 @@ bool AP_MotorsUGV::output_test_pct(motor_test_order motor_seq, float pct)
                 SRV_Channels::set_output_scaled(SRV_Channel::k_mast_rotation, pct);
             }
             break;
-        }
+        } // coverity[DEADCODE]
         case MOTOR_TEST_LAST:
             return false;
     }
@@ -470,7 +471,7 @@ bool AP_MotorsUGV::output_test_pwm(motor_test_order motor_seq, float pwm)
                 SRV_Channels::set_output_pwm(SRV_Channel::k_throttleRight, pwm);
             }
             break;
-        }
+        } // coverity[DEADCODE]
         case MOTOR_TEST_MAINSAIL: {
             if (SRV_Channels::function_assigned(SRV_Channel::k_mainsail_sheet)) {
                 SRV_Channels::set_output_pwm(SRV_Channel::k_mainsail_sheet, pwm);
@@ -800,7 +801,7 @@ void AP_MotorsUGV::output_regular(bool armed, float ground_speed, float steering
     SRV_Channels::set_output_scaled(SRV_Channel::k_steering, steering);
 }
 
-// output to skid steering channels
+// output to skid steering channels // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_MotorsUGV::output_skid_steering(bool armed, float steering, float throttle, float dt)
 {
     if (!have_skid_steering()) {
@@ -829,7 +830,7 @@ void AP_MotorsUGV::output_skid_steering(bool armed, float steering, float thrott
     float steering_scaled = steering / 4500.0f; // steering scaled -1 to +1
     float throttle_scaled = throttle * 0.01f;  // throttle scaled -1 to +1
 
-    // sanitize values for asymmetry of thrust, mixer assumes forward thrust is always larger than reverse
+    // sanitize values for asymmetry of thrust, mixer assumes forward thrust is always larger than reverse // coverity[RW.NO_MATCHING_FUNCTION]
     const float thrust_asymmetry = MAX(_thrust_asymmetry, 1.0);
     const float lower_throttle_limit = -1.0 / thrust_asymmetry;
 
@@ -864,7 +865,7 @@ void AP_MotorsUGV::output_skid_steering(bool armed, float steering, float thrott
     const float max_output = throttle_scaled + fabsf(steering_scaled);
     const float min_output = throttle_scaled - fabsf(steering_scaled);
 
-    // check for saturation and scale back throttle and steering proportionally
+    // check for saturation and scale back throttle and steering proportionally // coverity[RW.NO_MATCHING_FUNCTION]
     const float saturation_value = MAX(max_output, min_output / lower_throttle_limit);
     if (saturation_value > 1.0f) {
         // store pre-scaled values so we can set limit flags afterwards
@@ -945,7 +946,8 @@ void AP_MotorsUGV::output_omni(bool armed, float steering, float throttle, float
         const float scaled_steering = steering / 4500.0f;
         const float scaled_lateral = lateral * 0.01f;
 
-        float thr_str_ltr_out[_motors_num];
+        // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+        float thr_str_ltr_out[_motors_num]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
         float thr_str_ltr_max = 1;
         for (uint8_t i=0; i<_motors_num; i++) {
             // Each motor outputs throttle + steering + lateral
@@ -983,7 +985,7 @@ void AP_MotorsUGV::output_omni(bool armed, float steering, float throttle, float
         }
     }
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 // output throttle value to main throttle channel, left throttle or right throttle.  throttle should be scaled from -100 to 100
 void AP_MotorsUGV::output_throttle(SRV_Channel::Function function, float throttle, float dt)
 {
@@ -1035,7 +1037,7 @@ void AP_MotorsUGV::output_throttle(SRV_Channel::Function function, float throttl
         // invert the output to always have positive value calculated by calc_pwm
         throttle = reverse_multiplier * fabsf(throttle);
     }
-#endif  // AP_RELAY_ENABLED
+#endif  // AP_RELAY_ENABLED // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     if (_reverse_delay > 0) {
         switch (function) {

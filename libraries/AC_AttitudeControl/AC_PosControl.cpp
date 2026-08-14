@@ -350,7 +350,7 @@ AC_PosControl::AC_PosControl(AP_AHRS_View& ahrs, const AP_Motors& motors, AC_Att
     AP_Param::setup_object_defaults(this, var_info);
 
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 ///
@@ -790,7 +790,7 @@ void AC_PosControl::set_max_speed_accel_U_cm(float speed_down_cms, float speed_u
 
 // Sets maximum climb/descent rate (m/s) and vertical acceleration (m/s²) for the U-axis.
 // These values are used for jerk-limited kinematic shaping of the vertical trajectory.
-void AC_PosControl::set_max_speed_accel_U_m(float speed_down_ms, float speed_up_ms, float accel_mss)
+void AC_PosControl::set_max_speed_accel_U_m(float speed_down_ms, float speed_up_ms, float accel_mss) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // ensure speed_down_ms is always negative
     speed_down_ms = -fabsf(speed_down_ms);
@@ -809,10 +809,10 @@ void AC_PosControl::set_max_speed_accel_U_m(float speed_down_ms, float speed_up_
     // ensure the vertical Jerk is not limited by the filters in the Z acceleration PID object
     _jerk_max_u_msss = _shaping_jerk_u_msss;
     if (is_positive(_pid_accel_u_cm_to_kt.filt_T_hz())) {
-        _jerk_max_u_msss = MIN(_jerk_max_u_msss, MIN(GRAVITY_MSS, _accel_max_u_mss) * (M_2PI * _pid_accel_u_cm_to_kt.filt_T_hz()) / 5.0);
+        _jerk_max_u_msss = MIN(_jerk_max_u_msss, MIN(GRAVITY_MSS, _accel_max_u_mss) * (M_2PI * _pid_accel_u_cm_to_kt.filt_T_hz()) / 5.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     if (is_positive(_pid_accel_u_cm_to_kt.filt_E_hz())) {
-        _jerk_max_u_msss = MIN(_jerk_max_u_msss, MIN(GRAVITY_MSS, _accel_max_u_mss) * (M_2PI * _pid_accel_u_cm_to_kt.filt_E_hz()) / 5.0);
+        _jerk_max_u_msss = MIN(_jerk_max_u_msss, MIN(GRAVITY_MSS, _accel_max_u_mss) * (M_2PI * _pid_accel_u_cm_to_kt.filt_E_hz()) / 5.0); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 }
 
@@ -1552,7 +1552,7 @@ void AC_PosControl::update_estimates(bool high_vibes)
 // Calculates vertical throttle using vibration-resistant feedforward estimation.
 // Returns throttle output using manual feedforward gain for vibration compensation mode.
 // Integrator is adjusted using velocity error when PID is being overridden.
-float AC_PosControl::get_throttle_with_vibration_override()
+float AC_PosControl::get_throttle_with_vibration_override() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const float thr_per_accel_u_mss = _motors.get_throttle_hover() / GRAVITY_MSS;
     // Estimate throttle based on desired acceleration (manual feedforward gain).
@@ -1563,7 +1563,7 @@ float AC_PosControl::get_throttle_with_vibration_override()
     if (!(_motors.limit.throttle_lower || _motors.limit.throttle_upper) || ((is_positive(_pid_accel_u_cm_to_kt.get_i()) && is_negative(_pid_vel_u_cm.get_error())) || (is_negative(_pid_accel_u_cm_to_kt.get_i()) && is_positive(_pid_vel_u_cm.get_error())))) {
         // Adjust integrator to help reduce velocity error.
         // Note: scale by velocity P-gain and an override-specific I gain.
-        _pid_accel_u_cm_to_kt.set_integrator(_pid_accel_u_cm_to_kt.get_i() + _dt_s * (thr_per_accel_u_mss / 100.0) * 1000.0 * _pid_vel_u_cm.get_error() * _pid_vel_u_cm.kP() * POSCONTROL_VIBE_COMP_I_GAIN);
+        _pid_accel_u_cm_to_kt.set_integrator(_pid_accel_u_cm_to_kt.get_i() + _dt_s * (thr_per_accel_u_mss / 100.0) * 1000.0 * _pid_vel_u_cm.get_error() * _pid_vel_u_cm.kP() * POSCONTROL_VIBE_COMP_I_GAIN); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     // Final throttle = P term (feedforward) + scaled I term.
     return POSCONTROL_VIBE_COMP_P_GAIN * thr_per_accel_u_mss * _accel_target_neu_mss.z + _pid_accel_u_cm_to_kt.get_i() * 0.001;

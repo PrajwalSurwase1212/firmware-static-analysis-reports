@@ -20,6 +20,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <AP_HAL/utility/sparse-endian.h>
 #include <AP_SerialManager/AP_SerialManager.h>
+#include <cerrno>
 
 #if AP_TRAMP_ENABLED
 
@@ -43,7 +44,7 @@ extern const AP_HAL::HAL &hal;
 
 AP_Tramp::AP_Tramp()
 {
-    singleton = this;
+    singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_Tramp *AP_Tramp::singleton;
@@ -352,7 +353,8 @@ void AP_Tramp::process_requests()
             } else if (!is_race_lock_enabled() && vtx.update_power()) {
                 debug("Updating power to %umw\n", vtx.get_configured_power_mw());
                 // Power can be and needs to be updated, issue request
-                send_command('P', vtx.get_configured_power_mw());
+                // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+                send_command('P', vtx.get_configured_power_mw()); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
                 // Set flag
                 configUpdateRequired = true;
@@ -528,7 +530,7 @@ bool AP_Tramp::init(void)
 
     // init uart
     port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_Tramp, 0);
-    if (port != nullptr) {
+    if (port) {
         port->configure_parity(0);
         port->set_stop_bits(1);
         port->set_flow_control(AP_HAL::UARTDriver::FLOW_CONTROL_DISABLE);

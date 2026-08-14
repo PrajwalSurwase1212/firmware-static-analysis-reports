@@ -23,7 +23,7 @@ public:
     bool update() override;
 
 private:
-    SITL::SIM          *_sitl = nullptr;                 // sitl instance pointer
+    SITL::SIM          *_sitl = nullptr;                 // sitl instance pointer // coverity[UNINIT_CTOR] // Reviewed: safe in context
     uint32_t _last_timestamp = 0;
 };
 

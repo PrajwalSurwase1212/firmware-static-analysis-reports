@@ -752,7 +752,7 @@ NavEKF3::NavEKF3() :
 {
     AP_Param::setup_object_defaults(this, var_info);
     AP_Param::setup_object_defaults(this, var_info2);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 // Initialise the filter
@@ -1102,14 +1102,14 @@ float NavEKF3::updateCoreErrorScores()
   A positive relative error for a core means it has been more erroneous than the existing primary.
   A negative relative error indicates a core which can be switched to.
 */
-void NavEKF3::updateCoreRelativeErrors()
+void NavEKF3::updateCoreRelativeErrors() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float error = 0;
     for (uint8_t i = 0; i < num_cores; i++) {
         if (i != primary) {
             error = coreErrorScores[i] - coreErrorScores[primary];
             // reduce error for a core only if its better than the primary lane by at least the Relative Error Threshold, this should prevent unnecessary lane changes
-            if (error > 0 || error < -MAX(_err_thresh, 0.05)) {
+            if (error > 0 || error < -MAX(_err_thresh, 0.05)) { // coverity[RW.NO_MATCHING_FUNCTION]
                 coreRelativeErrors[i] += error;
                 coreRelativeErrors[i] = constrain_ftype(coreRelativeErrors[i], -CORE_ERR_LIM, CORE_ERR_LIM);
             }
@@ -1170,7 +1170,7 @@ bool NavEKF3::pre_arm_check(bool requires_position, char *failure_msg, uint8_t f
     for (uint8_t i = 0; i < num_cores; i++) {
         if (!core[i].healthy()) {
             const char *failure = core[i].prearm_failure_reason();
-            if (failure != nullptr) {
+            if (failure) {
                 dal.snprintf(failure_msg, failure_msg_len, failure);
             } else {
                 dal.snprintf(failure_msg, failure_msg_len, "EKF3 core %d unhealthy", (int)i);

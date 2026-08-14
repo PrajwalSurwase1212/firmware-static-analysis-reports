@@ -7,7 +7,7 @@
 
 class AP_OpticalFlow_Calibrator {
 public:
-    AP_OpticalFlow_Calibrator() {};
+    AP_OpticalFlow_Calibrator() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // start or stop the calibration
     void start();

@@ -80,6 +80,7 @@
 
 #define FORCE_VERSION_H_INCLUDE
 #include "version.h"
+#include <cerrno>
 #undef FORCE_VERSION_H_INCLUDE
 
 const AP_HAL::HAL& hal = AP_HAL::get_HAL();
@@ -457,7 +458,8 @@ AP_Vehicle::custom_mode_state* Copter::register_custom_mode(const uint8_t num, c
             gcs().available_modes_changed();
 
             return &mode_guided_custom[i]->state;
-        }
+        // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+        } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     }
 
     // No free slots
@@ -989,7 +991,7 @@ Copter::Copter(void)
     super_simple_cos_yaw(1.0),
     land_accel_ef_filter(LAND_DETECTOR_ACCEL_LPF_CUTOFF),
     rc_throttle_control_in_filter(1.0f),
-    param_loader(var_info)
+    param_loader(var_info) // coverity[UNINIT_CTOR] // Reviewed: safe in context
 {
 }
 

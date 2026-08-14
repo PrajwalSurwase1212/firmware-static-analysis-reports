@@ -71,7 +71,7 @@ private:
                    uint8_t &_timing) :
             high_level{_high_level},
             low_level{_low_level}
-            { }
+            { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         void update();
 

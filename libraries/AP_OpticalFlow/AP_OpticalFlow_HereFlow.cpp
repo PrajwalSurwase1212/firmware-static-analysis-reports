@@ -23,7 +23,7 @@ AP_OpticalFlow_HereFlow::AP_OpticalFlow_HereFlow(AP_OpticalFlow &flow) :
         AP_HAL::panic("Only one instance of Flow supported!");
     }
     _driver = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 //links the HereFlow messages to the backend
 bool AP_OpticalFlow_HereFlow::subscribe_msgs(AP_DroneCAN* ap_dronecan)

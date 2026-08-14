@@ -9,7 +9,7 @@ void Sub::read_inertia()
 
     // pull position from ahrs
     Location loc;
-    if (ahrs.get_location(loc)) {
+    if (ahrs.get_location(loc)) { // coverity[CHECKED_RETURN]
         current_loc.lat = loc.lat;
         current_loc.lng = loc.lng;
     }

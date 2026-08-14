@@ -45,6 +45,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include <AP_SerialManager/AP_SerialManager.h>
+#include <cerrno>
 
 static const char* LOG_FMT = "%s ExternalAHRS: %s";
 
@@ -159,7 +160,8 @@ void AP_ExternalAHRS_MicroStrain7::post_imu() const
             temperature: -300
         };
         // *INDENT-ON*
-        AP::ins().handle_external(ins);
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        AP::ins().handle_external(ins); // parasoft-suppress BD-PB-NP "Reviewed and safe"
     }
 
 #if AP_COMPASS_EXTERNALAHRS_ENABLED

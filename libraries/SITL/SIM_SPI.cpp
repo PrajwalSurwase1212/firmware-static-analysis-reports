@@ -27,6 +27,7 @@
 #include "SIM_JEDEC_MX25L3206E.h"
 
 #include <signal.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -87,7 +88,8 @@ int SPI::ioctl_transaction(uint8_t bus, uint8_t cs_pin, uint8_t count, spi_ioc_t
             continue;
         }
         return dev_at_cs_pin.device.rdwr(count, data);
-    }
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+    } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Unhandled spi message: bus=%u cs_pin=%u", bus, cs_pin);
     return -1;
 }

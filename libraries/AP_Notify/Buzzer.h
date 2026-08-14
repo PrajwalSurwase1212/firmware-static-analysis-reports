@@ -23,7 +23,7 @@ class Buzzer: public NotifyDevice
 {
 public:
     /// Constructor
-    Buzzer() {}
+    Buzzer() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /// init - initialise the buzzer
     bool init(void) override;

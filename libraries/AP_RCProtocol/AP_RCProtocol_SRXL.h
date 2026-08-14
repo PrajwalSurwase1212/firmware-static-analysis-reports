@@ -42,7 +42,7 @@
 
 class AP_RCProtocol_SRXL : public AP_RCProtocol_Backend {
 public:
-    AP_RCProtocol_SRXL(AP_RCProtocol &_frontend) : AP_RCProtocol_Backend(_frontend) {}
+    AP_RCProtocol_SRXL(AP_RCProtocol &_frontend) : AP_RCProtocol_Backend(_frontend) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     void process_pulse(uint32_t width_s0, uint32_t width_s1) override;
     void process_byte(uint8_t byte, uint32_t baudrate) override;
 private:

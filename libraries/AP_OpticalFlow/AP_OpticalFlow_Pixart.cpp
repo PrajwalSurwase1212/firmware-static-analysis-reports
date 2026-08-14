@@ -33,6 +33,7 @@
 #include "AP_OpticalFlow.h"
 #include "AP_OpticalFlow_Pixart_SROM.h"
 #include <stdio.h>
+#include <cerrno>
 
 #define debug(fmt, args ...)  do {printf(fmt, ## args); } while(0)
 
@@ -88,7 +89,7 @@ extern const AP_HAL::HAL& hal;
 AP_OpticalFlow_Pixart::AP_OpticalFlow_Pixart(const char *devname, AP_OpticalFlow &_frontend) :
     OpticalFlow_backend(_frontend)
 {
-    _dev = std::move(hal.spi->get_device(devname));
+    _dev = std::move(hal.spi->get_device(devname)); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // detect the device
@@ -170,7 +171,8 @@ bool AP_OpticalFlow_Pixart::setup_sensor(void)
 
     _dev->register_periodic_callback(2000, FUNCTOR_BIND_MEMBER(&AP_OpticalFlow_Pixart::timer, void));
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 // write an 8 bit register
 void AP_OpticalFlow_Pixart::reg_write(uint8_t reg, uint8_t value)

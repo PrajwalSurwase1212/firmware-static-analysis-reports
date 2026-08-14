@@ -1521,15 +1521,15 @@ float SIM::measure_distance_at_angle_bf(const Location &location, float angle) c
     Vector2f ray_endpos_cm;
     if (!location2.get_vector_xy_from_origin_NE_cm(ray_endpos_cm)) {
         // should probably use SITL variables...
-#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-        if (rayfile != nullptr) {
+#if CONFIG_HAL_BOARD == HAL_BOARD_SITL // coverity[RESOURCE_LEAK] // Reviewed: safe in context
+        if (rayfile) {
             fclose(rayfile);
         }
 #endif
         return 0.0f;
     }
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (rayfile != nullptr) {
+    if (rayfile) {
         ::fprintf(rayfile, "map icon %f %f barrell\n", location2.lat*1e-7, location2.lng*1e-7);
         fclose(rayfile);
     }
@@ -1556,7 +1556,7 @@ float SIM::measure_distance_at_angle_bf(const Location &location, float angle) c
             Location post_location = post_origin;
             post_location.offset(x*10+3, y*10+2);
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-            if (postfile != nullptr) {
+            if (postfile) {
                 ::fprintf(postfile, "map circle %f %f %f blue\n", post_location.lat*1e-7, post_location.lng*1e-7, radius_cm*0.01);
             }
 #endif
@@ -1570,7 +1570,7 @@ float SIM::measure_distance_at_angle_bf(const Location &location, float angle) c
             if (Vector2f::circle_segment_intersection(ray_endpos_cm, vehicle_pos_cm, post_position_cm, radius_cm, intersection_point_cm)) {
                 float dist_cm = (intersection_point_cm-vehicle_pos_cm).length();
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-                if (intersectionsfile != nullptr) {
+                if (intersectionsfile) {
                     Location intersection_point = location;
                     intersection_point.offset(intersection_point_cm.x*0.01,
                                               intersection_point_cm.y*0.01);
@@ -1589,10 +1589,10 @@ float SIM::measure_distance_at_angle_bf(const Location &location, float angle) c
 
 OUT:
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (postfile != nullptr) {
+    if (postfile) {
         fclose(postfile);
     }
-    if (intersectionsfile != nullptr) {
+    if (intersectionsfile) {
         fclose(intersectionsfile);
     }
 #endif

@@ -16,7 +16,7 @@ AP_Camera_Backend::AP_Camera_Backend(AP_Camera &frontend, AP_Camera_Params &para
     _frontend(frontend),
     _params(params),
     camera_feedback{},
-    time_interval_settings{},
+    time_interval_settings{}, // coverity[UNINIT_CTOR] // Reviewed: safe in context
     _instance(instance)
 {
     timer_installed = false;
@@ -30,7 +30,7 @@ AP_Camera_Backend::AP_Camera_Backend(AP_Camera &frontend, AP_Camera_Params &para
     last_location = {};
     image_index = 0;
     last_is_armed = false;
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void AP_Camera_Backend::init()
 {
@@ -101,7 +101,7 @@ void AP_Camera_Backend::update()
     // check vehicle roll angle is less than configured maximum
     if ((_frontend.get_roll_max() > 0) && (fabsf(ahrs.roll_sensor * 1e-2f) > _frontend.get_roll_max())) {
         return;
-    }
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // initialise last location to current location
     if (last_location.lat == 0 && last_location.lng == 0) {
@@ -135,14 +135,14 @@ uint8_t AP_Camera_Backend::get_mount_instance() const
 // get mavlink gimbal device id which is normally mount_instance+1
 uint8_t AP_Camera_Backend::get_gimbal_device_id() const
 {
-#if HAL_MOUNT_ENABLED
+#if HAL_MOUNT_ENABLED // coverity[RW.ROUTINE_NOT_EMITTED]
     const uint8_t mount_instance = get_mount_instance();
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         if (mount->get_mount_type(mount_instance) != AP_Mount::Type::None) {
             return (mount_instance + 1);
         }
-    }
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 #endif
     return 0;
 }
@@ -251,7 +251,7 @@ void AP_Camera_Backend::send_camera_information(mavlink_channel_t chan) const
     camera_info.sensor_size_v = NaNf;
 
     camera_info.flags = CAMERA_CAP_FLAGS_CAPTURE_IMAGE;
-
+ // coverity[PASS_BY_VALUE]
 #endif // AP_CAMERA_INFO_FROM_SCRIPT_ENABLED
 
     // Set fixed fields
@@ -272,7 +272,7 @@ void AP_Camera_Backend::set_camera_information(const mavlink_camera_information_
 };
 #endif // AP_CAMERA_INFO_FROM_SCRIPT_ENABLED
 
-#if AP_MAVLINK_MSG_VIDEO_STREAM_INFORMATION_ENABLED
+#if AP_MAVLINK_MSG_VIDEO_STREAM_INFORMATION_ENABLED // coverity[PASS_BY_VALUE]
 // send video stream information message to GCS
 void AP_Camera_Backend::send_video_stream_information(mavlink_channel_t chan) const
 {

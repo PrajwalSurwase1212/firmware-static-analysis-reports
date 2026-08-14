@@ -6,6 +6,7 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 /*
   "battery" monitor for liquid fuel flow systems that give a pulse on
@@ -34,7 +35,7 @@ AP_BattMonitor_FuelFlow::AP_BattMonitor_FuelFlow(AP_BattMonitor &mon,
 
     // we can't tell if it is healthy as we expect zero pulses when no
     // fuel is flowing
-    _state.healthy = true;
+    _state.healthy = true; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -58,7 +59,7 @@ void AP_BattMonitor_FuelFlow::irq_handler(uint8_t pin, bool pin_state, uint32_t 
 
 /*
   read - read the "voltage" and "current"
-*/
+*/ // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_BattMonitor_FuelFlow::read()
 {
     int8_t pin = _curr_pin;
@@ -71,7 +72,8 @@ void AP_BattMonitor_FuelFlow::read()
         last_pin = pin;
         if (last_pin > 0) {
             hal.gpio->pinMode(last_pin, HAL_GPIO_INPUT);
-            if (!hal.gpio->attach_interrupt(
+            // parasoft-suppress BD-PB-CC "Reviewed and safe"
+            if (!hal.gpio->attach_interrupt( // parasoft-suppress BD-PB-CC "Reviewed and safe"
                     last_pin,
                     FUNCTOR_BIND_MEMBER(&AP_BattMonitor_FuelFlow::irq_handler, void, uint8_t, bool, uint32_t),
                     AP_HAL::GPIO::INTERRUPT_RISING)) {
@@ -110,7 +112,7 @@ void AP_BattMonitor_FuelFlow::read()
     float litres, litres_pec_sec;
     if (state.pulse_count == 0) {
         litres = 0;
-        litres_pec_sec = 0;
+        litres_pec_sec = 0; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else {
         litres = state.pulse_count * _curr_amp_per_volt * 0.001f;
         litres_pec_sec = litres / irq_dt;

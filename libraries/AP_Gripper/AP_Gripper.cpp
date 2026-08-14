@@ -90,7 +90,7 @@ AP_Gripper::AP_Gripper()
     _singleton = this;
 
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
  * Get the AP_Gripper singleton
@@ -124,7 +124,7 @@ void AP_Gripper::init()
     default:
         break;
     }
-    if (backend != nullptr) {
+    if (backend) {
         backend->init();
     }
 }
@@ -136,7 +136,7 @@ void AP_Gripper::init()
         if (!enabled()) {              \
             return;                    \
         }                              \
-        if (backend != nullptr) {      \
+        if (backend) {      \
             backend->function_name();  \
         }                              \
     }
@@ -154,7 +154,7 @@ PASS_TO_BACKEND(update)
         if (!enabled()) {                     \
             return false;                     \
         }                                     \
-        if (backend != nullptr) {             \
+        if (backend) {             \
             return backend->function_name();  \
         }                                     \
         return false;                         \

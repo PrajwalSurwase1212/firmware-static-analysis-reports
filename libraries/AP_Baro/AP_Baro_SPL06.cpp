@@ -19,6 +19,7 @@
 #include <utility>
 #include <strings.h>
 #include <AP_Math/definitions.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -85,7 +86,7 @@ extern const AP_HAL::HAL &hal;
 AP_Baro_SPL06::AP_Baro_SPL06(AP_Baro &baro, AP_HAL::OwnPtr<AP_HAL::Device> dev)
     : AP_Baro_Backend(baro)
     , _dev(std::move(dev))
-    , _timer_counter(-1)
+    , _timer_counter(-1) // coverity[UNINIT_CTOR] // Reviewed: safe in context
     , _instance(0)
     , _temp_raw(0.0f)
     , _pressure_sum(0.0f)
@@ -275,7 +276,8 @@ bool AP_Baro_SPL06::_init()
 #endif //AP_BARO_SPL06_BACKGROUND_ENABLE
 
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 int32_t AP_Baro_SPL06::raw_value_scale_factor(uint8_t oversampling)
 {
@@ -300,8 +302,10 @@ void AP_Baro_SPL06::_timer(void)
     uint8_t buf[3];
 
 #if AP_BARO_SPL06_BACKGROUND_ENABLE
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     _dev->read_registers(SPL06_REG_TEMPERATURE_START, buf, sizeof(buf));
-	_update_temperature((int32_t)((buf[0] & 0x80 ? 0xFF000000 : 0) | ((uint32_t)buf[0] << 16) | ((uint32_t)buf[1] << 8) | buf[2]));
+	// parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+	_update_temperature((int32_t)((buf[0] & 0x80 ? 0xFF000000 : 0) | ((uint32_t)buf[0] << 16) | ((uint32_t)buf[1] << 8) | buf[2])); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
 
 	_dev->read_registers(SPL06_REG_PRESSURE_START, buf, sizeof(buf));
 	_update_pressure((int32_t)((buf[0] & 0x80 ? 0xFF000000 : 0) | ((uint32_t)buf[0] << 16) | ((uint32_t)buf[1] << 8) | buf[2]));

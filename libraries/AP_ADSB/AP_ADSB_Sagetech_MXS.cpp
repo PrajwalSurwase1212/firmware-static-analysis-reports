@@ -304,7 +304,7 @@ bool AP_ADSB_Sagetech_MXS::parse_byte(const uint8_t data)
 
 void AP_ADSB_Sagetech_MXS::msg_write(const uint8_t *data, const uint16_t len) const
 {
-    if (_port != nullptr) {
+    if (_port) {
         _port->write(data, len);
     }
 }

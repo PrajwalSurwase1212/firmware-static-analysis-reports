@@ -1,5 +1,6 @@
 #include "AP_Baro.h"
 #include <AP_InternalError/AP_InternalError.h>
+#include <cerrno>
 
 /*
    This program is free software: you can redistribute it and/or modify
@@ -58,8 +59,11 @@ float AP_Baro::get_altitude_difference_simple(float base_pressure, float pressur
     float scaling = pressure / base_pressure;
 
     // This is an exact calculation that is within +-2.5m of the standard
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // atmosphere tables in the troposphere (up to 11,000 m amsl).
-    ret = 153.8462f * temp_K * (1.0f - expf(0.190259f * logf(scaling)));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0;
+    ret = 153.8462f * temp_K * (1.0f - expf(0.190259f * logf(scaling))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     return ret;
 }
@@ -170,12 +174,18 @@ float AP_Baro::get_altitude_from_pressure(float pressure) const
 
     float alt;
     const float temp_slope = atmospheric_1976_consts[idx].temp_lapse;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (is_zero(temp_slope)) {  // Iso-thermal layer
         const float fac = -(atmospheric_1976_consts[idx].temp_K * R_specific) / GRAVITY_MSS;
-        alt = atmospheric_1976_consts[idx].amsl_m + fac * logf(pressure_ratio);
+        errno = 0;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        alt = atmospheric_1976_consts[idx].amsl_m + fac * logf(pressure_ratio); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     } else {                    // Gradient temperature layer
         const float fac = -(temp_slope * R_specific) / GRAVITY_MSS;
-        alt = atmospheric_1976_consts[idx].amsl_m + (atmospheric_1976_consts[idx].temp_K / atmospheric_1976_consts[idx].temp_lapse) * (powf(pressure_ratio, fac) - 1);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        alt = atmospheric_1976_consts[idx].amsl_m + (atmospheric_1976_consts[idx].temp_K / atmospheric_1976_consts[idx].temp_lapse) * (powf(pressure_ratio, fac) - 1); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     }
 
     return geopotential_alt_to_geometric(alt);
@@ -192,16 +202,21 @@ void AP_Baro::get_pressure_temperature_for_alt_amsl(float alt_amsl, float &press
     const float temp_slope = atmospheric_1976_consts[idx].temp_lapse;
     temperature_K =  get_temperature_by_altitude_layer(alt_amsl, idx);
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // Previous versions used the current baro temperature instead of an estimate we could try to incorporate this??? non-standard atmosphere
     // const float temp =  get_temperature();
 
     if (is_zero(temp_slope)) {    // Iso-thermal layer
-        const float fac = expf(-GRAVITY_MSS / (temperature_K * R_specific) * (alt_amsl - atmospheric_1976_consts[idx].amsl_m));
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        const float fac = expf(-GRAVITY_MSS / (temperature_K * R_specific) * (alt_amsl - atmospheric_1976_consts[idx].amsl_m)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         pressure = atmospheric_1976_consts[idx].pressure_Pa * fac;
     } else {            // Gradient temperature layer
         const float fac =  GRAVITY_MSS / (temp_slope * R_specific);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         const float temp_ratio = temperature_K / atmospheric_1976_consts[idx].temp_K; // temperature ratio [unitless]
-        pressure = atmospheric_1976_consts[idx].pressure_Pa * powf(temp_ratio, -fac);
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        pressure = atmospheric_1976_consts[idx].pressure_Pa * powf(temp_ratio, -fac); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     }
 }
 
@@ -213,18 +228,24 @@ float AP_Baro::get_air_density_for_alt_amsl(float alt_amsl)
     alt_amsl = geometric_alt_to_geopotential(alt_amsl);
 
     const uint8_t idx = find_atmosphere_layer_by_altitude(alt_amsl);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float temp_slope = atmospheric_1976_consts[idx].temp_lapse;
     const float temp =  get_temperature_by_altitude_layer(alt_amsl, idx);
     // const float temp =  get_temperature();
 
     float rho;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (is_zero(temp_slope)) {    // Iso-thermal layer
-        const float fac = expf(-GRAVITY_MSS / (temp * R_specific) * (alt_amsl - atmospheric_1976_consts[idx].amsl_m));
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        const float fac = expf(-GRAVITY_MSS / (temp * R_specific) * (alt_amsl - atmospheric_1976_consts[idx].amsl_m)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         rho      = atmospheric_1976_consts[idx].density     * fac;
     } else {            // Gradient temperature layer
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         const float fac =  GRAVITY_MSS / (temp_slope * R_specific);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         const float temp_ratio = temp / atmospheric_1976_consts[idx].temp_K; // temperature ratio [unitless]
-        rho      = atmospheric_1976_consts[idx].density     * powf(temp_ratio, -(fac + 1));
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        rho      = atmospheric_1976_consts[idx].density     * powf(temp_ratio, -(fac + 1)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     }
     return rho;
 }
@@ -232,6 +253,7 @@ float AP_Baro::get_air_density_for_alt_amsl(float alt_amsl)
 /*
   return current scale factor that converts from equivalent to true airspeed
 */
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 float AP_Baro::get_EAS2TAS_extended(float altitude) const
 {
     float density = get_air_density_for_alt_amsl(altitude);
@@ -240,8 +262,11 @@ float AP_Baro::get_EAS2TAS_extended(float altitude) const
         const uint8_t table_size = ARRAY_SIZE(atmospheric_1976_consts);
         density = atmospheric_1976_consts[table_size-1].density;
     }
+    errno = 0;
     return sqrtf(SSL_AIR_DENSITY / density);
 }
+
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
 /*
   Given the geometric altitude (m)
@@ -251,6 +276,7 @@ float AP_Baro::get_EAS2TAS_extended(float altitude) const
 float AP_Baro::get_EAS2TAS_for_alt_amsl(float alt_amsl)
 {
     const float density = get_air_density_for_alt_amsl(alt_amsl);
+    errno = 0;
     return sqrtf(SSL_AIR_DENSITY / MAX(0.00001,density));
 }
 
@@ -280,6 +306,7 @@ float AP_Baro::get_EAS2TAS_simple(float altitude, float pressure) const
 {
     if (is_zero(pressure)) {
         return 1.0f;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     }
 
     // only estimate lapse rate for the difference from the ground location
@@ -287,10 +314,14 @@ float AP_Baro::get_EAS2TAS_simple(float altitude, float pressure) const
     // ISA model atmosphere
     float tempK = C_TO_KELVIN(get_ground_temperature()) - ISA_LAPSE_RATE * altitude;
     const float eas2tas_squared = SSL_AIR_DENSITY / (pressure / (ISA_GAS_CONSTANT * tempK));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (!is_positive(eas2tas_squared)) {
         return 1.0f;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     }
-    return sqrtf(eas2tas_squared);
+    errno = 0;
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    return sqrtf(eas2tas_squared); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 /*

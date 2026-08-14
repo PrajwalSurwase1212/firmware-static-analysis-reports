@@ -183,7 +183,7 @@ const AP_Param::GroupInfo AP_AdvancedFailsafe::var_info[] = {
 // check for Failsafe conditions. This is called at 10Hz by the main
 // ArduPlane code
 void
-AP_AdvancedFailsafe::check(uint32_t last_valid_rc_ms)
+AP_AdvancedFailsafe::check(uint32_t last_valid_rc_ms) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!_enable) {
         return;
@@ -211,7 +211,7 @@ AP_AdvancedFailsafe::check(uint32_t last_valid_rc_ms)
     // check for RC failure in manual mode or RC failure when AFS_RC_MANUAL is 0
     if (_state != STATE_PREFLIGHT && !_terminate && _enable_RC_fs &&
         (mode == AFS_MANUAL || mode == AFS_STABILIZED || !_rc_term_manual_only) &&
-        _rc_fail_time_seconds > 0 &&
+        _rc_fail_time_seconds > 0 && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             (AP_HAL::millis() - last_valid_rc_ms) > (_rc_fail_time_seconds * 1000.0f)) {
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Terminating due to RC failure");
         _terminate.set_and_notify(1);
@@ -382,12 +382,12 @@ AP_AdvancedFailsafe::gps_altitude_ok() const
 
 // check for altitude limit breach
 bool
-AP_AdvancedFailsafe::check_altlimit(void)
+AP_AdvancedFailsafe::check_altlimit(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {    
     if (!_enable) {
         return false;
     }
-    if (_amsl_limit == 0 || _qnh_pressure <= 0) {
+    if (_amsl_limit == 0 || _qnh_pressure <= 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // no limit set
         return false;
     }
@@ -404,7 +404,7 @@ AP_AdvancedFailsafe::check_altlimit(void)
         return true;
     }
 
-    float alt_amsl = baro.get_altitude_difference(_qnh_pressure*100, baro.get_pressure());
+    float alt_amsl = baro.get_altitude_difference(_qnh_pressure*100, baro.get_pressure()); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (alt_amsl > _amsl_limit) {
         // pressure altitude breach
         return true;

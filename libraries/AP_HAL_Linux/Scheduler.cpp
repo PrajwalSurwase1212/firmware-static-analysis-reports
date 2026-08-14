@@ -253,7 +253,7 @@ void Scheduler::_timer_task()
     }
 
     // and the failsafe, if one is setup
-    if (_failsafe != nullptr) {
+    if (_failsafe) {
         _failsafe();
     }
 

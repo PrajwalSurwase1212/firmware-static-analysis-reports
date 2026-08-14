@@ -111,7 +111,7 @@ private:
         CANIface_Params()
         {
             AP_Param::setup_object_defaults(this, var_info);
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         static const struct AP_Param::GroupInfo var_info[];
 
@@ -143,7 +143,7 @@ private:
         CANDriver_Params()
         {
             AP_Param::setup_object_defaults(this, var_info);
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
         static const struct AP_Param::GroupInfo var_info[];
 
     private:

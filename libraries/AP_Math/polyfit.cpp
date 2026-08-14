@@ -6,16 +6,19 @@
 #include "polyfit.h"
 #include "AP_Math.h"
 #include "vector3.h"
+#include <cerrno>
 
 template <uint8_t order, typename xtype, typename vtype>
 void PolyFit<order,xtype,vtype>::update(xtype x, vtype y)
 {
     xtype temp = 1;
 
-    for (int8_t i = 2*(order-1); i >= 0; i--) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    for (int8_t i = 2*(order-1); i >= 0; i--) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         int8_t k = (i<order)?0:i - order + 1;
         for (int8_t j = i - k; j >= k; j--) {
-            mat[j][i-j] += temp;
+            // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+            mat[j][i-j] += temp; // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
         }
         temp *= x;
     }

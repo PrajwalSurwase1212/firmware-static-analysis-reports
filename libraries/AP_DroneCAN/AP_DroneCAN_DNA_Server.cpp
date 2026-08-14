@@ -27,6 +27,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include <stdio.h>
+#include <cerrno>
 extern const AP_HAL::HAL& hal;
 
 // FORMAT REVISION DREAMS (things to address if the NodeRecord needs to be changed substantially)
@@ -219,7 +220,8 @@ bool AP_DroneCAN_DNA_Server::Database::check_registration(uint8_t node_id)
 
     uint8_t empty_uid[sizeof(NodeRecord::uid_hash)] {};
     uint8_t crc = crc_crc8(record.uid_hash, sizeof(record.uid_hash));
-    if (crc == record.crc && memcmp(&record.uid_hash[0], &empty_uid[0], sizeof(empty_uid)) != 0) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    if (crc == record.crc && memcmp(&record.uid_hash[0], &empty_uid[0], sizeof(empty_uid)) != 0) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         return true; // CRC matches and UID hash is not all zero
     }
     return false;
@@ -250,7 +252,7 @@ AP_DroneCAN_DNA_Server::AP_DroneCAN_DNA_Server(AP_DroneCAN &ap_dronecan, CanardI
     storage(StorageManager::StorageCANDNA),
     _ap_dronecan(ap_dronecan),
     _canard_iface(canard_iface),
-    allocation_sub(allocation_cb, driver_index),
+    allocation_sub(allocation_cb, driver_index), // coverity[UNINIT_CTOR] // Reviewed: safe in context
     node_status_sub(node_status_cb, driver_index),
     node_info_client(_canard_iface, node_info_cb) {}
 

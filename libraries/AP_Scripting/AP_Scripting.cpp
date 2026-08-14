@@ -209,12 +209,12 @@ AP_Scripting::AP_Scripting() {
     AP_Param::setup_object_defaults(this, var_info);
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("Scripting must be a singleton");
     }
 #endif // CONFIG_HAL_BOARD == HAL_BOARD_SITL
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Scripting::init(void) {
     if (!_enable) {
@@ -448,7 +448,7 @@ bool AP_Scripting::arming_checks(size_t buflen, char *buffer) const
 
     lua_scripts::get_last_error_semaphore()->take_blocking();
     const char *error_buf = lua_scripts::get_last_error_message();
-    if (error_buf != nullptr) {
+    if (error_buf) {
         hal.util->snprintf(buffer, buflen, "Scripting: %s", error_buf);
         lua_scripts::get_last_error_semaphore()->give();
         return false;
@@ -508,7 +508,7 @@ bool AP_Scripting::is_handling_command(uint16_t cmd_id)
     WITH_SEMAPHORE(mavlink_command_block_list_sem);
 
     // Look in linked list to see if id is registered
-    if (mavlink_command_block_list != nullptr) {
+    if (mavlink_command_block_list) {
         for (command_block_list *item = mavlink_command_block_list; item; item = item->next) {
             if (item->id == cmd_id) {
                 return true;

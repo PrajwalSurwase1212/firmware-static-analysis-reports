@@ -133,11 +133,11 @@ AP_Avoidance::AP_Avoidance(AP_ADSB &adsb) :
     _adsb(adsb)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_Avoidance must be singleton");
     }
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
  * Initialize variables and allocate memory for array
@@ -169,7 +169,7 @@ void AP_Avoidance::init(void)
  */
 void AP_Avoidance::deinit(void)
 {
-    if (_obstacles != nullptr) {
+    if (_obstacles) {
         delete [] _obstacles;
         _obstacles = nullptr;
         _obstacles_allocated = 0;
@@ -181,7 +181,7 @@ void AP_Avoidance::deinit(void)
 bool AP_Avoidance::check_startup()
 {
     if (!_enabled) {
-        if (_obstacles != nullptr) {
+        if (_obstacles) {
             deinit();
         }
         // nothing to do
@@ -541,7 +541,7 @@ void AP_Avoidance::handle_avoidance_local(AP_Avoidance::Obstacle *threat)
     MAV_COLLISION_THREAT_LEVEL new_threat_level = MAV_COLLISION_THREAT_LEVEL_NONE;
     MAV_COLLISION_ACTION action = MAV_COLLISION_ACTION_NONE;
 
-    if (threat != nullptr) {
+    if (threat) {
         new_threat_level = threat->threat_level;
         if (new_threat_level == MAV_COLLISION_THREAT_LEVEL_HIGH) {
             action = (MAV_COLLISION_ACTION)_fail_action.get();

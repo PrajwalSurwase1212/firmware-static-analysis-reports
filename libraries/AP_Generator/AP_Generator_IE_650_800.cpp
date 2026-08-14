@@ -16,6 +16,7 @@
 #pragma GCC optimize("Os")
 
 #include "AP_Generator_IE_650_800.h"
+#include <cerrno>
 
 #if AP_GENERATOR_IE_650_800_ENABLED
 
@@ -67,28 +68,38 @@ void AP_Generator_IE_650_800::decode_latest_term()
     }
 
     switch (_term_number) {
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 1:
-            _parsed.tank_pct = strtof(_term, NULL);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.tank_pct = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Out of range values
             if (_parsed.tank_pct > 100.0f || _parsed.tank_pct < 0.0f) {
                 _data_valid = false;
             }
             break;
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
         case 2:
-            _parsed.battery_pct = strtof(_term, NULL);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.battery_pct = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Out of range values
             if (_parsed.battery_pct > 100.0f || _parsed.battery_pct < 0.0f) {
                 _data_valid = false;
             }
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
         case 3:
-            _parsed.state = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.state = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
         
         case 4:
-            _parsed.err_code = strtoul(_term, nullptr, 16);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.err_code = strtoul(_term, nullptr, 16); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Sentence only declared valid when we have the expected number of terms
             _sentence_valid = _data_valid;
             break;

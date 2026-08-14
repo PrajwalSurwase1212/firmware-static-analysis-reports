@@ -23,6 +23,7 @@
 #define MAX_ANGULAR_SPEED (2 * M_PI)
 
 #include <stdio.h>
+#include <cerrno>
 
 SITL::Calibration::Calibration(const char *frame_str)
     : Aircraft(frame_str)
@@ -155,7 +156,9 @@ void SITL::Calibration::_calibration_poses(Vector3f& rot_accel)
     };
     const float secs_per_pose = 6;
     const float rate = radians(360 / secs_per_pose);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     float tnow = AP_HAL::millis() * 1.0e-3;
+    errno = 0;
     float t_in_pose = fmod(tnow, secs_per_pose);
     uint8_t pose_num = ((unsigned)(tnow / secs_per_pose)) % ARRAY_SIZE(poses);
     const struct pose &pose = poses[pose_num];

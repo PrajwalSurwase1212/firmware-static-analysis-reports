@@ -59,7 +59,7 @@ public:
 
     AC_PolyFence_loader(AP_Int8 &total, const AP_Int16 &options) :
         _total(total),
-        _options(options) {}
+        _options(options) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AC_PolyFence_loader);

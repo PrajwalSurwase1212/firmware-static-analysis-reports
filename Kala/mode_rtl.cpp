@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 #if MODE_RTL_ENABLED
 
@@ -181,7 +182,8 @@ void ModeRTL::climb_return_run()
     attitude_control->input_thrust_vector_heading(pos_control->get_thrust_vector(), auto_yaw.get_heading());
 
     // check if we've completed this stage of RTL
-    _state_complete = wp_nav->reached_wp_destination();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    _state_complete = wp_nav->reached_wp_destination(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 // loiterathome_start - initialise return to home

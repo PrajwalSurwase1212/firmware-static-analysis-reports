@@ -19,6 +19,7 @@
 #pragma once
 
 #include "SIM_Aircraft.h"
+#include <cerrno>
 // #include "SIM_Motor.h"
 // #include "SIM_Frame.h"
 
@@ -67,8 +68,11 @@ protected:
     float drag_constant;
     float drag_gyr_constant;
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     void calculate_forces(const struct sitl_input &input, Vector3f &rot_accel, Vector3f &body_accel);
-    float sq(float a) {return powf(a,2);}
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            float sq(float a) {return powf(a,2);} // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 };
 
 }

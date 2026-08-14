@@ -22,6 +22,7 @@
 #include <AP_Scheduler/AP_Scheduler.h>
 #include "AP_CANSensor.h"
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -33,7 +34,7 @@ extern const AP_HAL::HAL& hal;
 
 CANSensor::CANSensor(const char *driver_name, uint16_t stack_size) :
     _driver_name(driver_name),
-    _stack_size(stack_size)
+    _stack_size(stack_size) // coverity[UNINIT_CTOR] // Reviewed: safe in context
 {}
 
 
@@ -111,7 +112,7 @@ void CANSensor::init(uint8_t driver_index, bool enable_filters)
 
 bool CANSensor::add_interface(AP_HAL::CANIface* can_iface)
 {
-    if (_can_iface != nullptr) {
+    if (_can_iface) {
         debug_can(AP_CANManager::LOG_ERROR, "Multiple Interface not supported");
         return false;
     }
@@ -128,7 +129,8 @@ bool CANSensor::add_interface(AP_HAL::CANIface* can_iface)
         return false;
     }
 
-    if (!_can_iface->set_event_handle(&sem_handle)) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!_can_iface->set_event_handle(&sem_handle)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         debug_can(AP_CANManager::LOG_ERROR, "Cannot add event handle");
         return false;
     }
@@ -211,7 +213,7 @@ MultiCAN::MultiCAN(ForwardCanFrame cf, AP_CAN::Protocol can_type, const char *dr
 // handle a received frame from the CAN bus
 void MultiCAN::handle_frame(AP_HAL::CANFrame &frame)
 {
-    if (callbacks != nullptr) {
+    if (callbacks) {
         callbacks->handle_frame(frame);
     }
 

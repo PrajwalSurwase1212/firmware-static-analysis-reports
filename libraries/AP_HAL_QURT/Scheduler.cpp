@@ -243,7 +243,7 @@ void Scheduler::_run_timers(bool called_from_timer_thread)
     }
 
     // and the failsafe, if one is setup
-    if (_failsafe != nullptr) {
+    if (_failsafe) {
         _failsafe();
     }
 
@@ -300,7 +300,7 @@ void *Scheduler::_uart_thread(void *arg)
         // process any pending serial bytes
         for (uint8_t i = 0; i < hal.num_serial; i++) {
             auto *p = hal.serial(i);
-            if (p != nullptr) {
+            if (p) {
                 p->_timer_tick();
             }
         }

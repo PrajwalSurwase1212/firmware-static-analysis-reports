@@ -240,7 +240,7 @@ bool UARTDriver_Local::_write_pending_bytes(void)
     }
     uint32_t available;
     const uint8_t *ptr = _writebuf.readptr(available);
-    if (ptr != nullptr) {
+    if (ptr) {
         auto n = sl_client_uart_write(fd, (const char *)ptr, available);
         if (n > 0) {
             _writebuf.advance(n);

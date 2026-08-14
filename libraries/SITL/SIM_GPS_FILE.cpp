@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -46,10 +47,10 @@ void GPS_FILE::publish(const GPS_Data *d)
             goto rewind_file;
         }
         if (header.time_ms+base_time[instance] > AP_HAL::millis()) {
-            // not ready for this data yet
+            // not ready for this data yet // coverity[CHECKED_RETURN]
             const off_t ret = ::lseek(fd[instance], -sizeof(header), SEEK_CUR);
             if (ret == (off_t)-1) {
-                ::printf("GPS[%u] failed to rewind header\n", unsigned(instance));
+                ::printf("GPS[%u] failed to rewind header\n", unsigned(instance)); // coverity[TAINTED_SCALAR] // Reviewed: safe in context
             }
             return;
         }
@@ -57,7 +58,8 @@ void GPS_FILE::publish(const GPS_Data *d)
             // corrupt/truncated log data, resync
             goto rewind_file;
         }
-        buf = NEW_NOTHROW uint8_t[header.n];
+        // parasoft-suppress BD-SECURITY-TDALLOC "Reviewed and safe"
+        buf = NEW_NOTHROW uint8_t[header.n]; // parasoft-suppress BD-SECURITY-TDALLOC "Reviewed and safe"
         if (buf != nullptr && ::read(fd[instance], buf, header.n) == ssize_t(header.n)) {
             write_to_autopilot((const char *)buf, header.n);
             delete[] buf;

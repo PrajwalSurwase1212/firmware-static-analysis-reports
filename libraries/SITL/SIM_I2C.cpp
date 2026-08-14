@@ -45,6 +45,7 @@
 #include "SIM_ToshibaLED.h"
 
 #include <signal.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -197,7 +198,8 @@ void I2C::init()
 {
     for (auto &i : i2c_devices) {
         i.device.init();
-    }
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+    } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 #if AP_SIM_IS31FL3195_ENABLED
     // IS31FL3195 needs to know its own address:

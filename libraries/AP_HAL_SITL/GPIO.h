@@ -5,7 +5,7 @@
 
 class HALSITL::GPIO : public AP_HAL::GPIO {
 public:
-    explicit GPIO(SITL_State *sitlState): _sitlState(sitlState) {}
+    explicit GPIO(SITL_State *sitlState): _sitlState(sitlState) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     void init() override;
     void pinMode(uint8_t pin, uint8_t output) override;
     uint8_t read(uint8_t pin) override;

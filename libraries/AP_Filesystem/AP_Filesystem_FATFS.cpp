@@ -97,7 +97,7 @@ static FAT_FILE *fileno_to_stream(int fileno)
 static void free_file_descriptor(int fileno)
 {
     FAT_FILE *stream = fileno_to_stream(fileno);
-    if (stream != nullptr) {
+    if (stream) {
         file_table[fileno] = NULL;
         free(stream->name);
         free(stream);

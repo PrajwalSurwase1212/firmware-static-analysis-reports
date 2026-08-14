@@ -42,7 +42,7 @@ public:
     uint32_t packet_for_alt(uint16_t alt_cm, uint8_t *buffer, uint8_t buflen) override;
 
 private:
-    uint8_t frame_count{0};  // sequence number
+    uint8_t frame_count{0};  // sequence number // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 }

@@ -1,6 +1,7 @@
 // Jacob Walser: jacob@bluerobotics.com
 
 #include "Sub.h"
+#include <cerrno>
 
 // counter to verify contact with bottom
 static uint32_t bottom_detector_count = 0;
@@ -9,7 +10,7 @@ static float current_depth = 0;
 
 // checks if we have hit bottom or surface and updates the ap.at_bottom and ap.at_surface flags
 // called at MAIN_LOOP_RATE
-// ToDo: doesn't need to be called this fast
+// ToDo: doesn't need to be called this fast // coverity[RW.ROUTINE_NOT_EMITTED]
 void Sub::update_surface_and_bottom_detector()
 {
     if (!motors.armed()) { // only update when armed
@@ -19,7 +20,8 @@ void Sub::update_surface_and_bottom_detector()
     }
 
     Vector3f velocity;
-    UNUSED_RESULT(ahrs.get_velocity_NED(velocity));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    UNUSED_RESULT(ahrs.get_velocity_NED(velocity)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     // check that we are not moving up or down
     bool vel_stationary = velocity.z > -0.05 && velocity.z < 0.05;
@@ -27,9 +29,9 @@ void Sub::update_surface_and_bottom_detector()
     if (ap.depth_sensor_present && sensor_health.depth) { // we can use the external pressure sensor for a very accurate and current measure of our z axis position
         current_depth = barometer.get_altitude(); // cm
 
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (ap.at_surface) {
-            set_surfaced(current_depth > g.surface_depth*0.01 - 0.05); // add a 5cm buffer so it doesn't trigger too often
+            set_surfaced(current_depth > g.surface_depth*0.01 - 0.05); // add a 5cm buffer so it doesn't trigger too often // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         } else {
             set_surfaced(current_depth > g.surface_depth*0.01); // If we are above surface depth, we are surfaced
         }

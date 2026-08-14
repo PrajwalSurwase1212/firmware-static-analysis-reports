@@ -250,7 +250,7 @@ public:
 #if AP_PARAM_DYNAMIC_ENABLED
         _num_vars_base = _num_vars;
 #endif
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("AP_Param must be singleton");
         }
         _singleton = this;

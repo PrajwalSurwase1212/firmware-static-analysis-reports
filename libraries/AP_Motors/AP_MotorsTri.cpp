@@ -29,7 +29,7 @@
 extern const AP_HAL::HAL& hal;
 
 // init
-void AP_MotorsTri::init(motor_frame_class frame_class, motor_frame_type frame_type)
+void AP_MotorsTri::init(motor_frame_class frame_class, motor_frame_type frame_type) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     add_motor_num(AP_MOTORS_MOT_1);
     add_motor_num(AP_MOTORS_MOT_2);
@@ -49,7 +49,7 @@ void AP_MotorsTri::init(motor_frame_class frame_class, motor_frame_type frame_ty
     // Check for tail servo
     _have_tail_servo = SRV_Channels::function_assigned(SRV_Channel::k_motor7);
 
-    SRV_Channels::set_angle(SRV_Channels::get_motor_function(AP_MOTORS_CH_TRI_YAW), _yaw_servo_angle_max_deg*100);
+    SRV_Channels::set_angle(SRV_Channels::get_motor_function(AP_MOTORS_CH_TRI_YAW), _yaw_servo_angle_max_deg*100); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // check for reverse tricopter
     _pitch_reversed = frame_type == MOTOR_FRAME_TYPE_PLUSREV;
@@ -136,7 +136,7 @@ uint32_t AP_MotorsTri::get_motor_mask()
 
 // output_armed - sends commands to the motors
 // includes new scaling stability patch
-void AP_MotorsTri::output_armed_stabilizing()
+void AP_MotorsTri::output_armed_stabilizing() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float   roll_thrust;                // roll thrust input value, +/- 1.0
     float   pitch_thrust;               // pitch thrust input value, +/- 1.0
@@ -149,7 +149,7 @@ void AP_MotorsTri::output_armed_stabilizing()
     float   rpy_high = 0.0f;            // highest motor value
     float   thr_adj;                    // the difference between the pilot's desired throttle and throttle_thrust_best_rpy
 
-    SRV_Channels::set_angle(SRV_Channels::get_motor_function(AP_MOTORS_CH_TRI_YAW), _yaw_servo_angle_max_deg*100);
+    SRV_Channels::set_angle(SRV_Channels::get_motor_function(AP_MOTORS_CH_TRI_YAW), _yaw_servo_angle_max_deg*100); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // sanity check YAW_SV_ANGLE parameter value to avoid divide by zero
     _yaw_servo_angle_max_deg.set(constrain_float(_yaw_servo_angle_max_deg, AP_MOTORS_TRI_SERVO_RANGE_DEG_MIN, AP_MOTORS_TRI_SERVO_RANGE_DEG_MAX));

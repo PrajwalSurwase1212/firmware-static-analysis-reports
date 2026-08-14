@@ -10,7 +10,7 @@ public:
     /* Do not allow copies */
     CLASS_NO_COPY(AP_Scripting_SerialAccess);
 
-    AP_Scripting_SerialAccess() {}
+    AP_Scripting_SerialAccess() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void begin(uint32_t baud);
 

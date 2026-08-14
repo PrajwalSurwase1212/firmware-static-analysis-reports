@@ -5,6 +5,7 @@
 #include "SIM_GPS_UBLOX.h"
 
 #include <SITL/SITL.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -309,7 +310,8 @@ void GPS_UBlox::publish(const GPS_Data *d)
             // not bothering to fill in prRes
         }
         send_ubx(MSG_SVINFO, (uint8_t*)&svinfo, sizeof(svinfo));
-        _next_nav_sv_info_time = gps_tow.ms + 10000; // 10 second delay
+        // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+        _next_nav_sv_info_time = gps_tow.ms + 10000; // 10 second delay // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
     }
 }
 

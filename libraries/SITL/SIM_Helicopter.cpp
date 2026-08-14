@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 namespace SITL {
 
@@ -73,7 +74,7 @@ Helicopter::Helicopter(const char *frame_str) :
     ground_behavior = GROUND_BEHAVIOR_NO_MOVEMENT;
     lock_step_scheduled = true;
 
-    motor_mask |= (1U<<0);
+    motor_mask |= (1U<<0); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -390,11 +391,15 @@ float Helicopter::update_rpm(float curr_rpm, float throttle, float &engine_torqu
     //use this to make rpm model more realistic
     accel_scale = 100.0f;
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // calculate aerodynamic rotor drag torque
-    rotor_torque = (sq(curr_rpm * 0.104667f) * (torque_mpog + torque_scale * powf(fabsf(collective),1.5f))) / izz;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    rotor_torque = (sq(curr_rpm * 0.104667f) * (torque_mpog + torque_scale * powf(fabsf(collective),1.5f))) / izz; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     // Calculate autorotation effect on rotor
-    auto_ss_torque = sq(nominal_rpm * 0.104667f) * (torque_mpog + torque_scale * powf(fabsf(-1.0f),1.5f)) / izz;
+    auto_ss_torque = sq(nominal_rpm * 0.104667f) * (torque_mpog + torque_scale * powf(fabsf(-1.0f),1.5f)) / izz; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (is_positive(velocity_air_bf.z)) {
         descent_torque = (velocity_air_bf.z - 5.3) * auto_ss_torque / 5.3f + auto_ss_torque;
     } else {

@@ -20,7 +20,7 @@ private:
     
 public:
     // constructor
-    AP_Tuning_Plane(void) : AP_Tuning(tuning_sets, tuning_names) {}
+    AP_Tuning_Plane(void) : AP_Tuning(tuning_sets, tuning_names) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     static const struct AP_Param::GroupInfo  var_info[];
     

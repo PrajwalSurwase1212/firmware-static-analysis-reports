@@ -68,7 +68,7 @@ const AP_Param::GroupInfo GliderPullup::var_info[] = {
 GliderPullup::GliderPullup(void)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   return true if in a pullup manoeuvre at the end of NAV_ALTITUDE_WAIT
@@ -106,7 +106,7 @@ bool GliderPullup::pullup_start(void)
 /*
   first stage pullup from balloon release, verify completion
  */
-bool GliderPullup::verify_pullup(void)
+bool GliderPullup::verify_pullup(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const auto &ahrs = plane.ahrs;
     const auto &current_loc = plane.current_loc;
@@ -143,7 +143,7 @@ bool GliderPullup::verify_pullup(void)
     case Stage::WAIT_LEVEL: {
         // When pitch has raised past lower limit used by speed controller, wait for airspeed to approach
         // target value before handing over control of pitch demand to speed controller
-        bool pitchup_complete = ahrs.get_pitch_deg() > MIN(0, aparm.pitch_limit_min);
+        bool pitchup_complete = ahrs.get_pitch_deg() > MIN(0, aparm.pitch_limit_min); // coverity[RW.NO_MATCHING_FUNCTION]
         const float pitch_lag_time = 1.0f * sqrtf(ahrs.get_EAS2TAS());
         float aspeed;
         const float aspeed_derivative = (ahrs.get_accel().x + GRAVITY_MSS * ahrs.get_DCM_rotation_body_to_ned().c.x) / ahrs.get_EAS2TAS();
@@ -174,14 +174,14 @@ bool GliderPullup::verify_pullup(void)
 /*
   stabilize during pullup from balloon drop
  */
-void GliderPullup::stabilize_pullup(void)
+void GliderPullup::stabilize_pullup(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const float speed_scaler = plane.get_speed_scaler();
     switch (stage) {
     case Stage::WAIT_AIRSPEED: {
         plane.pitchController.reset_I();
         plane.yawController.reset_I();
-        SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, elev_offset*4500);
+        SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, elev_offset*4500); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         SRV_Channels::set_output_scaled(SRV_Channel::k_rudder, 0);
         plane.nav_pitch_cd = 0;
         plane.nav_roll_cd = 0;
@@ -207,12 +207,12 @@ void GliderPullup::stabilize_pullup(void)
             const uint32_t elev_trim_offset_cd = 4500.0f * elev_offset * (1.0f - ng_demand / ng_limit);
             SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, elev_trim_offset_cd + plane.pitchController.get_rate_out(demanded_rate_dps, speed_scaler));
         } else {
-            SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, elev_offset*4500);
+            SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, elev_offset*4500); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
         break;
     }
     case Stage::PUSH_NOSE_DOWN: {
-        plane.nav_pitch_cd = plane.aparm.pitch_limit_min*100;
+        plane.nav_pitch_cd = plane.aparm.pitch_limit_min*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         plane.stabilize_pitch();
         plane.nav_roll_cd = 0;
         plane.stabilize_roll();
@@ -221,7 +221,7 @@ void GliderPullup::stabilize_pullup(void)
         break;
     }
     case Stage::WAIT_LEVEL:
-        plane.nav_pitch_cd = MAX((plane.aparm.pitch_limit_min + 5), pitch_dem)*100;
+        plane.nav_pitch_cd = MAX((plane.aparm.pitch_limit_min + 5), pitch_dem)*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         plane.stabilize_pitch();
         plane.nav_roll_cd = 0;
         plane.stabilize_roll();

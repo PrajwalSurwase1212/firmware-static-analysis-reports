@@ -9,7 +9,7 @@ AP_DAL_GPS::AP_DAL_GPS()
         _RGPI[i].instance = i;
         _RGPJ[i].instance = i;
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_DAL_GPS::start_frame()
 {

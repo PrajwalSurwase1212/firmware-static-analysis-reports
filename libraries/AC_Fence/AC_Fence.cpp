@@ -163,7 +163,7 @@ const AP_Param::GroupInfo AC_Fence::var_info[] = {
 AC_Fence::AC_Fence()
 {
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("Fence must be singleton");
     }
 #endif
@@ -172,7 +172,7 @@ AC_Fence::AC_Fence()
     if (_enabled) {
         _enabled_fences = _configured_fences.get() & ~AC_FENCE_TYPE_ALT_MIN;
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // get a user-friendly list of fences
 void AC_Fence::get_fence_names(uint8_t fences, ExpandingString& msg)
@@ -412,13 +412,13 @@ bool AC_Fence::pre_arm_check_polygon(char *failure_msg, const uint8_t failure_ms
 }
 
 // additional checks for the circle fence:
-bool AC_Fence::pre_arm_check_circle(char *failure_msg, const uint8_t failure_msg_len) const
+bool AC_Fence::pre_arm_check_circle(char *failure_msg, const uint8_t failure_msg_len) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    if (_circle_radius < 0) {
+    if (_circle_radius < 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         hal.util->snprintf(failure_msg, failure_msg_len, "Invalid Circle FENCE_RADIUS value");
         return false;
     }
-    if (_circle_radius < _margin) {
+    if (_circle_radius < _margin) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         hal.util->snprintf(failure_msg, failure_msg_len, "Circle FENCE_MARGIN is greater than FENCE_RADIUS");
         return false;
     }
@@ -443,7 +443,7 @@ bool AC_Fence::pre_arm_check_alt(char *failure_msg, const uint8_t failure_msg_le
 
 
 /// pre_arm_check - returns true if all pre-takeoff checks have completed successfully
-bool AC_Fence::pre_arm_check(char *failure_msg, const uint8_t failure_msg_len) const
+bool AC_Fence::pre_arm_check(char *failure_msg, const uint8_t failure_msg_len) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // if fences are enabled but none selected fail pre-arm check
     if (_enabled && !present()) {
@@ -517,12 +517,12 @@ bool AC_Fence::pre_arm_check(char *failure_msg, const uint8_t failure_msg_len) c
         return false;
     }
 
-    if (_alt_max < _alt_min) {
+    if (_alt_max < _alt_min) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         hal.util->snprintf(failure_msg, failure_msg_len, "FENCE_ALT_MAX < FENCE_ALT_MIN");
         return false;
     }
 
-    if (_alt_max - _alt_min <= 2.0f * _margin) {
+    if (_alt_max - _alt_min <= 2.0f * _margin) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         hal.util->snprintf(failure_msg, failure_msg_len, "FENCE_MARGIN too big");
         return false;
     }
@@ -534,7 +534,7 @@ bool AC_Fence::pre_arm_check(char *failure_msg, const uint8_t failure_msg_len) c
 /// returns true if we have freshly breached the maximum altitude
 /// fence; also may set up a fallback fence which, if breached, will
 /// cause the altitude fence to be freshly breached
-bool AC_Fence::check_fence_alt_max()
+bool AC_Fence::check_fence_alt_max() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // altitude fence check
     if (!(get_enabled_fences() & AC_FENCE_TYPE_ALT_MAX)) {
@@ -565,7 +565,7 @@ bool AC_Fence::check_fence_alt_max()
         }
         // old breach
         return false;
-    } else if (_curr_alt >= _alt_max - _margin) {
+    } else if (_curr_alt >= _alt_max - _margin) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         record_margin_breach(AC_FENCE_TYPE_ALT_MAX);
     } else {
         clear_margin_breach(AC_FENCE_TYPE_ALT_MAX);
@@ -585,7 +585,7 @@ bool AC_Fence::check_fence_alt_max()
 /// returns true if we have freshly breached the minimum altitude
 /// fence; also may set up a fallback fence which, if breached, will
 /// cause the altitude fence to be freshly breached
-bool AC_Fence::check_fence_alt_min()
+bool AC_Fence::check_fence_alt_min() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // altitude fence check
     if (!(get_enabled_fences() & AC_FENCE_TYPE_ALT_MIN)) {
@@ -618,7 +618,7 @@ bool AC_Fence::check_fence_alt_min()
         }
         // old breach
         return false;
-    } else if (_curr_alt <= _alt_min + _margin) {
+    } else if (_curr_alt <= _alt_min + _margin) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         record_margin_breach(AC_FENCE_TYPE_ALT_MIN);
     } else {
         clear_margin_breach(AC_FENCE_TYPE_ALT_MIN);
@@ -637,7 +637,7 @@ bool AC_Fence::check_fence_alt_min()
 
 
 /// auto enable fence floor
-bool AC_Fence::auto_enable_fence_floor()
+bool AC_Fence::auto_enable_fence_floor() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // altitude fence check
     if (!(_configured_fences & AC_FENCE_TYPE_ALT_MIN)       // not configured
@@ -654,7 +654,7 @@ bool AC_Fence::auto_enable_fence_floor()
     const float _curr_alt = -alt; // translate Down to Up
 
     // check if we are over the altitude fence
-    if (!floor_enabled() && _curr_alt >= _alt_min + _margin) {
+    if (!floor_enabled() && _curr_alt >= _alt_min + _margin) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         enable(true, AC_FENCE_TYPE_ALT_MIN, false);
         GCS_SEND_TEXT(MAV_SEVERITY_NOTICE, "Min Alt fence enabled (auto enable)");
         return true;
@@ -702,7 +702,7 @@ bool AC_Fence::check_fence_polygon()
 /// parameters) has been freshly breached.  May also set up a backup
 /// fence outside the fence and return a fresh breach if that backup
 /// fence is breached.
-bool AC_Fence::check_fence_circle()
+bool AC_Fence::check_fence_circle() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!(get_enabled_fences() & AC_FENCE_TYPE_CIRCLE)) {
         // not enabled; no breach
@@ -731,7 +731,7 @@ bool AC_Fence::check_fence_circle()
             return true;
         }
         return false;
-    } else if (_home_distance >= _circle_radius - _margin) {
+    } else if (_home_distance >= _circle_radius - _margin) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         record_margin_breach(AC_FENCE_TYPE_CIRCLE);
     } else {
         clear_margin_breach(AC_FENCE_TYPE_CIRCLE);
@@ -887,7 +887,7 @@ bool AC_Fence::check_destination_within_fence(const Location& loc)
         }
     }
 
-    // Circular fence check
+    // Circular fence check // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if ((get_enabled_fences() & AC_FENCE_TYPE_CIRCLE)) {
         if (AP::ahrs().get_home().get_distance(loc) > _circle_radius) {
             return false;

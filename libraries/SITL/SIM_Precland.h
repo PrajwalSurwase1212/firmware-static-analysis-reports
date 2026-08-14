@@ -25,7 +25,7 @@ class SIM_Precland {
 public:
     SIM_Precland() {
         AP_Param::setup_object_defaults(this, var_info);
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update precland state
     void update(const Location &loc);

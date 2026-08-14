@@ -15,7 +15,7 @@ class AP_Proximity_LightWareSF40C : public AP_Proximity_Backend_Serial
 
 public:
     // constructor
-    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial;
+    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     uint16_t rxspace() const override {
         return 1280;

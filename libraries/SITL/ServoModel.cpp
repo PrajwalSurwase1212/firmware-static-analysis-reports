@@ -50,13 +50,13 @@ const AP_Param::GroupInfo SITL::SIM::ServoParams::var_info[] = {
   simpler filter used when SIM_SERVO_FILTER and SIM_SERVO_DELAY are not set
   this filter is a 1p low pass based on SIM_SERVO_SPEED
  */
-float ServoModel::apply_simple_filter(float v, float dt)
+float ServoModel::apply_simple_filter(float v, float dt) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const auto *sitl = AP::sitl();
     if (!is_positive(sitl->servo.servo_speed)) {
         return v;
     }
-    const float cutoff = 1.0f / (2 * M_PI * sitl->servo.servo_speed);
+    const float cutoff = 1.0f / (2 * M_PI * sitl->servo.servo_speed); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     filter1p.set_cutoff_frequency(cutoff);
     return filter1p.apply(v, dt);
 }
@@ -64,7 +64,7 @@ float ServoModel::apply_simple_filter(float v, float dt)
 /*
   apply a filter for a servo model consistting of a delay, speed and 2p filter
  */
-float ServoModel::apply_filter(float v, float dt)
+float ServoModel::apply_filter(float v, float dt) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const auto *sitl = AP::sitl();
     if (!sitl) {
@@ -78,8 +78,8 @@ float ServoModel::apply_filter(float v, float dt)
     }
 
     // apply delay
-    if (sitl->servo.servo_delay > 0) {
-        uint32_t delay_len = MAX(1,sitl->servo.servo_delay * sitl->loop_rate_hz);
+    if (sitl->servo.servo_delay > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        uint32_t delay_len = MAX(1,sitl->servo.servo_delay * sitl->loop_rate_hz); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         if (!delay) {
             delay = NEW_NOTHROW ObjectBuffer<float>();
         }
@@ -93,9 +93,9 @@ float ServoModel::apply_filter(float v, float dt)
     }
 
     // apply slew limit
-    if (sitl->servo.servo_speed > 0) {
+    if (sitl->servo.servo_speed > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // assume SIM_SERVO_SPEED is time for 60 degrees
-        float time_per_degree = sitl->servo.servo_speed / 60.0;
+        float time_per_degree = sitl->servo.servo_speed / 60.0; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         float proportion_per_second = 1.0 / (angle_deg * time_per_degree);
         delta_max = proportion_per_second * dt;
         v = constrain_float(v, last_v-delta_max, last_v+delta_max);
@@ -104,7 +104,7 @@ float ServoModel::apply_filter(float v, float dt)
     }
 
     // apply filter
-    if (sitl->servo.servo_filter > 0) {
+    if (sitl->servo.servo_filter > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         filter.set_cutoff_frequency(sitl->loop_rate_hz, sitl->servo.servo_filter);
         v = filter.apply(v);
     }

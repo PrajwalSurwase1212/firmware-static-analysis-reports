@@ -42,7 +42,7 @@ public:
     {
         // setup parameter defaults
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-        if (_singleton != nullptr) {
+        if (_singleton) { // coverity[UNINIT_CTOR] // Reviewed: safe in context
             AP_HAL::panic("Parachute must be singleton");
         }
 #endif

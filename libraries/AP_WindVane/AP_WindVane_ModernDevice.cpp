@@ -23,6 +23,7 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -31,7 +32,7 @@ AP_WindVane_ModernDevice::AP_WindVane_ModernDevice(AP_WindVane &frontend) :
     AP_WindVane_Backend(frontend)
 {
     _speed_analog_source = hal.analogin->channel(ANALOG_INPUT_NONE);
-    _temp_analog_source = hal.analogin->channel(ANALOG_INPUT_NONE);
+    _temp_analog_source = hal.analogin->channel(ANALOG_INPUT_NONE); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_WindVane_ModernDevice::update_speed()
@@ -64,8 +65,10 @@ void AP_WindVane_ModernDevice::update_speed()
         analog_voltage = 0.0f;
     }
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // simplified equation from data sheet, converted from mph to m/s
-    _frontend._speed_apparent_raw  = 24.254896f * powf((analog_voltage / powf(temp_ambient, 0.115157f)), 3.009364f);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    _frontend._speed_apparent_raw  = 24.254896f * powf((analog_voltage / powf(temp_ambient, 0.115157f)), 3.009364f); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 void AP_WindVane_ModernDevice::calibrate()

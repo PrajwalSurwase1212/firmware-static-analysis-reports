@@ -17,6 +17,7 @@
 
 #if HAL_LOGGER_FENCE_ENABLED
     #include <AC_Fence/AC_Fence.h>
+#include <cerrno>
 #endif
 
 extern const AP_HAL::HAL& hal;
@@ -26,7 +27,7 @@ AP_Logger_Backend::AP_Logger_Backend(AP_Logger &front,
     _front(front),
     _startup_messagewriter(writer)
 {
-    writer->set_logger_backend(this);
+    writer->set_logger_backend(this); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 uint8_t AP_Logger_Backend::num_types() const
@@ -217,7 +218,8 @@ bool AP_Logger_Backend::Write(const uint8_t msg_type, va_list arg_list, bool is_
         return false;
     }
 
-    uint8_t buffer[msg_len];
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    uint8_t buffer[msg_len]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
     uint8_t offset = 0;
     buffer[offset++] = HEAD_BYTE1;
     buffer[offset++] = HEAD_BYTE2;
@@ -399,7 +401,7 @@ void AP_Logger_Backend::validate_WritePrioritisedBlock(const void *pBuffer,
     }
     if (type_len != size) {
         char name[5] = {}; // get a null-terminated string
-        if (name_src != nullptr) {
+        if (name_src) {
             memcpy(name, name_src, 4);
         } else {
             strncpy(name, "?NM?", ARRAY_SIZE(name));

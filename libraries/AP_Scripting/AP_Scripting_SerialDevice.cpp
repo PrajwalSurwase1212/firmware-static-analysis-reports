@@ -127,7 +127,7 @@ uint32_t AP_Scripting_SerialDevice::Port::_available()
 bool AP_Scripting_SerialDevice::Port::_discard_input()
 {
     WITH_SEMAPHORE(sem);
-    if (readbuffer != nullptr) {
+    if (readbuffer) {
         readbuffer->clear();
     }
     return true;

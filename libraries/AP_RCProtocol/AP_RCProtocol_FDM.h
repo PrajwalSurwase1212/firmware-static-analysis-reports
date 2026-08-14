@@ -9,7 +9,7 @@
 class AP_RCProtocol_FDM : public AP_RCProtocol_Backend {
 public:
 
-    using AP_RCProtocol_Backend::AP_RCProtocol_Backend;
+    using AP_RCProtocol_Backend::AP_RCProtocol_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update() override;
 

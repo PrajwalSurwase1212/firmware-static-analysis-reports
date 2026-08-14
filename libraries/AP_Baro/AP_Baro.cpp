@@ -59,6 +59,7 @@
 #include <AP_Vehicle/AP_Vehicle.h>
 #if AP_BARO_THST_COMP_ENABLED
 #include <AP_Motors/AP_Motors.h>
+#include <cerrno>
 #endif
 
 #define INTERNAL_TEMPERATURE_CLAMP 35.0f
@@ -280,7 +281,7 @@ AP_Baro::AP_Baro()
     _singleton = this;
 
     AP_Param::setup_object_defaults(this, var_info);
-    _field_elevation_active = _field_elevation;
+    _field_elevation_active = _field_elevation; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // calibrate the barometer. This must be called at least once before
@@ -466,7 +467,7 @@ float AP_Baro::get_external_temperature(const uint8_t instance) const
     // if we don't have an external temperature then try to use temperature
     // from the airspeed sensor
     AP_Airspeed *airspeed = AP_Airspeed::get_singleton();
-    if (airspeed != nullptr) {
+    if (airspeed) {
         float temperature;
         if (airspeed->healthy() && airspeed->get_temperature(temperature)) {
             return temperature;
@@ -651,7 +652,7 @@ void AP_Baro::init(void)
 #endif
     }
 
-#if AP_BARO_PROBE_EXTERNAL_I2C_BUSES
+#if AP_BARO_PROBE_EXTERNAL_I2C_BUSES // coverity[UNREACHABLE]
     _probe_i2c_barometers();
 #endif
 
@@ -698,7 +699,8 @@ void AP_Baro::_probe_i2c_barometers(void)
     uint32_t probe = _baro_probe_ext.get();
     (void)probe;  // may be unused if most baros compiled out
     uint32_t mask = hal.i2c_mgr->get_bus_mask_external();
-    if (AP_BoardConfig::get_board_type() == AP_BoardConfig::PX4_BOARD_PIXHAWK2) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (AP_BoardConfig::get_board_type() == AP_BoardConfig::PX4_BOARD_PIXHAWK2) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         // for the purpose of baro probing, treat CubeBlack internal i2c as external. It has
         // no internal i2c baros, so this is safe
         mask |= hal.i2c_mgr->get_bus_mask_internal();

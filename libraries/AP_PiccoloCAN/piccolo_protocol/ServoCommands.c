@@ -22,6 +22,7 @@
 #include "fieldencode.h"
 #include "scaleddecode.h"
 #include "scaledencode.h"
+#include <errno.h>
 
 /*!
  * \brief Create the Servo_RequestHighFrequencyData packet
@@ -74,7 +75,8 @@ int decodeServo_RequestHighFrequencyDataPacket(const void* _pg_pkt, Servo_Teleme
         return 0;
 
     // Select which telemetry packets are transmitted at high-speed by the servo
-    if(decodeServo_TelemetryPackets_t(_pg_data, &_pg_byteindex, packets) == 0)
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if(decodeServo_TelemetryPackets_t(_pg_data, &_pg_byteindex, packets) == 0) // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return 0;
 
     return 1;

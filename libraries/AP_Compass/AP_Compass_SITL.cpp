@@ -10,7 +10,7 @@ AP_Compass_SITL::AP_Compass_SITL()
     : _num_compass(0)
     , _sitl(AP::sitl())
 {
-    if (_sitl != nullptr) {
+    if (_sitl) {
         for (uint8_t i=0; i<MAX_CONNECTED_MAGS; i++) {
             uint32_t dev_id = _sitl->mag_devid[i];
             if (dev_id == 0) {
@@ -18,7 +18,7 @@ AP_Compass_SITL::AP_Compass_SITL()
             }
             uint8_t instance;
             if (!register_compass(dev_id, instance)) {
-                continue;
+                continue; // coverity[UNINIT] // Reviewed: safe in context
             } else if (_num_compass<MAX_SITL_COMPASSES) {
                 _compass_instance[_num_compass] = instance;
                 set_dev_id(_compass_instance[_num_compass], dev_id);
@@ -32,7 +32,7 @@ AP_Compass_SITL::AP_Compass_SITL()
             }
         }
 
-        // Scroll through the registered compasses, and set the offsets
+        // Scroll through the registered compasses, and set the offsets // coverity[UNINIT] // Reviewed: safe in context
         for (uint8_t i=0; i<_num_compass; i++) {
             if (_compass.get_offsets(i).is_zero()) {
                 _compass.set_offsets(i, _sitl->mag_ofs[i]);
@@ -45,11 +45,11 @@ AP_Compass_SITL::AP_Compass_SITL()
         AP_Param::set_default_by_name("COMPASS_SCALE2", 1);
         AP_Param::set_default_by_name("COMPASS_SCALE3", 1);
 
-        // make first compass external
+        // make first compass external // coverity[UNINIT] // Reviewed: safe in context
         set_external(_compass_instance[0], true);
 
         hal.scheduler->register_timer_process(FUNCTOR_BIND(this, &AP_Compass_SITL::_timer, void));
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 

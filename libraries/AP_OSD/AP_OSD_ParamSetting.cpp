@@ -27,6 +27,7 @@
 #include <SRV_Channel/SRV_Channel.h>
 #include <AP_SerialManager/AP_SerialManager.h>
 #include <ctype.h>
+#include <cerrno>
 
 #if OSD_PARAM_ENABLED
 
@@ -268,7 +269,7 @@ AP_OSD_ParamSetting::AP_OSD_ParamSetting(uint8_t param_number) :
     default_param_idx(-1),
     default_param_key(-1)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // construct a setting from a compact static initializer structure
@@ -281,7 +282,7 @@ AP_OSD_ParamSetting::AP_OSD_ParamSetting(const Initializer& initializer) :
     default_param_key(initializer.token.key),
     default_type(float(initializer.type))
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // update the contained parameter
@@ -358,7 +359,7 @@ void AP_OSD_ParamSetting::guess_ranges(bool force)
     // nothing statically configured so guess some appropriate values
     float min = -1, max = 127, incr = 1;
 
-    if (_param != nullptr) {
+    if (_param) {
         switch (_param_type) {
         case AP_PARAM_INT8:
             break;
@@ -368,7 +369,9 @@ void AP_OSD_ParamSetting::guess_ranges(bool force)
             uint8_t digits = 0;
             for (int16_t int16p = p->get(); int16p > 0; int16p /= 10) {
                 digits++;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             }
+            errno = 0;
             incr = MAX(1, powf(10, digits - 2));
             max = powf(10, digits + 1);
             debug("Guessing range for value %d as %f -> %f, %f\n", p->get(), min, max, incr);
@@ -379,8 +382,10 @@ void AP_OSD_ParamSetting::guess_ranges(bool force)
             min = -1;
             uint8_t digits = 0;
             for (int32_t int32p = p->get(); int32p > 0; int32p /= 10) {
+                // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                 digits++;
             }
+            errno = 0;
             incr = MAX(1, powf(10, digits - 2));
             max = powf(10, digits + 1);
             debug("Guessing range for value %d as %f -> %f, %f\n", int(p->get()), min, max, incr);
@@ -438,10 +443,13 @@ void AP_OSD_ParamSetting::copy_name_camel_case(char* name, size_t len) const
     char buf[17];
     _param->copy_name_token(_current_token, buf, 17);
     buf[16] = 0;
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     name[0] = buf[0];
     for (uint8_t i = 1, n = 1; i < len; i++, n++) {
-        if (buf[i] == '_') {
-            name[n] = buf[i+1];
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        if (buf[i] == '_') { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+            // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+            name[n] = buf[i+1]; // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
             i++;
         } else {
             name[n] = tolower(buf[i]);

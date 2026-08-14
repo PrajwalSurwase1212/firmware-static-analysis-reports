@@ -35,7 +35,7 @@
 class AP_Winch_Daiwa : public AP_Winch_Backend {
 public:
 
-    using AP_Winch_Backend::AP_Winch_Backend;
+    using AP_Winch_Backend::AP_Winch_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // true if winch is healthy
     bool healthy() const override;

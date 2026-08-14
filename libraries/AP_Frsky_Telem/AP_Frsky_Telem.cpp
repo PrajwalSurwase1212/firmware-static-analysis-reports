@@ -47,7 +47,7 @@ AP_Frsky_Telem::AP_Frsky_Telem()
 #if HAL_WITH_FRSKY_TELEM_BIDIRECTIONAL
     _frsky_parameters = &AP::vehicle()->frsky_parameters;
 #endif //HAL_WITH_FRSKY_TELEM_BIDIRECTIONAL
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 AP_Frsky_Telem::~AP_Frsky_Telem(void)

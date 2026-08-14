@@ -63,7 +63,7 @@ bool DroneCAN_RGB_LED::hw_set_rgb(uint8_t red, uint8_t green, uint8_t blue)
     bool ok = false;
     for (uint8_t i = 0; i < can_num_drivers; i++) {
         auto *dronecan = AP_DroneCAN::get_dronecan(i);
-        if (dronecan != nullptr) {
+        if (dronecan) {
             ok |= dronecan->rgb_led.broadcast(msg);
         }
     }

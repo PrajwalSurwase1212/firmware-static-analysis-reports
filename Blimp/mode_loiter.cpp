@@ -15,7 +15,7 @@ bool ModeLoiter::init(bool ignore_checks)
 }
 
 //Runs the main loiter controller
-void ModeLoiter::run()
+void ModeLoiter::run() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const float dt = blimp.scheduler.get_last_loop_time_s();
 
@@ -32,16 +32,16 @@ void ModeLoiter::run()
         blimp.rotate_BF_to_NE(pilot.xy());
     }
 
-    if (fabsf(target_pos.x-blimp.pos_ned.x) < (g.max_pos_xy*POS_LAG)) {
+    if (fabsf(target_pos.x-blimp.pos_ned.x) < (g.max_pos_xy*POS_LAG)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         target_pos.x += pilot.x;
     }
-    if (fabsf(target_pos.y-blimp.pos_ned.y) < (g.max_pos_xy*POS_LAG)) {
+    if (fabsf(target_pos.y-blimp.pos_ned.y) < (g.max_pos_xy*POS_LAG)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         target_pos.y += pilot.y;
     }
-    if (fabsf(target_pos.z-blimp.pos_ned.z) < (g.max_pos_z*POS_LAG)) {
+    if (fabsf(target_pos.z-blimp.pos_ned.z) < (g.max_pos_z*POS_LAG)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         target_pos.z += pilot.z;
     }
-    if (fabsf(wrap_PI(target_yaw-ahrs.get_yaw_rad())) < (g.max_pos_yaw*POS_LAG)) {
+    if (fabsf(wrap_PI(target_yaw-ahrs.get_yaw_rad())) < (g.max_pos_yaw*POS_LAG)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         target_yaw = wrap_PI(target_yaw + pilot_yaw);
     }
 

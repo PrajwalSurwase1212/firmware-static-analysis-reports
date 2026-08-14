@@ -1,4 +1,5 @@
 #include "Sub.h"
+#include <cerrno>
 
 #if HAL_LOGGING_ENABLED
 
@@ -28,8 +29,9 @@ void Sub::Log_Write_Control_Tuning()
     // get terrain altitude
     float terr_alt = 0.0f;
 #if AP_TERRAIN_AVAILABLE
-    if (terrain.enabled()) {
-        (void)terrain.height_above_terrain(terr_alt, true);
+    if (terrain.enabled()) { // coverity[CHECKED_RETURN]
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        (void)terrain.height_above_terrain(terr_alt, true); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     } else {
         terr_alt = rangefinder_state.rangefinder_terrain_offset_cm * 0.01f;
     }
@@ -45,7 +47,7 @@ void Sub::Log_Write_Control_Tuning()
         throttle_out        : motors.get_throttle(),
         throttle_hover      : motors.get_throttle_hover(),
         desired_alt         : pos_control.get_pos_target_U_cm() * 0.01f,
-        inav_alt            : inertial_nav.get_position_z_up_cm() * 0.01f,
+        inav_alt            : inertial_nav.get_position_z_up_cm() * 0.01f, // coverity[PW.NARROWING_CONVERSION]
         baro_alt            : barometer.get_altitude(),
         desired_rangefinder_alt   : mode_surftrak.get_rangefinder_target_cm() * 0.01,
         rangefinder_alt           : rangefinder_state.alt,

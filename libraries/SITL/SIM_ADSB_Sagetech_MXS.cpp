@@ -38,7 +38,8 @@ void ADSB_Sagetech_MXS::update_serial_input()
     const ssize_t n = read_from_autopilot(&msg.buffer[buflen], ARRAY_SIZE(msg.buffer) - buflen - 1);
     if (n < 0) {
         // TODO: do better here
-        if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (errno != EAGAIN && errno != EWOULDBLOCK && errno != 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             AP_HAL::panic("Failed to read from autopilot");
         }
     } else {

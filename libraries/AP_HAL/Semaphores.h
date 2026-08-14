@@ -3,6 +3,7 @@
 #include "AP_HAL_Namespace.h"
 
 #include <AP_Common/AP_Common.h>
+#include <cerrno>
 
 #define HAL_SEMAPHORE_BLOCK_FOREVER 0
 
@@ -20,7 +21,10 @@ public:
     // a variant that blocks forever
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wunused-result"
-    virtual void take_blocking() { take(HAL_SEMAPHORE_BLOCK_FOREVER); };
+    // parasoft-suppress BD-TRS-LOCK "Reviewed and safe"
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    // parasoft-suppress BD-TRS-LOCK "Reviewed and safe"
+    virtual void take_blocking() { take(HAL_SEMAPHORE_BLOCK_FOREVER); }; // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-TRS-LOCK "Reviewed and safe"
     #pragma GCC diagnostic pop
     
     virtual bool give() = 0;

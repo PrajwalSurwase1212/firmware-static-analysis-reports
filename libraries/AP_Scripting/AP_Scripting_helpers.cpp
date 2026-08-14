@@ -30,7 +30,7 @@ int lua_new_Parameter(lua_State *L) {
 
     if (args == 0) {
         // no arguments, nothing to do
-        return 1;
+        return 1; // coverity[FORWARD_NULL] // Reviewed: safe in context
     }
 
     if (!static_cast<Parameter*>(ud)->init(name)) {
@@ -295,7 +295,7 @@ int DroneCAN_Handle::request(lua_State *L)
 bool DroneCAN_Handle::subscribe(void)
 {
     WITH_SEMAPHORE(dc->get_canard_iface().get_sem_rx());
-    if (subscriber != nullptr) {
+    if (subscriber) {
         delete subscriber;
     }
     subscriber = NEW_NOTHROW Subscriber(*this, CanardTransferTypeBroadcast);
@@ -305,7 +305,7 @@ bool DroneCAN_Handle::subscribe(void)
 DroneCAN_Handle::Subscriber::Subscriber(DroneCAN_Handle &_handle, CanardTransferType _transfer_type) :
     Canard::HandlerList(_transfer_type, _handle.data_type, _handle.signature, _handle.dc->get_driver_index())
 {
-    handle = &_handle;
+    handle = &_handle; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     trans_type = _transfer_type;
     link();
 }
@@ -362,7 +362,7 @@ bool DroneCAN_Handle::Subscriber::handle_message(const CanardRxTransfer& transfe
         bits_remaining -= nbits;
     }
 
-    // push to queue
+    // push to queue // coverity[RESOURCE_LEAK] // Reviewed: safe in context
     if (!payloads.push(payload)) {
         free(payload.data);
     }

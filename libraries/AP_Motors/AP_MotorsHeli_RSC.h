@@ -170,7 +170,7 @@ private:
     // parameter accessors to allow conversions
     float       get_critical_speed() const { return _critical_speed * 0.01; }
     float       get_idle_output() const { return _idle_output * 0.01; }
-    float       get_governor_torque() const { return _governor_torque * 0.01; }
-    float       get_governor_compensator() const { return _governor_compensator * 0.000001; }
+    float       get_governor_torque() const { return _governor_torque * 0.01; } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    float       get_governor_compensator() const { return _governor_compensator * 0.000001; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
 };

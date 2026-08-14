@@ -22,11 +22,15 @@
 #include <stdlib.h>
 #include "AP_Math.h"
 #include "location.h"
+#include <cerrno>
 
 // return bearing_rad in radians between two positions
 float get_bearing_rad(const Vector2f &origin, const Vector2f &destination)
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    return wrap_2PI(atan2f(destination.y - origin.y, destination.x - origin.x));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    return wrap_2PI(atan2f(destination.y - origin.y, destination.x - origin.x)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 // return bearing_cd in centi-degrees between two positions

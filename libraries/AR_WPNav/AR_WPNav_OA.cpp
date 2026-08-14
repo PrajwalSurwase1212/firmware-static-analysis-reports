@@ -19,6 +19,7 @@
 #include "AR_WPNav_OA.h"
 #include <GCS_MAVLink/GCS.h>
 #include <AP_InternalError/AP_InternalError.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -48,7 +49,7 @@ void AR_WPNav_OA::update(float dt)
     }
 
     AP_OAPathPlanner *oa = AP_OAPathPlanner::get_singleton();
-    if (oa != nullptr) {
+    if (oa) {
         Location oa_origin_new, oa_destination_new, oa_next_destination_new;
         AP_OAPathPlanner::OAPathPlannerUsed path_planner_used;
         bool dest_to_next_dest_clear;
@@ -93,7 +94,8 @@ void AR_WPNav_OA::update(float dt)
                 // this should never happen.  this means the path planner has returned success but has returned an invalid planner
                 INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
                 _oa_active = false;
-                stop_vehicle = true;
+                // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+                stop_vehicle = true; // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
                 return;
 
             case AP_OAPathPlanner::OAPathPlannerUsed::Dijkstras:
@@ -131,7 +133,7 @@ void AR_WPNav_OA::update(float dt)
 
             } // switch (path_planner_used) {
         } // switch (oa_retstate) {
-    } // if (oa != nullptr) {
+    } // if (oa) {
 
     update_oa_distance_and_bearing_to_destination();
 

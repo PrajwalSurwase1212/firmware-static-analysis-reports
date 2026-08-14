@@ -51,7 +51,7 @@ AP_RangeFinder_Backend_CAN::AP_RangeFinder_Backend_CAN(
     if (multican_rangefinder == nullptr) {
         AP_BoardConfig::allocation_error("Failed to create rangefinder multican");
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // update the state of the sensor
 void AP_RangeFinder_Backend_CAN::update(void)

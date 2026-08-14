@@ -15,6 +15,7 @@
 
 #include "AP_ExpandingArray.h"
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 #ifndef HAL_BOOTLOADER_BUILD
 
@@ -78,7 +79,8 @@ bool AP_ExpandingArrayGeneric::expand_to_hold(uint16_t num_items)
         return true;
     }
     uint16_t chunks_required = ((num_items - max_items()) / chunk_size) + 1;
-    return expand(chunks_required);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    return expand(chunks_required); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 #endif // HAL_BOOTLOADER_BUILD

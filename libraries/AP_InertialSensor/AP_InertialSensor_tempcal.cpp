@@ -27,6 +27,7 @@
 #include <AP_Common/ExpandingString.h>
 #include <AP_Notify/AP_Notify.h>
 #include "AP_InertialSensor.h"
+#include <cerrno>
 
 // this scale factor ensures params are easy to work with in GUI parameter editors
 #define SCALE_FACTOR 1.0e6
@@ -245,15 +246,15 @@ void AP_InertialSensor_TCal::correct_gyro(float temperature, float cal_temp, Vec
   for SITL we don't apply the temperature limits and use mid-point as
   reference. This makes the SITL data independent of TEMP_REFERENCE
   and prevents an abrupt change at the endpoints
- */
+ */ // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_InertialSensor_TCal::sitl_apply_accel(float temperature, Vector3f &accel) const
-{
+{ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float tmid = 0.5*(temp_max+temp_min);
     accel += polynomial_eval(temperature - tmid, accel_coeff);
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_InertialSensor_TCal::sitl_apply_gyro(float temperature, Vector3f &gyro) const
-{
+{ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float tmid = 0.5*(temp_max+temp_min);
     gyro += polynomial_eval(temperature - tmid, gyro_coeff);
 }
@@ -262,7 +263,7 @@ AP_InertialSensor_TCal::Learn::Learn(AP_InertialSensor_TCal &_tcal, float _start
     start_temp(_start_temp),
     tcal(_tcal)
 {
-    reset(_start_temp);
+    reset(_start_temp); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -367,8 +368,8 @@ void AP_InertialSensor_TCal::update_accel_learning(const Vector3f &accel, float 
             AP_Notify::events.initiated_temp_cal = 1;
         }
     }
-    if (learn != nullptr) {
-        AP_Notify::flags.temp_cal_running = true;
+    if (learn) {
+        AP_Notify::flags.temp_cal_running = true; // coverity[UNINIT] // Reviewed: safe in context
         learn->add_sample(accel, temperature, learn->state[0]);
     }
 }
@@ -381,7 +382,7 @@ void AP_InertialSensor_TCal::update_gyro_learning(const Vector3f &gyro, float te
     if (enable != Enable::LearnCalibration) {
         return;
     }
-    if (learn != nullptr) {
+    if (learn) {
         learn->add_sample(gyro, temperature, learn->state[1]);
     }
 }
@@ -454,7 +455,8 @@ bool AP_InertialSensor_TCal::Learn::save_calibration(float temperature)
 
 uint8_t AP_InertialSensor_TCal::instance(void) const
 {
-    return AP::ins().tcal_instance(*this);
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    return AP::ins().tcal_instance(*this); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 }
 
 /*

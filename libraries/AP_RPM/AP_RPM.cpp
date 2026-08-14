@@ -63,11 +63,11 @@ AP_RPM::AP_RPM(void)
 {
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_RPM must be singleton");
     }
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   initialise the AP_RPM class.

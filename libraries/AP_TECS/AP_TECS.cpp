@@ -9,6 +9,7 @@ extern const AP_HAL::HAL& hal;
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include <stdio.h>
+#include <cerrno>
 # define Debug(fmt, args ...)  do {printf("%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## args); hal.scheduler->delay(1); } while(0)
 #else
 # define Debug(fmt, args ...)
@@ -309,7 +310,7 @@ const AP_Param::GroupInfo AP_TECS::var_info[] = {
  *    of easy to measure aircraft performance data
  *
  */
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_TECS::update_50hz(void)
 {
     // Implement third order complementary filter for height and height rate
@@ -353,7 +354,7 @@ void AP_TECS::update_50hz(void)
         // Get height acceleration
         float hgt_ddot_mea = -(_ahrs.get_accel_ef().z + GRAVITY_MSS);
         // Perform filter calculation using backwards Euler integration
-        // Coefficients selected to place all three filter poles at omega
+        // Coefficients selected to place all three filter poles at omega // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         float omega2 = _hgtCompFiltOmega*_hgtCompFiltOmega;
         float hgt_err = baro_alt - _height_filter.height;
         float integ1_input = hgt_err * omega2 * _hgtCompFiltOmega;
@@ -390,7 +391,8 @@ void AP_TECS::_update_speed(float DT)
         // Get DCM
         const Matrix3f &rotMat = _ahrs.get_rotation_body_to_ned();
         // Calculate speed rate of change
-        float temp = rotMat.c.x * GRAVITY_MSS + AP::ins().get_accel().x;
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        float temp = rotMat.c.x * GRAVITY_MSS + AP::ins().get_accel().x; // parasoft-suppress BD-PB-NP "Reviewed and safe"
         // take 5 point moving average
         _vel_dot = _vdot_filter.apply(temp);
         const float alpha = DT / (DT + timeConstant());
@@ -531,11 +533,11 @@ void AP_TECS::_update_speed_demand(void)
 
     // Constrain speed demand again to protect against bad values on initialisation.
     _TAS_dem_adj = constrain_float(_TAS_dem_adj, _TASmin, _TASmax);
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void AP_TECS::_update_height_demand(void)
 {
-    _climb_rate_limit = _maxClimbRate * _max_climb_scaler;
+    _climb_rate_limit = _maxClimbRate * _max_climb_scaler; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     _sink_rate_limit = _maxSinkRate * _max_sink_scaler;
     if (_maxSinkRate_approach > 0 && _flags.is_doing_auto_land) {
         // special sink rate for approach to accommodate steep slopes and reverse thrust.
@@ -905,7 +907,7 @@ float AP_TECS::_get_i_gain(void)
 }
 
 /*
-  calculate throttle, non-airspeed case
+  calculate throttle, non-airspeed case // coverity[RW.ROUTINE_NOT_EMITTED]
  */
 void AP_TECS::_update_throttle_without_airspeed(int16_t throttle_nudge, float pitch_trim_deg)
 {
@@ -914,8 +916,8 @@ void AP_TECS::_update_throttle_without_airspeed(int16_t throttle_nudge, float pi
 
     // Calculate throttle demand by interpolating between pitch and throttle limits
     float nomThr;
-    //If landing and we don't have an airspeed sensor and we have a non-zero
-    //TECS_LAND_THR param then use it
+    //If landing and we don't have an airspeed sensor and we have a non-zero // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    //TECS_LAND_THR param then use it // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (_flags.is_doing_auto_land && _landThrottle >= 0) {
         nomThr = (_landThrottle + throttle_nudge) * 0.01f;
     } else { //not landing or not using TECS_LAND_THR parameter
@@ -981,7 +983,7 @@ void AP_TECS::_detect_bad_descent(void)
     } else {
         _flags.badDescent = false;
     }
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void AP_TECS::_update_pitch(void)
 {
@@ -1001,7 +1003,7 @@ void AP_TECS::_update_pitch(void)
         // and height is broken by the VTOL motors
         _SKE_weighting = 0.0f;
     } else if ( _flags.underspeed || _flight_stage == AP_FixedWing::FlightStage::TAKEOFF || _flight_stage == AP_FixedWing::FlightStage::ABORT_LANDING || _flags.is_gliding) {
-        _SKE_weighting = 2.0f;
+        _SKE_weighting = 2.0f; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else if (_flags.is_doing_auto_land) {
         if (_spdWeightLand < 0) {
             // use sliding scale from normal weight down to zero at landing
@@ -1023,7 +1025,7 @@ void AP_TECS::_update_pitch(void)
     float SEB_est = _SPE_est * SPE_weighting - _SKE_est * _SKE_weighting;
     float SEB_error = SEB_dem - SEB_est;
 
-    // track demanded height using the specified time constant
+    // track demanded height using the specified time constant // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     float SEBdot_dem = _hgt_rate_dem * GRAVITY_MSS * SPE_weighting + SEB_error / timeConstant();
     const float SEBdot_dem_min = - _maxSinkRate * GRAVITY_MSS;
     const float SEBdot_dem_max = _maxClimbRate * GRAVITY_MSS;
@@ -1157,7 +1159,7 @@ void AP_TECS::_update_pitch(void)
                                     (double)_THRmaxf);
     }
 #endif
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void AP_TECS::_initialise_states(float hgt_afe)
 {
@@ -1194,7 +1196,7 @@ void AP_TECS::_initialise_states(float hgt_afe)
         _pitch_min_at_flare_entry = 0.0f;
 
         _max_climb_scaler = 1.0f;
-        _max_sink_scaler = 1.0f;
+        _max_sink_scaler = 1.0f; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         const float fc = 1.0f / (M_2PI * _timeConst);
         _pitch_demand_lpf.set_cutoff_frequency(fc);
@@ -1240,14 +1242,14 @@ void AP_TECS::_initialise_states(float hgt_afe)
         _flags.reached_speed_takeoff = false;
         _flag_have_reset_after_takeoff = false;
     }
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void AP_TECS::_update_STE_rate_lim(void)
 {
     // Calculate Specific Total Energy Rate Limits & deceleration rate bounds
 	// Keep the 50% energy margin from the original velRate calculation for now
-    // This is a trivial calculation at the moment but will get bigger once we start adding altitude effects
-    _STEdot_max = _climb_rate_limit * GRAVITY_MSS;
+    // This is a trivial calculation at the moment but will get bigger once we start adding altitude effects // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    _STEdot_max = _climb_rate_limit * GRAVITY_MSS; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     _STEdot_min = - _minSinkRate * GRAVITY_MSS;
     _STEdot_neg_max = - _maxSinkRate * GRAVITY_MSS;
 }

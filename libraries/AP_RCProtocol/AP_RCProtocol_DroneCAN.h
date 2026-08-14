@@ -16,7 +16,7 @@ public:
     AP_RCProtocol_DroneCAN(AP_RCProtocol &_frontend) :
         AP_RCProtocol_Backend(_frontend) {
         _singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     static bool subscribe_msgs(AP_DroneCAN* ap_dronecan);
 

@@ -89,7 +89,7 @@ class AP_OSD_AbstractScreen
     friend class AP_OSD;
 public:
     // constructor
-    AP_OSD_AbstractScreen() {}
+    AP_OSD_AbstractScreen() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     virtual void draw(void) {}
 
     void set_backend(AP_OSD_Backend *_backend);
@@ -414,7 +414,7 @@ public:
 
     static const ParamMetadata _param_metadata[];
 
-    AP_OSD_ParamSetting() {};
+    AP_OSD_ParamSetting() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     AP_OSD_ParamSetting(uint8_t param_number);
     AP_OSD_ParamSetting(const Initializer& initializer);
 

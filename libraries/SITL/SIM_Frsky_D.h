@@ -57,7 +57,7 @@ private:
     uint16_t _buflen = 0;
 
     uint8_t _id{0};
-    uint16_t _data{0};
+    uint16_t _data{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
     void handle_data(uint8_t id, uint16_t data);

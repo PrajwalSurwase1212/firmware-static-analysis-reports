@@ -19,7 +19,7 @@ HAL_Semaphore AP_Baro_DroneCAN::_sem_registry;
  */
 AP_Baro_DroneCAN::AP_Baro_DroneCAN(AP_Baro &baro) :
     AP_Baro_Backend(baro)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool AP_Baro_DroneCAN::subscribe_msgs(AP_DroneCAN* ap_dronecan)
 {

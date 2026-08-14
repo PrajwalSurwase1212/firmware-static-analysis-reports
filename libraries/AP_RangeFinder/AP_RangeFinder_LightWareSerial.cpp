@@ -19,6 +19,7 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <ctype.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -48,7 +49,9 @@ bool AP_RangeFinder_LightWareSerial::get_reading(float &reading_m)
         // use legacy protocol
         if (protocol_state == ProtocolState::UNKNOWN || protocol_state == ProtocolState::LEGACY) {
             if (c == '\r') {
+                // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                 linebuf[linebuf_len] = 0;
+                errno = 0;
                 const float dist = strtof(linebuf, nullptr);
                 if (!is_negative(dist) && !is_lost_signal_distance(dist * 100, distance_cm_max)) {
                     sum += dist;

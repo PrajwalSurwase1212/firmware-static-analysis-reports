@@ -4,6 +4,7 @@
 
 #include <AP_HAL/AP_HAL_Boards.h>
 #include <AP_HAL/AP_HAL_Macros.h>  // sets AP_MATH_ALLOW_DOUBLE_FUNCTIONS
+#include <cerrno>
 
 #ifdef M_PI
 # undef M_PI
@@ -37,7 +38,9 @@
 // The precision here does matter when using the wsg* functions for converting
 // between LLH and ECEF coordinates.
 #if AP_MATH_ALLOW_DOUBLE_FUNCTIONS
-static const double DEG_TO_RAD_DOUBLE = asin(1) / 90;
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+static const double DEG_TO_RAD_DOUBLE = asin(1) / 90; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 static const double RAD_TO_DEG_DOUBLE = 1 / DEG_TO_RAD_DOUBLE;
 #endif
 

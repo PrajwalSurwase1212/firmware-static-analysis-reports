@@ -42,7 +42,8 @@ void PS_LD06::update_input()
     // just discard any input
     char buffer[256];
     uint8_t buflen = 0;
-    (void)read_from_autopilot(&buffer[buflen], ARRAY_SIZE(buffer) - buflen - 1);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // coverity[CHECKED_RETURN]
+    (void)read_from_autopilot(&buffer[buflen], ARRAY_SIZE(buffer) - buflen - 1); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 void PS_LD06::update_output(const Location &location)
@@ -81,7 +82,7 @@ void PS_LD06::update_output(const Location &location)
 
     const uint32_t required_send_buffer_size = 11 + 3*sample_count;
     if (required_send_buffer_size > send_buffer_size) {
-        if (send_buffer != nullptr) {
+        if (send_buffer) {
             free(send_buffer);
         }
         send_buffer = (uint8_t*)malloc(required_send_buffer_size);

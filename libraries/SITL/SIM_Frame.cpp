@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <sys/stat.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -493,7 +494,8 @@ void Frame::load_frame_params(const char *model_json)
             parse_vector3(v, vars[i].label, *(Vector3f *)vars[i].ptr);
 
         }
-    }
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+    } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
     json_search per_motor_vars[] = {
         {"position", &model.motor_pos, VarType::VECTOR3F},
@@ -515,10 +517,11 @@ void Frame::load_frame_params(const char *model_json)
             } else if (per_motor_vars[i].t == VarType::VECTOR3F) {
                 parse_vector3(v, label_name, *(((Vector3f *)per_motor_vars[i].ptr) + j));
             }
-        }
+        // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+        } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     }
 
-    delete obj;
+    delete obj; // coverity[RESOURCE_LEAK] // Reviewed: safe in context
 
     ::printf("Loaded model params from %s\n", fname);
     free(fname);

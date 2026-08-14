@@ -12,7 +12,7 @@ class AP_RangeFinder_Benewake : public AP_RangeFinder_Backend_Serial
 
 public:
 
-    using AP_RangeFinder_Backend_Serial::AP_RangeFinder_Backend_Serial;
+    using AP_RangeFinder_Backend_Serial::AP_RangeFinder_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 protected:
 

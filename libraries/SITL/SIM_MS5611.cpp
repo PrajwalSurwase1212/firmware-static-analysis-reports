@@ -7,6 +7,7 @@
 #include <SITL/SITL.h>
 
 #include <stdio.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -62,8 +63,9 @@ void MS5611::convert(float P_Pa, float Temp_C, uint32_t &D1, uint32_t &D2)
 
     // second order temperature compensation when under 20 degrees C
     if (TEMP < 2000) {
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // Solve the quadratic equation for D2 when TEMP < 2000
-        D2 = 128 * (2 * int64_t(prom[5]) - sqrt(sq(int64_t(prom[6])) - 131072 * (TEMP - 2000)) + int64_t(prom[6]));
+        D2 = 128 * (2 * int64_t(prom[5]) - sqrt(sq(int64_t(prom[6])) - 131072 * (TEMP - 2000)) + int64_t(prom[6])); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
         // Must compute the pressure compensation values using D2
         const float dT = float(D2) - (int64_t(prom[5]) << Q5);

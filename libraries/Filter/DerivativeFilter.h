@@ -30,7 +30,7 @@ class DerivativeFilter : public FilterWithBuffer<T,FILTER_SIZE>
 public:
     // constructor
     DerivativeFilter() : FilterWithBuffer<T,FILTER_SIZE>() {
-    };
+    }; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update - Add a new raw value to the filter, but don't recalculate
     void update(T sample, uint32_t timestamp);

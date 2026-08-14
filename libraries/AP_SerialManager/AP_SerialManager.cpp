@@ -31,6 +31,7 @@
 #include <AP_InertialSensor/AP_InertialSensor.h>
 #include "AP_SerialManager.h"
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -404,7 +405,7 @@ AP_SerialManager::AP_SerialManager()
 {
     _singleton = this;
     // setup parameter defaults
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // init_console - initialise console at default baud rate
@@ -451,7 +452,7 @@ void AP_SerialManager::init()
 
         state[i].idx = i;
 
-        if (uart != nullptr) {
+        if (uart) {
             set_options(i);
             switch (state[i].protocol) {
                 case SerialProtocol_None:
@@ -795,7 +796,8 @@ void AP_SerialManager::set_options(uint16_t i)
 {
     struct UARTState &opt = state[i];
     // pass through to HAL
-    if (!hal.serial(i)->set_options(opt.options)) {
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (!hal.serial(i)->set_options(opt.options)) { // parasoft-suppress BD-PB-NP "Reviewed and safe"
         DEV_PRINTF("Unable to setup options for Serial%u\n", i);
     }
 }

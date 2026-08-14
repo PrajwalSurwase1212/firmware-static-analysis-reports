@@ -68,7 +68,7 @@ AP_Camera::AP_Camera(uint32_t _log_camera_bit) :
 {
     AP_Param::setup_object_defaults(this, var_info);
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // set camera trigger distance in a mission
 void AP_Camera::set_trigger_distance(float distance_m)
@@ -205,7 +205,7 @@ bool AP_Camera::record_video(bool start_recording)
 void AP_Camera::init()
 {
     // check init has not been called before
-    if (primary != nullptr) {
+    if (primary) {
         return;
     }
 
@@ -866,7 +866,7 @@ bool AP_Camera::change_setting(uint8_t instance, CameraSetting setting, float va
 
 
 #if AP_CAMERA_INFO_FROM_SCRIPT_ENABLED
-void AP_Camera::set_camera_information(const mavlink_camera_information_t &camera_info)
+void AP_Camera::set_camera_information(const mavlink_camera_information_t &camera_info) // coverity[PASS_BY_VALUE]
 {
     WITH_SEMAPHORE(_rsem);
 
@@ -876,7 +876,7 @@ void AP_Camera::set_camera_information(const mavlink_camera_information_t &camer
     return primary->set_camera_information(camera_info);
 }
 
-void AP_Camera::set_camera_information(uint8_t instance, const mavlink_camera_information_t &camera_info)
+void AP_Camera::set_camera_information(uint8_t instance, const mavlink_camera_information_t &camera_info) // coverity[PASS_BY_VALUE]
 {
     WITH_SEMAPHORE(_rsem);
 
@@ -889,7 +889,7 @@ void AP_Camera::set_camera_information(uint8_t instance, const mavlink_camera_in
     backend->set_camera_information(camera_info);
 }
 
-void AP_Camera::set_stream_information(const mavlink_video_stream_information_t &stream_info)
+void AP_Camera::set_stream_information(const mavlink_video_stream_information_t &stream_info) // coverity[PASS_BY_VALUE]
 {
     WITH_SEMAPHORE(_rsem);
 
@@ -899,7 +899,7 @@ void AP_Camera::set_stream_information(const mavlink_video_stream_information_t 
     return primary->set_stream_information(stream_info);
 }
 
-void AP_Camera::set_stream_information(uint8_t instance, const mavlink_video_stream_information_t &stream_info)
+void AP_Camera::set_stream_information(uint8_t instance, const mavlink_video_stream_information_t &stream_info) // coverity[PASS_BY_VALUE]
 {
     WITH_SEMAPHORE(_rsem);
 

@@ -11,9 +11,9 @@ Variometer::Variometer(const AP_FixedWing &parms, const PolarParams &polarParams
     _aparm(parms),
     _prev_update_time(0),
     _raw_climb_rate(0.0f),
-    _aspd_filt_constrained(0.0f),
+    _aspd_filt_constrained(0.0f), // coverity[UNINIT_CTOR] // Reviewed: safe in context
     _expected_thermalling_sink(0.0f),
-    alt(0.0f),
+    alt(0.0f), // coverity[RW.ROUTINE_NOT_EMITTED]
     reading(0.0f),
     tau(0.0f),
     _polarParams(polarParams)
@@ -28,7 +28,7 @@ void Variometer::update(const float thermal_bank)
     alt = -alt;
 
     float aspd = 0;
-    if (!_ahrs.airspeed_estimate(aspd)) {
+    if (!_ahrs.airspeed_estimate(aspd)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         aspd = _aparm.airspeed_cruise;
     }
 

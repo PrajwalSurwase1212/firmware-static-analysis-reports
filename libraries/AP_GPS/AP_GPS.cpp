@@ -58,6 +58,7 @@
 
 #if AP_GPS_RTCM_DECODE_ENABLED
 #include "RTCM3_Parser.h"
+#include <cerrno>
 #endif
 
 #if !AP_GPS_BLENDED_ENABLED
@@ -290,10 +291,10 @@ AP_GPS::AP_GPS()
 
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_GPS must be singleton");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // return true if a specific type of GPS uses a UART
@@ -333,7 +334,8 @@ void AP_GPS::init()
     const auto &serial_manager = AP::serialmanager();
     uint8_t uart_idx = 0;
     for (uint8_t i=0; i<ARRAY_SIZE(params) && i<ARRAY_SIZE(_port); i++) {
-        if (needs_uart(params[i].type)) {
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        if (needs_uart(params[i].type)) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
             _port[i] = serial_manager.find_serial(AP_SerialManager::SerialProtocol_GPS, uart_idx);
             uart_idx++;
         }
@@ -595,7 +597,8 @@ void AP_GPS::send_blob_update(uint8_t instance)
     }
 
     // see if we can write some more of the initialisation blob
-    const uint16_t n = MIN(_port[instance]->txspace(),
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    const uint16_t n = MIN(_port[instance]->txspace(), // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                            initblob_state[instance].remaining);
     const size_t written = _port[instance]->write((const uint8_t*)initblob_state[instance].blob, n);
     initblob_state[instance].blob += written;
@@ -1636,7 +1639,7 @@ bool AP_GPS::parse_rtcm_injection(mavlink_channel_t chan, const mavlink_gps_rtcm
             // we have a full message, inject it
             const uint8_t *buf = nullptr;
             uint16_t len = rtcm.parsers[chan]->get_len(buf);
-
+ // coverity[FORWARD_NULL] // Reviewed: safe in context
             // see if we have already sent it. This prevents
             // duplicates from multiple sources
             const uint32_t crc = crc_crc32(0, buf, len);

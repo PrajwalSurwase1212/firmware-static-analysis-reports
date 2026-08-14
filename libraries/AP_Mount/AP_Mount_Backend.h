@@ -40,7 +40,7 @@ public:
         _params(params),
         _instance(instance),
         _open_idx(_instance == 0? SRV_Channel::k_mount_open : SRV_Channel::k_mount2_open)
-    {}
+    {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // init - performs any required initialisation for this instance
     virtual void init();

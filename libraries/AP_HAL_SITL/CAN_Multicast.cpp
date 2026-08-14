@@ -84,7 +84,7 @@ bool CAN_Multicast::receive(AP_HAL::CANFrame &frame)
     // run constructor to initialise
     new(&frame) AP_HAL::CANFrame(pkt.message_id, pkt.data, ret-10, (pkt.flags & MCAST_FLAG_CANFD) != 0);
 
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         sem_handle->signal();
     }
 

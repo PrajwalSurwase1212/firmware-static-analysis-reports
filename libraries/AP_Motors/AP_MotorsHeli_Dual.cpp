@@ -251,7 +251,7 @@ void AP_MotorsHeli_Dual::calculate_armed_scalars()
 }
 
 // calculate_scalars
-void AP_MotorsHeli_Dual::calculate_scalars()
+void AP_MotorsHeli_Dual::calculate_scalars() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // range check collective min, max and mid
     if( _collective_min >= _collective_max ) {
@@ -272,10 +272,10 @@ void AP_MotorsHeli_Dual::calculate_scalars()
 
     if (!is_equal((float)_collective_max_deg, (float)_collective_min_deg)) {
         // calculate collective zero thrust point as a number from 0 to 1
-        _collective_zero_thrust_pct = (_collective_zero_thrust_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg);
+        _collective_zero_thrust_pct = (_collective_zero_thrust_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         // calculate collective land min point as a number from 0 to 1
-        _collective_land_min_pct = (_collective_land_min_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg);
+        _collective_land_min_pct = (_collective_land_min_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else {
         _collective_zero_thrust_pct = 0.0f;
         _collective_land_min_pct = 0.0f;
@@ -295,7 +295,7 @@ void AP_MotorsHeli_Dual::calculate_scalars()
 }
 
 // Mix and output swashplates for tandem
-void AP_MotorsHeli_Dual::mix_tandem(float pitch_input, float roll_input, float yaw_input, float collective1_input, float collective2_input)
+void AP_MotorsHeli_Dual::mix_tandem(float pitch_input, float roll_input, float yaw_input, float collective1_input, float collective2_input) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Differential cyclic roll is used for yaw and combined for roll
     const float swash1_roll = roll_input + _yaw_scaler * yaw_input;
@@ -305,8 +305,8 @@ void AP_MotorsHeli_Dual::mix_tandem(float pitch_input, float roll_input, float y
     const float swash_pitch = 0.0;
 
     // Differential collective for pitch and combined for thrust
-    const float swash1_coll =  0.45 * _dcp_scaler * (pitch_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective1_input;
-    const float swash2_coll = -0.45 * _dcp_scaler * (pitch_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective2_input;
+    const float swash1_coll =  0.45 * _dcp_scaler * (pitch_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective1_input; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const float swash2_coll = -0.45 * _dcp_scaler * (pitch_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective2_input; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // Calculate servo positions in swashplate library
     _swashplate1.calculate(swash1_roll, swash_pitch, swash1_coll);
@@ -314,7 +314,7 @@ void AP_MotorsHeli_Dual::mix_tandem(float pitch_input, float roll_input, float y
 }
 
 // coverity[RW.ROUTINE_NOT_EMITTED]
-// Mix and output swashplates for transverse
+// Mix and output swashplates for transverse // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_MotorsHeli_Dual::mix_transverse(float pitch_input, float roll_input, float yaw_input, float collective1_input, float collective2_input)
 {
     // cyclic is not used for roll control
@@ -324,8 +324,8 @@ void AP_MotorsHeli_Dual::mix_transverse(float pitch_input, float roll_input, flo
     const float swash1_pitch = pitch_input - _yaw_scaler * yaw_input;
     const float swash2_pitch = pitch_input + _yaw_scaler * yaw_input;
 
-    // Differential collective for roll and combined for thrust
-    const float swash1_coll =  0.45 * _dcp_scaler * (roll_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective1_input;
+    // Differential collective for roll and combined for thrust // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const float swash1_coll =  0.45 * _dcp_scaler * (roll_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective1_input; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float swash2_coll = -0.45 * _dcp_scaler * (roll_input + constrain_float(_dcp_trim, -0.2, 0.2)) + collective2_input;
 
     // Calculate servo positions in swashplate library
@@ -333,7 +333,7 @@ void AP_MotorsHeli_Dual::mix_transverse(float pitch_input, float roll_input, flo
     _swashplate2.calculate(swash_roll, swash2_pitch, swash2_coll);
 }
 
-// Mix and output swashplates for intermeshing
+// Mix and output swashplates for intermeshing // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_MotorsHeli_Dual::mix_intermeshing(float pitch_input, float roll_input, float yaw_input, float collective1_input, float collective2_input)
 {
     // Direct roll control on both swash plates
@@ -343,8 +343,8 @@ void AP_MotorsHeli_Dual::mix_intermeshing(float pitch_input, float roll_input, f
     const float swash1_pitch = pitch_input - _yaw_scaler * yaw_input;
     const float swash2_pitch = pitch_input + _yaw_scaler * yaw_input;
 
-    // Differential collective for yaw and combined for thrust
-    const float swash1_coll =   0.45 * _dcp_scaler * yaw_input + collective1_input;
+    // Differential collective for yaw and combined for thrust // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    const float swash1_coll =   0.45 * _dcp_scaler * yaw_input + collective1_input; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float swash2_coll =  -0.45 * _dcp_scaler * yaw_input + collective2_input;
 
     // Calculate servo positions in swashplate library

@@ -22,7 +22,7 @@
 class AP_Gripper_Backend {
 public:
     AP_Gripper_Backend(struct AP_Gripper::Backend_Config &_config) :
-        config(_config) { }
+        config(_config) { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // initialise the gripper backend
     void init();

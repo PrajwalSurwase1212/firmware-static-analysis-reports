@@ -28,7 +28,7 @@ AP_FW_Controller::AP_FW_Controller(const AP_FixedWing &parms, const AC_PID::Defa
       autotune_type(_autotune_type)
 {
     rate_pid.set_slew_limit_scale(45);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   AC_PID based rate controller
@@ -132,7 +132,7 @@ void AP_FW_Controller::decay_I()
  */
 void AP_FW_Controller::autotune_restore(void)
 {
-    if (autotune != nullptr) {
+    if (autotune) {
         autotune->stop();
     }
 }
@@ -151,7 +151,7 @@ void AP_FW_Controller::autotune_start(void)
             failed_autotune_alloc = true;
         }
     }
-    if (autotune != nullptr) {
+    if (autotune) {
         autotune->start();
     }
 }

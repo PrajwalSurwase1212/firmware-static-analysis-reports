@@ -111,7 +111,7 @@ void BinarySemaphore::signal_ISR()
 
 BinarySemaphore::~BinarySemaphore(void)
 {
-    if (_sem != nullptr) {
+    if (_sem) {
         vSemaphoreDelete(_sem);
     }
     _sem = nullptr;

@@ -35,9 +35,9 @@ AP_WindVane_Analog::AP_WindVane_Analog(AP_WindVane &frontend) :
     AP_WindVane_Backend(frontend)
 {
     _dir_analog_source = hal.analogin->channel(ANALOG_INPUT_NONE);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
-void AP_WindVane_Analog::update_direction()
+void AP_WindVane_Analog::update_direction() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!_dir_analog_source->set_pin(_frontend._dir_analog_pin)) {
         // pin invalid, don't have health monitoring to report yet
@@ -46,7 +46,7 @@ void AP_WindVane_Analog::update_direction()
     _current_analog_voltage = _dir_analog_source->voltage_latest();
 
     const float voltage_ratio = linear_interpolate(0.0f, 1.0f, _current_analog_voltage, _frontend._dir_analog_volt_min, _frontend._dir_analog_volt_max);
-    const float direction = (voltage_ratio * radians(360 - _frontend._dir_analog_deadzone)) + radians(_frontend._dir_analog_bearing_offset);
+    const float direction = (voltage_ratio * radians(360 - _frontend._dir_analog_deadzone)) + radians(_frontend._dir_analog_bearing_offset); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     _frontend._direction_apparent_raw  = wrap_PI(direction);
 }

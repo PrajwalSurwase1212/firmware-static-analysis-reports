@@ -8,11 +8,11 @@ public:
     AC_AttitudeControl_Multi_6DoF(AP_AHRS_View &ahrs, const AP_MultiCopter &aparm, AP_MotorsMulticopter& motors):
         AC_AttitudeControl_Multi(ahrs,aparm,motors) {
 
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("Can only be one AC_AttitudeControl_Multi_6DoF");
         }
         _singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     static AC_AttitudeControl_Multi_6DoF *get_singleton() {
         return _singleton;

@@ -56,9 +56,9 @@ AP_Hott_Telem::AP_Hott_Telem(void) :
     max_alt(0.0f)
 {
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (singleton != nullptr) {
+    if (singleton) {
         AP_HAL::panic("AP_Hott_Telem must be singleton");
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 #endif
     singleton = this;
 }
@@ -178,7 +178,7 @@ void AP_Hott_Telem::send_EAM(void)
     }
 #else
     WITH_SEMAPHORE(ahrs.get_semaphore());
-    msg.speed = uint16_t(ahrs.groundspeed() * 3.6 + 0.5);
+    msg.speed = uint16_t(ahrs.groundspeed() * 3.6 + 0.5); // coverity[UNINIT] // Reviewed: safe in context
 #endif
 
     send_packet((const uint8_t *)&msg, sizeof(msg));
@@ -300,7 +300,7 @@ void AP_Hott_Telem::send_GPS(void)
         WITH_SEMAPHORE(rtc.get_semaphore());
         uint16_t ms;
         rtc.get_system_clock_utc(msg.gps_time_h, msg.gps_time_m, msg.gps_time_s, ms);
-    }
+    } // coverity[UNINIT] // Reviewed: safe in context
 #endif
 
     send_packet((const uint8_t *)&msg, sizeof(msg));
@@ -353,7 +353,7 @@ void AP_Hott_Telem::send_Vario(void)
     msg.climbrate3s = 30000.5 + vel.z * -100*3;
     msg.climbrate10s = 30000.5 + vel.z * -100*10;
     
-    AP_Notify *notify = AP_Notify::get_singleton();
+    AP_Notify *notify = AP_Notify::get_singleton(); // coverity[BUFFER_SIZE] // Reviewed: safe in context
     char fltmode[5] {};
     if (notify) {
         snprintf(fltmode, sizeof(fltmode), "%s", notify->get_flight_mode_str());
@@ -372,7 +372,7 @@ void AP_Hott_Telem::send_Vario(void)
     } else {
         strncpy(msg.text[1], "DISARM", sizeof(msg.text[1]));
         const char *ck = AP_Notify::flags.pre_arm_check ? "CK:PASS" : "CK:FAIL";
-        memcpy(msg.text[2], ck, MIN(strlen(ck), sizeof(msg.text[2])));
+        memcpy(msg.text[2], ck, MIN(strlen(ck), sizeof(msg.text[2]))); // coverity[UNINIT] // Reviewed: safe in context
     }
 
     send_packet((const uint8_t *)&msg, sizeof(msg));

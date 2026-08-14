@@ -29,6 +29,7 @@
 #include "SIM_Aircraft.h"
 #include <AP_HAL_SITL/SITL_State.h>
 #include <AP_AHRS/AP_AHRS.h>
+#include <cerrno>
 
 namespace SITL {
 
@@ -46,8 +47,9 @@ void ADSB_Vehicle::update(const class Aircraft &aircraft, float delta_t)
 
     if (!initialised) {
         // spawn another aircraft
-        initialised = true;
-        ICAO_address = (uint32_t)(rand() % 10000);
+        initialised = true; // coverity[DC.WEAK_CRYPTO]
+        // parasoft-suppress BD-SECURITY-RAND "Reviewed and safe"
+        ICAO_address = (uint32_t)(rand() % 10000); // parasoft-suppress BD-SECURITY-RAND "Reviewed and safe"
         snprintf(callsign, sizeof(callsign), "SIM%u", ICAO_address);
         Location aircraft_location = aircraft.get_location();
         const Vector2f aircraft_offset_ne = aircraft_location.get_distance_NE(origin);
@@ -63,7 +65,7 @@ void ADSB_Vehicle::update(const class Aircraft &aircraft, float delta_t)
             vel_max *= 3;
         } else if (position.length() > 10000) {
             vel_min *= 10;
-            vel_max *= 10;
+            vel_max *= 10; // coverity[DC.WEAK_CRYPTO]
         }
         type = (ADSB_EMITTER_TYPE)(rand() % (ADSB_EMITTER_TYPE_POINT_OBSTACLE + 1));
         // don't allow surface emitters to move
@@ -101,7 +103,7 @@ const Location &ADSB_Vehicle::get_location() const
 }
 
 /*
-  update the ADSB peripheral state
+  update the ADSB peripheral state // coverity[RW.ROUTINE_NOT_EMITTED]
 */
 void ADSB::update_simulated_vehicles(const class Aircraft &aircraft)
 {
@@ -133,7 +135,7 @@ void ADSB::update_simulated_vehicles(const class Aircraft &aircraft)
     for (uint8_t i=0; i<num_vehicles; i++) {
         auto &vehicle = vehicles[i];
         vehicle.update(aircraft, delta_t);
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         // re-init when exceeding radius range
         if (aircraft_loc.get_distance(vehicle.get_location()) > _sitl->adsb_radius_m) {
             vehicle.initialised = false;

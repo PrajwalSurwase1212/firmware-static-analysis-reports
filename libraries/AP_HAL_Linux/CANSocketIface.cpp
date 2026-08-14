@@ -192,7 +192,7 @@ int16_t CANIface::receive(AP_HAL::CANFrame& out_frame, uint64_t& out_timestamp_u
         out_flags        = rx.flags;
     }
     (void)_rx_queue.pop();
-    if (sem_handle != nullptr) {
+    if (sem_handle) {
         sem_handle->signal();
     }
     return AP_HAL::CANIface::receive(out_frame, out_timestamp_us, out_flags);

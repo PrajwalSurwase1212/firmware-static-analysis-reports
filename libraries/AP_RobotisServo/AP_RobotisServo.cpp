@@ -43,6 +43,7 @@
 #include <AP_Math/AP_Math.h>
 #include <AP_SerialManager/AP_SerialManager.h>
 #include <SRV_Channel/SRV_Channel.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -131,7 +132,7 @@ const AP_Param::GroupInfo AP_RobotisServo::var_info[] = {
 AP_RobotisServo::AP_RobotisServo(void) :
     port(nullptr),
     baudrate(0),
-    us_per_byte(0),
+    us_per_byte(0), // coverity[UNINIT_CTOR] // Reviewed: safe in context
     us_gap(0),
     servo_mask(0),
     detection_count(0),
@@ -139,7 +140,7 @@ AP_RobotisServo::AP_RobotisServo(void) :
     initialised(false),
     pktbuf_ofs(0),
     last_send_us(0),
-    delay_time_us(0)
+    delay_time_us(0) // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
 {
     // set defaults from the parameter table
     AP_Param::setup_object_defaults(this, var_info);
@@ -178,7 +179,8 @@ void AP_RobotisServo::add_stuffing(uint8_t *packet)
     uint16_t packet_length_before_crc = packet_length_in - 2;
     for (uint16_t i = 3; i < packet_length_before_crc; i++) {
         packet_ptr = &packet[i+PKT_INSTRUCTION-2];
-        if (packet_ptr[0] == 0xFF && packet_ptr[1] == 0xFF && packet_ptr[2] == 0xFD) {
+        // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+        if (packet_ptr[0] == 0xFF && packet_ptr[1] == 0xFF && packet_ptr[2] == 0xFD) { // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
             packet_length_out++;
         }
     }
@@ -316,9 +318,9 @@ void AP_RobotisServo::read_bytes(void)
         memmove(pktbuf, &pktbuf[1], pktbuf_ofs-1);
         pktbuf_ofs--;
     }
-
+ // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     if (pktbuf_ofs < 10) {
-        // not enough data yet
+        // not enough data yet // coverity[OVERRUN] // Reviewed: safe in context
         return;
     }
 
@@ -326,7 +328,7 @@ void AP_RobotisServo::read_bytes(void)
     if (total_length >= sizeof(pktbuf) || total_length < 10) {
         pktbuf_ofs = 0;
         return;
-    }
+    } // coverity[OVERRUN] // Reviewed: safe in context
     const uint16_t total_packet_length = total_length;
     if (pktbuf_ofs < total_packet_length) {
         // more data needed

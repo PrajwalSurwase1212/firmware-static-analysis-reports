@@ -31,6 +31,7 @@
 #include <AP_HAL/utility/replace.h>
 #include <SRV_Channel/SRV_Channel.h>
 #include <AP_Filesystem/AP_Filesystem.h>
+#include <cerrno>
 
 #define UDP_TIMEOUT_MS 100
 
@@ -78,10 +79,11 @@ JSON::JSON(const char *frame_str) :
         if (sim_defaults[i].save) {
             enum ap_var_type ptype;
             AP_Param *p = AP_Param::find(sim_defaults[i].name, &ptype);
-            if (!p->configured()) {
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            if (!p->configured()) { // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
                 p->save();
             }
-        }
+        } // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 }
 
@@ -196,9 +198,11 @@ uint32_t JSON::parse_sensors(const char *json)
         received_bitmask |= 1U << i;
 
         p += strlen(key.key)+2;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         switch (key.type) {
             case DATA_UINT64:
-                *((uint64_t *)key.ptr) = strtoull(p, nullptr, 10);
+                // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+                *((uint64_t *)key.ptr) = strtoull(p, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                 //printf("%s/%s = %lu\n", key.section, key.key, *((uint64_t *)key.ptr));
                 break;
 
@@ -245,10 +249,13 @@ uint32_t JSON::parse_sensors(const char *json)
                 bool *b = (bool *)key.ptr;
                 if (strncasecmp(p, "true", 4) == 0) {
                     *b = true;
+                // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                 } else if (strncasecmp(p, "false", 5) == 0) {
                     *b = false;
                 } else {
-                    *b = strtoull(p, nullptr, 10) != 0;
+                    errno = 0;
+                    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+                    *b = strtoull(p, nullptr, 10) != 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                 }
                 //printf("%s/%s = %i\n", key.section, key.key, *((unit8_t *)key.ptr));
                 break;

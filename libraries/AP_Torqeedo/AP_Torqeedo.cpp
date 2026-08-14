@@ -46,7 +46,7 @@ AP_Torqeedo::AP_Torqeedo()
 {
     _singleton = this;
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // initialise driver
 void AP_Torqeedo::init()
@@ -113,7 +113,7 @@ bool AP_Torqeedo::healthy()
     uint8_t num_healthy = 0;
     for (uint8_t instance = 0; instance < AP_TORQEEDO_MAX_INSTANCES; instance++) {
         auto *backend = get_instance(instance);
-        if (backend != nullptr) {
+        if (backend) {
             num_backends++;
             if (backend->healthy()) {
                 num_healthy++;
@@ -155,7 +155,7 @@ void AP_Torqeedo::clear_motor_error()
 {
     for (uint8_t instance = 0; instance < AP_TORQEEDO_MAX_INSTANCES; instance++) {
         auto *backend = get_instance(instance);
-        if (backend != nullptr) {
+        if (backend) {
             backend->clear_motor_error();
         }
     }
@@ -172,7 +172,7 @@ bool AP_Torqeedo::get_batt_info(uint8_t instance, float &voltage, float &current
 
     // return battery info for specified instance
     auto *backend = get_instance(instance);
-    if (backend != nullptr) {
+    if (backend) {
         return backend->get_batt_info(voltage, current_amps, temp_C, pct_remaining);
     }
     return false;
@@ -189,7 +189,7 @@ bool AP_Torqeedo::get_batt_capacity_Ah(uint8_t instance, uint16_t &amp_hours) co
 
     // return battery capacity from specified instance
     auto *backend = get_instance(instance);
-    if (backend != nullptr) {
+    if (backend) {
         return backend->get_batt_capacity_Ah(amp_hours);
     }
     return false;

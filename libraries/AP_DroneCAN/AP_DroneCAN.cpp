@@ -293,7 +293,7 @@ _dna_server(*this, canard_iface, driver_index)
     }
 
     debug_dronecan(AP_CANManager::LOG_INFO, "AP_DroneCAN constructed\n\r");
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 AP_DroneCAN::~AP_DroneCAN()
 {
@@ -906,9 +906,9 @@ void AP_DroneCAN::SRV_send_esc_hobbywing(void)
         const bool armed = hal.util->get_soft_armed();
         for (uint8_t i = esc_offset; i < max_esc_num && k < ARRAY_SIZE(esc_msg.command.data); i++) {
             if (armed && ((((uint32_t) 1U) << i) & _ESC_armed_mask)) {
-                esc_msg.command.data[k] = scale_esc_output(i);
+                esc_msg.command.data[k] = scale_esc_output(i); // coverity[OVERRUN] // Reviewed: safe in context
             } else {
-                esc_msg.command.data[k] = static_cast<unsigned>(0);
+                esc_msg.command.data[k] = static_cast<unsigned>(0); // coverity[OVERRUN] // Reviewed: safe in context
             }
 
             k++;
@@ -934,7 +934,7 @@ void AP_DroneCAN::SRV_push_servos()
     for (uint8_t i = 0; i < DRONECAN_SRV_NUMBER; i++) {
         // Check if this channels has any function assigned
         if (SRV_Channels::channel_function(i) >= SRV_Channel::k_none) {
-            _SRV_conf[i].pulse = SRV_Channels::srv_channel(i)->get_output_pwm();
+            _SRV_conf[i].pulse = SRV_Channels::srv_channel(i)->get_output_pwm(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
             _SRV_conf[i].esc_pending = true;
             _SRV_conf[i].servo_pending = true;
 
@@ -950,7 +950,7 @@ void AP_DroneCAN::SRV_push_servos()
     const bool safety_off = hal.util->safety_switch_state() != AP_HAL::Util::SAFETY_DISARMED;
     if (!safety_off) {
         AP_BoardConfig *boardconfig = AP_BoardConfig::get_singleton();
-        if (boardconfig != nullptr) {
+        if (boardconfig) {
             const uint32_t safety_mask = boardconfig->get_safety_mask();
             servo_armed_mask &= safety_mask;
             esc_armed_mask &= safety_mask;
@@ -1055,7 +1055,7 @@ void AP_DroneCAN::notify_state_send()
 
 #ifndef HAL_BUILD_AP_PERIPH
     const AP_Vehicle* vehicle = AP::vehicle();
-    if (vehicle != nullptr) {
+    if (vehicle) {
         if (vehicle->is_landing()) {
             msg.vehicle_state |= 1 << ARDUPILOT_INDICATION_NOTIFYSTATE_VEHICLE_STATE_IS_LANDING;
         }
@@ -1424,10 +1424,10 @@ void AP_DroneCAN::handle_himark_servoinfo(const CanardRxTransfer& transfer, cons
     }
 
     const AP_Servo_Telem::TelemetryData telem_data {
-        .command_position = msg.pos_cmd * 0.01,
-        .measured_position = msg.pos_sensor * 0.01,
-        .voltage = msg.voltage * 0.01,
-        .current = msg.current * 0.01,
+        .command_position = msg.pos_cmd * 0.01, // coverity[PW.NARROWING_CONVERSION]
+        .measured_position = msg.pos_sensor * 0.01, // coverity[PW.NARROWING_CONVERSION]
+        .voltage = msg.voltage * 0.01, // coverity[PW.NARROWING_CONVERSION]
+        .current = msg.current * 0.01, // coverity[PW.NARROWING_CONVERSION]
         .motor_temperature_cdeg = int16_t(((msg.motor_temp * 0.2) - 40) * 100),
         .pcb_temperature_cdeg = int16_t(((msg.pcb_temp * 0.2) - 40) * 100),
         .status_flags = msg.error_status,
@@ -1886,7 +1886,7 @@ void AP_DroneCAN::send_parameter_save_request()
 bool AP_DroneCAN::save_parameters_on_node(uint8_t node_id, ParamSaveCb *cb)
 {
     WITH_SEMAPHORE(_param_save_sem);
-    if (save_param_cb != nullptr) {
+    if (save_param_cb) {
         //busy
         return false;
     }

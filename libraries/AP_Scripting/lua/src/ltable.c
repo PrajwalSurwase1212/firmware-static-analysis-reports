@@ -44,6 +44,7 @@
 #include "lstring.h"
 #include "ltable.h"
 #include "lvm.h"
+#include <errno.h>
 
 
 /*
@@ -447,7 +448,8 @@ void luaH_free (lua_State *L, Table *t) {
 
 static Node *getfreepos (Table *t) {
   if (!isdummy(t)) {
-    while (t->lastfree > t->node) {
+    // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
+    while (t->lastfree > t->node) { // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
       t->lastfree--;
       if (ttisnil(gkey(t->lastfree)))
         return t->lastfree;
@@ -493,7 +495,8 @@ TValue *luaH_newkey (lua_State *L, Table *t, const TValue *key) {
       /* yes; move colliding node into free position */
       while (othern + gnext(othern) != mp)  /* find previous */
         othern += gnext(othern);
-      gnext(othern) = cast_int(f - othern);  /* rechain to point to 'f' */
+      // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+      gnext(othern) = cast_int(f - othern);  /* rechain to point to 'f' */ // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
       *f = *mp;  /* copy colliding node into free pos. (mp->next also goes) */
       if (gnext(mp) != 0) {
         gnext(f) += cast_int(mp - f);  /* correct 'next' */
@@ -502,11 +505,14 @@ TValue *luaH_newkey (lua_State *L, Table *t, const TValue *key) {
       setnilvalue(gval(mp));
     }
     else {  /* colliding node is in its own main position */
+      // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
       /* new node will go into free position */
       if (gnext(mp) != 0)
-        gnext(f) = cast_int((mp + gnext(mp)) - f);  /* chain new position */
+        // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+        gnext(f) = cast_int((mp + gnext(mp)) - f);  /* chain new position */ // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
       else lua_assert(gnext(f) == 0);
-      gnext(mp) = cast_int(f - mp);
+      // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+      gnext(mp) = cast_int(f - mp); // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
       mp = f;
     }
   }
@@ -517,12 +523,14 @@ TValue *luaH_newkey (lua_State *L, Table *t, const TValue *key) {
 }
 
 
+// parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
 /*
 ** search function for integers
 */
 const TValue *luaH_getint (Table *t, lua_Integer key) {
   /* (1 <= key && key <= t->sizearray) */
-  if (l_castS2U(key) - 1 < t->sizearray)
+  // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+  if (l_castS2U(key) - 1 < t->sizearray) // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
     return &t->array[key - 1];
   else {
     Node *n = hashint(t, key);

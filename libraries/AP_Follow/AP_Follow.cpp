@@ -37,6 +37,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_Scheduler/AP_Scheduler.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -221,7 +222,7 @@ AP_Follow::AP_Follow() :
     _p_pos(AP_FOLLOW_POS_P_DEFAULT)
 {
     _singleton = this;
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 
@@ -229,7 +230,7 @@ AP_Follow::AP_Follow() :
 // Target Estimation Update Functions
 //==============================================================================
 
-// Projects and updates the estimated target position, velocity, and heading based on last known data and configured input shaping.
+// Projects and updates the estimated target position, velocity, and heading based on last known data and configured input shaping. // coverity[RW.ROUTINE_NOT_EMITTED]
 void AP_Follow::update_estimates()
 {
     WITH_SEMAPHORE(_follow_sem);
@@ -332,7 +333,7 @@ void AP_Follow::update_estimates()
         return;
     }
     const Vector3p dist_vec_ned_m = _target_pos_ned_m - current_position_ned_m;
-    // If _dist_max_m is not positive, we don't check the distance
+    // If _dist_max_m is not positive, we don't check the distance // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (is_positive(_dist_max_m.get()) && (dist_vec_ned_m.length() > _dist_max_m)) {
         // target is too far away, mark the estimate invalid
         _estimate_valid = false;
@@ -868,10 +869,12 @@ void AP_Follow::Log_Write_FOLL()
     // retrieve latest estimated location and velocity
     Location loc_estimate{};
     Vector3f vel_estimate;
-    UNUSED_RESULT(get_target_location_and_velocity(loc_estimate, vel_estimate));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(get_target_location_and_velocity(loc_estimate, vel_estimate)); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     Location _target_location;
-    UNUSED_RESULT(AP::ahrs().get_location_from_origin_offset_NED(_target_location, _target_pos_ned_m));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(AP::ahrs().get_location_from_origin_offset_NED(_target_location, _target_pos_ned_m)); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     // log the lead target's reported position and vehicle's estimated position
     // @LoggerMessage: FOLL

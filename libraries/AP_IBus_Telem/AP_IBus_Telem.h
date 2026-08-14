@@ -51,7 +51,7 @@
 class AP_IBus_Telem
 {
 public:
-    AP_IBus_Telem() {}
+    AP_IBus_Telem() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     CLASS_NO_COPY(AP_IBus_Telem);
 

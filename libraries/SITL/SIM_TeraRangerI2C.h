@@ -54,7 +54,7 @@ private:
 
     float rangefinder_range{0.0f};
 
-    uint32_t reading_start_us{0};
+    uint32_t reading_start_us{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 } // namespace SITL

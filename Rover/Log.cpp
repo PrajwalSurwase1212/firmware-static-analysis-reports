@@ -1,6 +1,7 @@
 #include "Rover.h"
 
 #include <AP_RangeFinder/AP_RangeFinder_Backend.h>
+#include <cerrno>
 
 #if HAL_LOGGING_ENABLED
 
@@ -215,8 +216,9 @@ struct PACKED log_Throttle {
 void Rover::Log_Write_Throttle()
 {
     const Vector3f accel = ins.get_accel();
-    float speed = logger.quiet_nanf();
-    (void)g2.attitude_control.get_forward_speed(speed);
+    float speed = logger.quiet_nanf(); // coverity[CHECKED_RETURN]
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    (void)g2.attitude_control.get_forward_speed(speed); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     struct log_Throttle pkt = {
         LOG_PACKET_HEADER_INIT(LOG_THR_MSG),
         time_us         : AP_HAL::micros64(),

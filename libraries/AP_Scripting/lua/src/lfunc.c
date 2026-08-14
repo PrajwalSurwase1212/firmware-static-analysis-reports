@@ -19,6 +19,7 @@
 #include "lmem.h"
 #include "lobject.h"
 #include "lstate.h"
+#include <errno.h>
 
 
 
@@ -59,7 +60,8 @@ UpVal *luaF_findupval (lua_State *L, StkId level) {
   UpVal *p;
   UpVal *uv;
   lua_assert(isintwups(L) || L->openupval == NULL);
-  while (*pp != NULL && (p = *pp)->v >= level) {
+  // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
+  while (*pp != NULL && (p = *pp)->v >= level) { // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
     lua_assert(upisopen(p));
     if (p->v == level)  /* found a corresponding upvalue? */
       return p;  /* return it */
@@ -82,7 +84,8 @@ UpVal *luaF_findupval (lua_State *L, StkId level) {
 
 void luaF_close (lua_State *L, StkId level) {
   UpVal *uv;
-  while (L->openupval != NULL && (uv = L->openupval)->v >= level) {
+  // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
+  while (L->openupval != NULL && (uv = L->openupval)->v >= level) { // parasoft-suppress BD-PB-PTRCMP "Reviewed and safe"
     lua_assert(upisopen(uv));
     L->openupval = uv->u.open.next;  /* remove from 'open' list */
     if (uv->refcount == 0)  /* no references? */

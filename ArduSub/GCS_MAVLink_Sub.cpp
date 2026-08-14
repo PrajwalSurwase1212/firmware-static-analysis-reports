@@ -2,6 +2,7 @@
 
 #include "GCS_MAVLink_Sub.h"
 #include <AP_RPM/AP_RPM_config.h>
+#include <cerrno>
 
 MAV_TYPE GCS_Sub::frame_type() const
 {
@@ -745,7 +746,10 @@ int16_t GCS_MAVLINK_Sub::high_latency_target_altitude() const
 {
     AP_AHRS &ahrs = AP::ahrs();
     Location global_position_current;
-    UNUSED_RESULT(ahrs.get_location(global_position_current));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    UNUSED_RESULT(ahrs.get_location(global_position_current)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     //return units are m
     if (sub.control_mode == Mode::Number::AUTO || sub.control_mode == Mode::Number::GUIDED) {

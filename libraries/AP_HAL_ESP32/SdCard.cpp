@@ -77,10 +77,10 @@ done:
             printf("firmware updated\n");
         }
     }
-    if (f != nullptr) {
+    if (f) {
         fclose(f);
     }
-    if (buffer != nullptr) {
+    if (buffer) {
         free(buffer);
     }
     unlink(fw_name);
@@ -265,7 +265,7 @@ bool sdcard_retry(void)
 
 void unmount_sdcard()
 {
-    if (card != nullptr) {
+    if (card) {
         esp_vfs_fat_sdcard_unmount( "/SDCARD", card);
     }
     sdcard_running = false;

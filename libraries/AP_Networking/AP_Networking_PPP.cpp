@@ -393,7 +393,7 @@ void AP_Networking_PPP::restart_instance(const uint8_t idx)
         his_ip.addr = htonl(rem_ip);
         ppp_set_ipcp_ouraddr(inst.ppp, &our_ip);
         ppp_set_ipcp_hisaddr(inst.ppp, &his_ip);
-        if (netif_list != nullptr) {
+        if (netif_list) {
             const uint32_t nmask = frontend.get_netmask_param();
             if ((ip & nmask) == (rem_ip & nmask)) {
                 // remote PPP IP is on the same subnet as the

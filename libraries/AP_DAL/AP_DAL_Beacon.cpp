@@ -22,7 +22,7 @@ void AP_DAL_Beacon::start_frame()
     const auto *bcon = AP::beacon();
 
     const log_RBCH old = _RBCH;
-    if (bcon != nullptr) {
+    if (bcon) {
         _RBCH.get_vehicle_position_ned_returncode = bcon->get_vehicle_position_ned(_RBCH.vehicle_position_ned, _RBCH.accuracy_estimate);
         Location loc;
         _RBCH.get_origin_returncode = bcon->get_origin(loc);

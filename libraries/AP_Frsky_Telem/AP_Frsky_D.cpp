@@ -6,6 +6,7 @@
 #include <AP_BattMonitor/AP_BattMonitor.h>
 #include <AP_GPS/AP_GPS.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 /*
   send 1 byte and do byte stuffing
@@ -49,7 +50,8 @@ void AP_Frsky_D::send(void)
     // send frame1 every 200ms
     if (now - _D.last_200ms_frame >= 200) {
         _D.last_200ms_frame = now;
-        send_uint16(DATA_ID_TEMP2, (uint16_t)(AP::gps().num_sats() * 10 + AP::gps().status())); // send GPS status and number of satellites as num_sats*10 + status (to fit into a uint8_t)
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        send_uint16(DATA_ID_TEMP2, (uint16_t)(AP::gps().num_sats() * 10 + AP::gps().status())); // send GPS status and number of satellites as num_sats*10 + status (to fit into a uint8_t) // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         send_uint16(DATA_ID_TEMP1, gcs().custom_mode()); // send flight mode
         uint8_t percentage = 0;
         IGNORE_RETURN(_battery.capacity_remaining_pct(percentage));

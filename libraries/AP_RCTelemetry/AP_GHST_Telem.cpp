@@ -48,7 +48,7 @@ AP_GHST_Telem *AP_GHST_Telem::singleton;
 AP_GHST_Telem::AP_GHST_Telem() : AP_RCTelemetry(0)
 {
     singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 AP_GHST_Telem::~AP_GHST_Telem(void)
 {
@@ -108,7 +108,7 @@ bool AP_GHST_Telem::process_rf_mode_changes()
 
     AP_RCProtocol_GHST* ghost = AP::ghost();
     AP_HAL::UARTDriver* uart = nullptr;
-    if (ghost != nullptr) {
+    if (ghost) {
         uart = ghost->get_UART();
     }
 

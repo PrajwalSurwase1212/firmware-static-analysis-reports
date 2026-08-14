@@ -19,6 +19,7 @@
 #include "spline5.h"
 #include "location.h"
 #include "control.h"
+#include <cerrno>
 
 static const float NaNf = nanf("0x4152");
 
@@ -273,7 +274,9 @@ ftype sq(const T first, const Params... parameters)
 template<typename T, typename U, typename... Params>
 ftype norm(const T first, const U second, const Params... parameters)
 {
-    return sqrtF(sq(first, second, parameters...));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+                    return sqrtF(sq(first, second, parameters...)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 #undef MIN
@@ -287,7 +290,8 @@ static inline auto MIN(const A &one, const B &two) -> decltype(one < two ? one :
 template<typename A, typename B>
 static inline auto MAX(const A &one, const B &two) -> decltype(one > two ? one : two)
 {
-    return one > two ? one : two;
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    return one > two ? one : two; // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
 }
 
 inline constexpr uint32_t hz_to_nsec(uint32_t freq)

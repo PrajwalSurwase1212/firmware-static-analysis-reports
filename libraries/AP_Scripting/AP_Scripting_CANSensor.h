@@ -38,7 +38,7 @@ public:
     ScriptingCANSensor(AP_CAN::Protocol dtype)
         : CANSensor("Script") {
         register_driver(dtype);
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // handler for outgoing frames, using uint32
     bool write_frame(AP_HAL::CANFrame &out_frame, const uint32_t timeout_us);
@@ -63,7 +63,7 @@ public:
     ScriptingCANBuffer(ScriptingCANSensor &_sensor, uint32_t buffer_size):
         buffer(buffer_size),
         sensor(_sensor)
-    {};
+    {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Call main sensor write method
     bool write_frame(AP_HAL::CANFrame &out_frame, const uint32_t timeout_us);

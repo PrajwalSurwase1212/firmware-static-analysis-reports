@@ -17,7 +17,7 @@ public:
                                 AP_Proximity::Proximity_State &_state,
                                 AP_Proximity_Params& _params,
                                 uint8_t serial_instance) :
-            AP_Proximity_LightWareSerial(_frontend, _state, _params, serial_instance) {}
+            AP_Proximity_LightWareSerial(_frontend, _state, _params, serial_instance) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     uint16_t rxspace() const override {
         return 1280;

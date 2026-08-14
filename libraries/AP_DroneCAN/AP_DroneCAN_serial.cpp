@@ -9,6 +9,7 @@
 
 #include <AP_Math/AP_Math.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <cerrno>
 
 AP_DroneCAN_Serial *AP_DroneCAN_Serial::serial[HAL_MAX_CAN_PROTOCOL_DRIVERS];
 
@@ -104,7 +105,7 @@ void AP_DroneCAN_Serial::update(void)
             pkt.baudrate = p.baudrate;
             pkt.serial_id = p.idx;
             pkt.options = UAVCAN_TUNNEL_TARGETTED_OPTION_LOCK_PORT;
-            if (ptr != nullptr) {
+            if (ptr) {
                 memcpy(pkt.buffer.data, ptr, n);
             }
         }
@@ -193,8 +194,9 @@ uint32_t AP_DroneCAN_Serial::Port::_available()
 bool AP_DroneCAN_Serial::Port::_discard_input()
 {
     WITH_SEMAPHORE(sem);
-    if (readbuffer != nullptr) {
-        rx_stats_dropped_bytes += readbuffer->available();
+    if (readbuffer) {
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        rx_stats_dropped_bytes += readbuffer->available(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         readbuffer->clear();
     }
     return true;

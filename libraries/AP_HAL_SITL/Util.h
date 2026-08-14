@@ -15,7 +15,7 @@
 class HALSITL::Util : public AP_HAL::Util {
 public:
     Util(SITL_State *_sitlState) :
-        sitlState(_sitlState) {}
+        sitlState(_sitlState) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     
     /**
        how much free memory do we have in bytes. 

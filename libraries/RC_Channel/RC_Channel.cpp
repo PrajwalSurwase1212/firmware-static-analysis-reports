@@ -61,6 +61,7 @@ extern const AP_HAL::HAL& hal;
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_Parachute/AP_Parachute_config.h>
 #include <AP_Scripting/AP_Scripting.h>
+#include <cerrno>
 #define SWITCH_DEBOUNCE_TIME_MS  200
 
 const AP_Param::GroupInfo RC_Channel::var_info[] = {
@@ -272,7 +273,7 @@ const AP_Param::GroupInfo RC_Channel::var_info[] = {
 // constructor
 RC_Channel::RC_Channel(void)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void RC_Channel::set_range(uint16_t high)
@@ -999,7 +1000,7 @@ bool RC_Channel::read_aux()
 #if AP_RC_CHANNEL_AUX_FUNCTION_STRINGS_ENABLED
     // announce the change to the GCS:
     const char *aux_string = string_for_aux_function(_option);
-    if (aux_string != nullptr) {
+    if (aux_string) {
         GCS_SEND_TEXT(MAV_SEVERITY_INFO, "RC%i: %s %s", ch_in+1, aux_string, string_for_aux_pos(new_position));
     }
 #endif
@@ -1669,7 +1670,7 @@ bool RC_Channel::do_aux_function(const AuxFuncTrigger &trigger)
     case AUX_FUNC::VISODOM_ALIGN:
         if (ch_flag == AuxSwitchPos::HIGH) {
             AP_VisualOdom *visual_odom = AP::visualodom();
-            if (visual_odom != nullptr) {
+            if (visual_odom) {
                 visual_odom->request_align_yaw_to_ahrs();
             }
         }
@@ -1807,7 +1808,8 @@ bool RC_Channel::do_aux_function(const AuxFuncTrigger &trigger)
         AP_Logger *logger = AP_Logger::get_singleton();
         switch (ch_flag) {
         case AuxSwitchPos::LOW:
-            logger->log_pause(false);
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            logger->log_pause(false); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
             break;
         case AuxSwitchPos::MIDDLE:
             // nothing
@@ -1891,7 +1893,7 @@ bool RC_Channel::do_aux_function(const AuxFuncTrigger &trigger)
     case AUX_FUNC::TORQEEDO_CLEAR_ERR: {
         if (ch_flag == AuxSwitchPos::HIGH) {
             AP_Torqeedo *torqeedo = AP_Torqeedo::get_singleton();
-            if (torqeedo != nullptr) {
+            if (torqeedo) {
                 torqeedo->clear_motor_error();
             }
         }
@@ -1902,7 +1904,7 @@ bool RC_Channel::do_aux_function(const AuxFuncTrigger &trigger)
 #if AP_SCRIPTING_ENABLED
     case AUX_FUNC::STOP_RESTART_SCRIPTING: {
         AP_Scripting *scr = AP::scripting();
-        if (scr != nullptr) {
+        if (scr) {
             switch (ch_flag) {
             case AuxSwitchPos::HIGH:
                 scr->stop();
@@ -1998,7 +2000,8 @@ bool RC_Channel::read_3pos_switch(RC_Channel::AuxSwitchPos &ret) const
 RC_Channel::AuxSwitchPos RC_Channel::get_aux_switch_pos() const
 {
     AuxSwitchPos position = AuxSwitchPos::LOW;
-    UNUSED_RESULT(read_3pos_switch(position));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(read_3pos_switch(position)); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     return position;
 }

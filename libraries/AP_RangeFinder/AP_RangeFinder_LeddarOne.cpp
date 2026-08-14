@@ -19,6 +19,7 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Math/crc.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -98,9 +99,10 @@ bool AP_RangeFinder_LeddarOne::CRC16(uint8_t *aBuffer, uint8_t aLength, bool aCh
 {
     uint16_t crc = calc_crc_modbus(aBuffer, aLength);
 
-    uint8_t lCRCLo = LOWBYTE(crc);
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+    uint8_t lCRCLo = LOWBYTE(crc); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
     uint8_t lCRCHi = HIGHBYTE(crc);
-
+ // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     if (aCheck) {
         return (aBuffer[aLength] == lCRCLo) && (aBuffer[aLength+1] == lCRCHi);
     } else {

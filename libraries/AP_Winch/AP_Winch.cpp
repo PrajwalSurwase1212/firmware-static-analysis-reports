@@ -56,7 +56,7 @@ AP_Winch::AP_Winch()
     _singleton = this;
 
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // indicate whether this module is enabled
 bool AP_Winch::enabled() const
@@ -67,7 +67,7 @@ bool AP_Winch::enabled() const
 // true if winch is healthy
 bool AP_Winch::healthy() const
 {
-    if (backend != nullptr) {
+    if (backend) {
         return backend->healthy();
     }
     return false;
@@ -91,7 +91,7 @@ void AP_Winch::init()
     default:
         break;
     }
-    if (backend != nullptr) {
+    if (backend) {
         backend->init();
 
         // initialise control mode
@@ -128,7 +128,7 @@ void AP_Winch::set_desired_rate(float rate)
 // send status to ground station
 void AP_Winch::send_status(const GCS_MAVLINK &channel)
 {
-    if (backend != nullptr) {
+    if (backend) {
         backend->send_status(channel);
     }
 }
@@ -157,7 +157,7 @@ bool AP_Winch::pre_arm_check(char *failmsg, uint8_t failmsg_len) const
         if (!enabled()) {              \
             return;                    \
         }                              \
-        if (backend != nullptr) {      \
+        if (backend) {      \
             backend->function_name();  \
         }                              \
     }

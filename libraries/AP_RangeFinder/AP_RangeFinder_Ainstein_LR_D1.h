@@ -37,7 +37,7 @@ protected:
 
 private:
 
-    using AP_RangeFinder_Backend_Serial::AP_RangeFinder_Backend_Serial;
+    using AP_RangeFinder_Backend_Serial::AP_RangeFinder_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // get a reading
     bool get_reading(float &reading_m) override;

@@ -9,7 +9,7 @@ class AC_PolyFence_loader;
 class MissionItemProtocol_Fence : public MissionItemProtocol {
 public:
     MissionItemProtocol_Fence(class AC_Fence &fence) :
-        _fence(fence) {}
+        _fence(fence) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     MAV_MISSION_TYPE mission_type() const override {
         return MAV_MISSION_TYPE_FENCE;

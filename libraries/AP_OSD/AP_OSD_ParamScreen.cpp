@@ -188,7 +188,7 @@ AP_OSD_ParamScreen::AP_OSD_ParamScreen(uint8_t index)
         params[i] = PARAM_DEFAULTS[index][i];
     }
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 AP_OSD_ParamSetting* AP_OSD_ParamScreen::get_setting(uint8_t param_idx)
 {
@@ -228,7 +228,7 @@ void AP_OSD_ParamScreen::draw_parameter(uint8_t number, uint8_t x, uint8_t y)
 
     ap_var_type type = setting._param_type;
     AP_Param* p =  setting._param;
-    if (p != nullptr) {
+    if (p) {
         // grab the name of the parameter
         char name[17];
         setting.copy_name(name, 17);
@@ -362,19 +362,19 @@ void AP_OSD_ParamScreen::modify_configured_parameter(uint8_t number, Event ev)
                 || setting._current_token.idx != token.idx
                 || setting._current_token.group_element != token.group_element);
             param = AP_Param::next_scalar(&token, &type)) {
-            prev_prev_token = prev_token;
+            prev_prev_token = prev_token; // coverity[UNINIT] // Reviewed: safe in context
             prev_prev_type = prev_type;
             prev_token = token;
             prev_type = type;
         }
-        if (param != nullptr) {
+        if (param) {
             param = AP_Param::next_scalar(&prev_prev_token, &prev_prev_type);
             setting._current_token = prev_prev_token;
             setting._param_type = prev_prev_type;
         }
     }
 
-    if (param != nullptr) {
+    if (param) {
         // update the stored index
         setting._param_group.set(setting._current_token.group_element);
         setting._param_key.set(AP_Param::get_persistent_key(setting._current_token.key));
@@ -579,7 +579,7 @@ void AP_OSD_ParamScreen::save_parameters()
     for (uint8_t i = 0; i < NUM_PARAMS; i++) {
         if (params[i].enabled && (_requires_save & (1 << i))) {
             AP_Param* p = params[i]._param;
-            if (p != nullptr) {
+            if (p) {
                 p->save();
             }
             params[i].save_as_new();

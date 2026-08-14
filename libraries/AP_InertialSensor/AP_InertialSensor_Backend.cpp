@@ -11,6 +11,7 @@
 #include <AP_Module/AP_Module.h>
 #endif
 #include <stdio.h>
+#include <cerrno>
 
 #ifndef AP_HEATER_IMU_INSTANCE
 #define AP_HEATER_IMU_INSTANCE 0
@@ -22,7 +23,7 @@ const extern AP_HAL::HAL& hal;
 
 AP_InertialSensor_Backend::AP_InertialSensor_Backend(AP_InertialSensor &imu) :
     _imu(imu)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -836,7 +837,8 @@ void AP_InertialSensor_Backend::update_gyro_filters(uint8_t instance) /* front e
         if (notch.params.enabled()) {
             notch.update_params(instance, sensors_converging(), gyro_rate);
         }
-    }
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+    } // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 #endif
 }
 

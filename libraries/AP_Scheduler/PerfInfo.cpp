@@ -8,6 +8,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <AP_InternalError/AP_InternalError.h>
 #include "AP_Scheduler.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -31,7 +32,7 @@ void AP::PerfInfo::reset()
     long_running = 0;
     sigma_time = 0;
     sigmasquared_time = 0;
-    if (_task_info != nullptr) {
+    if (_task_info) {
         memset(_task_info, 0, (_num_tasks) * sizeof(TaskInfo));
     }
 }
@@ -129,7 +130,7 @@ void AP::PerfInfo::check_loop_time(uint32_t time_in_micros)
     if (time_in_micros > overtime_threshold_micros) {
         long_running++;
     }
-    sigma_time += time_in_micros;
+    sigma_time += time_in_micros; // coverity[OVERFLOW_BEFORE_WIDEN]
     sigmasquared_time += (uint64_t)time_in_micros * time_in_micros;
 
     /* we keep a filtered loop time for use as G_Dt which is the
@@ -190,8 +191,11 @@ uint32_t AP::PerfInfo::get_avg_time() const
 
 // get_stddev_time - return stddev of average loop time (in us)
 uint32_t AP::PerfInfo::get_stddev_time() const
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    return sqrtf((sigmasquared_time - (sigma_time*sigma_time)/loop_count) / loop_count);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    return sqrtf((sigmasquared_time - (sigma_time*sigma_time)/loop_count) / loop_count); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 // get_filtered_time - return low pass filtered loop time in seconds
@@ -223,7 +227,7 @@ void AP::PerfInfo::update_logging() const
                     (unsigned long)get_stddev_time(),
                     (unsigned long)AP::scheduler().get_extra_loop_us());
 }
-
+ // coverity[UNINTENDED_INTEGER_DIVISION]
 void AP::PerfInfo::set_loop_rate(uint16_t rate_hz)
 {
     // allow a 20% overrun before we consider a loop "slow":

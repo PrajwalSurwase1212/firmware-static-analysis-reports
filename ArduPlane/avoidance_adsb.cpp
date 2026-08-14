@@ -172,7 +172,7 @@ bool AP_Avoidance_Plane::check_flightmode(bool allow_mode_change)
     return (plane.control_mode == &plane.mode_avoidADSB);
 }
 
-bool AP_Avoidance_Plane::handle_avoidance_vertical(const AP_Avoidance::Obstacle *obstacle, bool allow_mode_change, Location &new_loc)
+bool AP_Avoidance_Plane::handle_avoidance_vertical(const AP_Avoidance::Obstacle *obstacle, bool allow_mode_change, Location &new_loc) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // ensure copter is in avoid_adsb mode
      if (!check_flightmode(allow_mode_change)) {
@@ -185,7 +185,7 @@ bool AP_Avoidance_Plane::handle_avoidance_vertical(const AP_Avoidance::Obstacle 
          new_loc.set_alt_cm(plane.current_loc.alt + 1000, Location::AltFrame::ABSOLUTE);
          return true;
 
-     } else if (plane.current_loc.alt > plane.g.RTL_altitude*100) {
+     } else if (plane.current_loc.alt > plane.g.RTL_altitude*100) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
          // should descend while above RTL alt
          // TODO: consider using a lower altitude than RTL_altitude since it's default (100m) is quite high
          new_loc.set_alt_cm(plane.current_loc.alt - 1000, Location::AltFrame::ABSOLUTE);

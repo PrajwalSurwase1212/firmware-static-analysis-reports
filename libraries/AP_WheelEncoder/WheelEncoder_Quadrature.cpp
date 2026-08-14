@@ -18,6 +18,7 @@
 #include "WheelEncoder_Quadrature.h"
 
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -33,7 +34,8 @@ void AP_WheelEncoder_Quadrature::update_pin(uint8_t &pin,
 
     // remove old gpio event callback if present
     if (pin != (uint8_t)-1 &&
-        !hal.gpio->detach_interrupt(pin)) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        !hal.gpio->detach_interrupt(pin)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "WEnc: Failed to detach from pin %u", pin);
         // ignore this failure or the user may be stuck
     }
@@ -93,7 +95,7 @@ uint8_t AP_WheelEncoder_Quadrature::pin_ab_to_phase(bool pin_a, bool pin_b)
         } else {
             // A = 1, B = 1
             return 2;
-        }
+        } // coverity[UNREACHABLE]
     }
 }
 

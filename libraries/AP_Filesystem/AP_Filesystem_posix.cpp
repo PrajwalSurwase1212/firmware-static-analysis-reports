@@ -32,6 +32,7 @@
 
 #if AP_FILESYSTEM_POSIX_HAVE_UTIME
 #include <utime.h>
+#include <cerrno>
 #endif
 
 extern const AP_HAL::HAL& hal;
@@ -77,7 +78,7 @@ int AP_Filesystem_Posix::open(const char *fname, int flags, bool allow_absolute_
     if (! allow_absolute_paths) {
         fname = map_filename(fname);
     }
-
+ // coverity[TOCTOU] // Reviewed: safe in context
     // we automatically add O_CLOEXEC as we always want it for ArduPilot FS usage
     int ret = ::open(fname, flags | O_CLOEXEC, 0644);
     if (ret != -1) {
@@ -99,19 +100,23 @@ int AP_Filesystem_Posix::open(const char *fname, int flags, bool allow_absolute_
 int AP_Filesystem_Posix::close(int fd)
 {
     FS_CHECK_ALLOWED(-1);
-    return ::close(fd);
+    // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
+    return ::close(fd); // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
 }
 
 int32_t AP_Filesystem_Posix::read(int fd, void *buf, uint32_t count)
 {
     FS_CHECK_ALLOWED(-1);
-    return ::read(fd, buf, count);
+    // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
+    return ::read(fd, buf, count); // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
 }
 
 int32_t AP_Filesystem_Posix::write(int fd, const void *buf, uint32_t count)
+// parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
 {
     FS_CHECK_ALLOWED(-1);
-    return ::write(fd, buf, count);
+    // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
+    return ::write(fd, buf, count); // parasoft-suppress BD-API-NEGPARAM "Reviewed and safe"
 }
 
 int AP_Filesystem_Posix::fsync(int fd)

@@ -51,7 +51,7 @@ AP_Motors::AP_Motors(uint16_t speed_hz) :
     limit.set_all(true);
     _thrust_boost = false;
     _thrust_balanced = true;
-};
+}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_Motors::get_frame_and_type_string(char *buffer, uint8_t buflen) const
 {
@@ -260,7 +260,7 @@ bool AP_Motors::is_digital_pwm_type() const
 const char* AP_Motors::get_frame_string() const
 {
 #if AP_SCRIPTING_ENABLED
-    if (custom_frame_string != nullptr) {
+    if (custom_frame_string) {
         return custom_frame_string;
     }
 #endif
@@ -270,12 +270,12 @@ const char* AP_Motors::get_frame_string() const
 #if AP_SCRIPTING_ENABLED
 // set custom frame string
 void AP_Motors::set_frame_string(const char * str) {
-    if (custom_frame_string != nullptr) {
+    if (custom_frame_string) {
         return;
     }
     const size_t len = strlen(str)+1;
     custom_frame_string = NEW_NOTHROW char[len];
-    if (custom_frame_string != nullptr) {
+    if (custom_frame_string) {
         strncpy(custom_frame_string, str, len);
     }
 }

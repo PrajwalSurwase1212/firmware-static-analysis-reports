@@ -69,7 +69,7 @@ RCMapper *RCMapper::_singleton;
 // object constructor.
 RCMapper::RCMapper(void)
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("RCMapper must be singleton");
     }
     AP_Param::setup_object_defaults(this, var_info);

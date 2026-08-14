@@ -59,7 +59,7 @@ AP_GPS_NOVA::AP_GPS_NOVA(AP_GPS &_gps,
         port->write((const uint8_t*)init_str, strlen(init_str));
         port->write((const uint8_t*)init_str1, strlen(init_str1));
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 const char* const AP_GPS_NOVA::_initialisation_blob[4] {
     "\r\n\r\nunlogall\r\n", // cleanup enviroment

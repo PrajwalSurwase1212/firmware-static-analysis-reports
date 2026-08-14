@@ -213,7 +213,7 @@ AP_WheelRateControl::AP_WheelRateControl(const AP_WheelEncoder &wheel_encoder_re
         _wheel_encoder(wheel_encoder_ref)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // returns true if a wheel encoder and rate control PID are available for this instance
 bool AP_WheelRateControl::enabled(uint8_t instance)

@@ -57,7 +57,7 @@ public:
     AP_AdvancedFailsafe()
         {
             AP_Param::setup_object_defaults(this, var_info);
-            if (_singleton != nullptr) {
+            if (_singleton) {
                 AP_HAL::panic("AP_AdvancedFailsafe must be singleton");
             }
 
@@ -66,7 +66,7 @@ public:
             _terminate.set(0);
 
             _saved_wp = 0;
-            _failsafe_setup = false;
+            _failsafe_setup = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
         }
 
     // get singleton instance

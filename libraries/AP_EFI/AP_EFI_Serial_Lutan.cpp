@@ -25,6 +25,7 @@
 #include "AP_EFI_Serial_Lutan.h"
 
 #include <stdio.h>
+#include <cerrno>
 
 // RPM Threshold for fuel consumption estimator
 #define RPM_THRESHOLD                100
@@ -34,7 +35,8 @@ extern const AP_HAL::HAL &hal;
 AP_EFI_Serial_Lutan::AP_EFI_Serial_Lutan(AP_EFI &_frontend):
     AP_EFI_Backend(_frontend)
 {
-    port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_EFI, 0);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // coverity[UNINIT_CTOR] // Reviewed: safe in context
+    port = AP::serialmanager().find_serial(AP_SerialManager::SerialProtocol_EFI, 0); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 

@@ -28,7 +28,7 @@ using namespace SITL;
 VectorNav::VectorNav() :
     SerialDevice::SerialDevice()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 struct PACKED VN_IMU_packet_sim {
@@ -242,7 +242,7 @@ void VectorNav::nmea_printf(const char *fmt, ...)
     va_start(ap, fmt);
     char *s = nmea_vaprintf(fmt, ap);
     va_end(ap);
-    if (s != nullptr) {
+    if (s) {
         write_to_autopilot((const char*)s, strlen(s));
         free(s);
     }

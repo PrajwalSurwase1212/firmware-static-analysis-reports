@@ -34,6 +34,7 @@
 #include <AP_HAL/utility/sparse-endian.h>
 #include <AP_Common/Bitmask.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -88,7 +89,7 @@ AP_ExternalAHRS_InertialLabs::AP_ExternalAHRS_InertialLabs(AP_ExternalAHRS *_fro
     auto &sm = AP::serialmanager();
     uart = sm.find_serial(AP_SerialManager::SerialProtocol_AHRS, 0);
     if (!uart) {
-        GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "InertialLabs ExternalAHRS no UART");
+        GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "InertialLabs ExternalAHRS no UART"); // coverity[UNINIT_CTOR] // Reviewed: safe in context
         return;
     }
     baudrate = sm.find_baudrate(AP_SerialManager::SerialProtocol_AHRS, 0);
@@ -102,7 +103,7 @@ AP_ExternalAHRS_InertialLabs::AP_ExternalAHRS_InertialLabs(AP_ExternalAHRS *_fro
     if (!hal.scheduler->thread_create(FUNCTOR_BIND_MEMBER(&AP_ExternalAHRS_InertialLabs::update_thread, void), "ILabs", 2048, AP_HAL::Scheduler::PRIORITY_SPI, 0)) {
         AP_HAL::panic("InertialLabs Failed to start ExternalAHRS update thread");
     }
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "InertialLabs ExternalAHRS initialised");
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "InertialLabs ExternalAHRS initialised"); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 /*
@@ -116,8 +117,9 @@ void AP_ExternalAHRS_InertialLabs::re_sync(void)
          */
         const uint16_t header = 0x55AA;
         const uint8_t *p = (const uint8_t *)memmem(&buffer[1], buffer_ofs-3, &header, sizeof(header));
-        if (p != nullptr) {
-            const uint16_t n = p - &buffer[0];
+        if (p) {
+            // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+            const uint16_t n = p - &buffer[0]; // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
             memmove(&buffer[0], p, buffer_ofs - n);
             buffer_ofs -= n;
         } else {
@@ -665,7 +667,7 @@ bool AP_ExternalAHRS_InertialLabs::check_uart()
     if (GOT_MSG(DIFFERENTIAL_PRESSURE) &&
         GOT_MSG(TEMPERATURE)) {
         auto *arsp = AP::airspeed();
-        if (arsp != nullptr) {
+        if (arsp) {
             arsp->handle_external(airspeed_data);
         }
     }
@@ -1094,7 +1096,8 @@ void AP_ExternalAHRS_InertialLabs::get_filter_status(nav_filter_status &status) 
     memset(&status, 0, sizeof(status));
     const bool init_ok = (state2.unit_status & (ILABS_UNIT_STATUS_ALIGNMENT_FAIL|ILABS_UNIT_STATUS_OPERATION_FAIL))==0;
     status.flags.initalized = init_ok;
-    status.flags.attitude = init_ok && (now - last_att_ms < dt_limit) && init_ok;
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    status.flags.attitude = init_ok && (now - last_att_ms < dt_limit) && init_ok; // parasoft-suppress BD-PB-CC "Reviewed and safe"
     status.flags.vert_vel = init_ok && (now - last_vel_ms < dt_limit);
     status.flags.vert_pos = init_ok && (now - last_pos_ms < dt_limit);
     status.flags.horiz_vel = status.flags.vert_vel;

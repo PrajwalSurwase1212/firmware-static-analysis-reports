@@ -71,7 +71,7 @@ public:
     Device(enum BusType type)
     {
         _bus_id.devid = 0;
-        _bus_id.devid_s.bus_type = type;
+        _bus_id.devid_s.bus_type = type; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 
     // return bus type

@@ -60,7 +60,7 @@ AP_MotorsTailsitter::AP_MotorsTailsitter(uint16_t speed_hz) :
     AP_MotorsMulticopter(speed_hz)
 {
     set_update_rate(speed_hz);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 // set update rate to motors - a value in hertz

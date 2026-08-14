@@ -40,7 +40,7 @@ namespace SITL {
 class CRSF : public SerialDevice {
 public:
 
-    CRSF() {};
+    CRSF() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update state
     void update();

@@ -35,7 +35,7 @@
 
 void freeifaddrs(struct ifaddrs *ifp)
 {
-    if (ifp != nullptr) {
+    if (ifp) {
         free(ifp->ifa_name);
         free(ifp->ifa_addr);
         free(ifp->ifa_netmask);

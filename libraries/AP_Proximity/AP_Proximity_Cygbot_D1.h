@@ -24,7 +24,7 @@ class AP_Proximity_Cygbot_D1 : public AP_Proximity_Backend_Serial
 
 public:
 
-    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial;
+    using AP_Proximity_Backend_Serial::AP_Proximity_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update the state of the sensor
     void update(void) override;

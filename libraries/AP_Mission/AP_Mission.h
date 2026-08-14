@@ -452,7 +452,7 @@ public:
         _prev_nav_cmd_wp_index(AP_MISSION_CMD_INDEX_NONE)
     {
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("Mission must be singleton");
         }
 #endif
@@ -464,7 +464,7 @@ public:
         // clear commands
         _nav_cmd.index = AP_MISSION_CMD_INDEX_NONE;
         _do_cmd.index = AP_MISSION_CMD_INDEX_NONE;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // get singleton instance
     static AP_Mission *get_singleton()

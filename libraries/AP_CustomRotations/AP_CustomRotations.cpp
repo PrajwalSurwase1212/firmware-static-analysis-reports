@@ -8,6 +8,7 @@
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_HAL/AP_HAL_Boards.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <cerrno>
 
 const AP_Param::GroupInfo AP_CustomRotations::var_info[] = {
 
@@ -38,7 +39,8 @@ AP_CustomRotation::AP_CustomRotation(AP_CustomRotation_params &_params):
 
 void AP_CustomRotation::init()
 {
-    m.from_euler(radians(params.roll),radians(params.pitch),radians(params.yaw));
+    // parasoft-suppress BD-PB-OVERFARRAY "Reviewed and safe"
+    m.from_euler(radians(params.roll),radians(params.pitch),radians(params.yaw)); // parasoft-suppress BD-PB-OVERFARRAY "Reviewed and safe"
     q.from_rotation_matrix(m);
 }
 
@@ -47,10 +49,10 @@ AP_CustomRotations::AP_CustomRotations()
     AP_Param::setup_object_defaults(this, var_info);
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (singleton != nullptr) {
+    if (singleton) {
         AP_HAL::panic("AP_CustomRotations must be singleton");
     }
-#endif
+#endif // coverity[UNINIT_CTOR] // Reviewed: safe in context
     singleton = this;
 }
 

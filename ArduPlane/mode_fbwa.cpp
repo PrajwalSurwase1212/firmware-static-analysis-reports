@@ -24,7 +24,7 @@ void ModeFBWA::update()
         SRV_Channels::set_output_limit(SRV_Channel::k_throttle, SRV_Channel::Limit::MIN);
     }
     RC_Channel *chan = rc().find_channel_for_option(RC_Channel::AUX_FUNC::FBWA_TAILDRAGGER);
-    if (chan != nullptr) {
+    if (chan) {
         // check for the user enabling FBWA taildrag takeoff mode
         bool tdrag_mode = chan->get_aux_switch_pos() == RC_Channel::AuxSwitchPos::HIGH;
         if (tdrag_mode && !plane.auto_state.fbwa_tdrag_takeoff_mode) {

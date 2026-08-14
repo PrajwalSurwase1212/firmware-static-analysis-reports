@@ -156,7 +156,7 @@ MAV_MISSION_RESULT MissionItemProtocol_Fence::replace_item(const mavlink_mission
     if (ret != MAV_MISSION_ACCEPTED) {
         return ret;
     }
-    if (_updated_mask != nullptr) {
+    if (_updated_mask) {
         _updated_mask[mission_item_int.seq/8] |= (1U<<(mission_item_int.seq%8));
     }
     return MAV_MISSION_ACCEPTED;
@@ -177,7 +177,7 @@ void MissionItemProtocol_Fence::free_upload_resources()
 
 MAV_MISSION_RESULT MissionItemProtocol_Fence::complete(const GCS_MAVLINK &_link)
 {
-    if (_updated_mask != nullptr) {
+    if (_updated_mask) {
         // get any points that weren't filled in
         for (uint16_t i=0; i<_new_items_count; i++) {
             if (!(_updated_mask[i/8] & (1U<<(i%8)))) {
@@ -219,7 +219,7 @@ bool MissionItemProtocol_Fence::clear_all_items()
 
 MAV_MISSION_RESULT MissionItemProtocol_Fence::allocate_receive_resources(const uint16_t count)
 {
-    if (_new_items != nullptr) {
+    if (_new_items) {
         // this is an error - the base class should have called
         // free_upload_resources first
         INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);

@@ -28,6 +28,7 @@
 #include <sys/types.h>
 
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -57,7 +58,7 @@ void last_letter::start_last_letter(void)
     pid_t child_pid = fork();
     if (child_pid == 0) {
       // in child
-      close(0);
+      close(0); // coverity[CHECKED_RETURN]
       (void)open("/dev/null", O_RDONLY|O_CLOEXEC);
       for (uint8_t i=3; i<100; i++) {
           close(i);
@@ -71,7 +72,8 @@ void last_letter::start_last_letter(void)
       if (ret != 0) {
           perror("roslaunch");
       }
-      exit(1);
+      // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+      exit(1); // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     }
 }
 
@@ -80,7 +82,7 @@ void last_letter::start_last_letter(void)
 */
 void last_letter::send_servos(const struct sitl_input &input)
 {
-    servo_packet pkt;
+    servo_packet pkt; // coverity[CHECKED_RETURN]
     memcpy(pkt.servos, input.servos, sizeof(pkt.servos));
     if (sock.sendto(&pkt, sizeof(pkt), "127.0.0.1", fdm_port) < 0) {
         // safe to ignore: SITL socket output failures shouldn't halt the simulator
@@ -99,7 +101,8 @@ void last_letter::recv_fdm(const struct sitl_input &input)
       we re-send the servo packet every 0.1 seconds until we get a
       reply. This allows us to cope with some packet loss to the FDM
      */
-    while (sock.recv(&pkt, sizeof(pkt), 100) != sizeof(pkt)) {
+    // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
+    while (sock.recv(&pkt, sizeof(pkt), 100) != sizeof(pkt)) { // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
         send_servos(input);
     }
 

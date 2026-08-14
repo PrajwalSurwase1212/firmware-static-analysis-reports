@@ -337,7 +337,7 @@ void Scheduler::_run_timers()
     }
 
     // and the failsafe, if one is setup
-    if (_failsafe != nullptr) {
+    if (_failsafe) {
         _failsafe();
     }
 

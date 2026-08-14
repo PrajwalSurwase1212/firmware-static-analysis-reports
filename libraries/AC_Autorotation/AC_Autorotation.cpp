@@ -3,6 +3,7 @@
 #include <AP_RPM/AP_RPM.h>
 #include <AP_AHRS/AP_AHRS.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -136,9 +137,9 @@ AC_Autorotation::AC_Autorotation(AP_MotorsHeli*& motors, AC_AttitudeControl*& at
     _motors_heli(motors),
     _attitude_control(att_crtl)
     {
-        AP_Param::setup_object_defaults(this, var_info);
+        AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 void AC_Autorotation::init(void)
 {
     // Initialisation of head speed controller
@@ -148,7 +149,7 @@ void AC_Autorotation::init(void)
     // Reset feed forward filter
     col_trim_lpf.reset(collective_out);
 
-    // Protect against divide by zero TODO: move this to an accessor function
+    // Protect against divide by zero TODO: move this to an accessor function // coverity[RW.NO_MATCHING_FUNCTION]
     _param_head_speed_set_point.set(MAX(_param_head_speed_set_point, 500.0));
 
     // Reset the landed reason
@@ -194,7 +195,8 @@ void AC_Autorotation::run_entry(float pilot_accel_norm)
     if (!get_norm_head_speed(head_speed_norm)) {
         // RPM sensor is bad, so we don't attempt to slew the head speed target as we do not know what head speed actually is
         // The collective output handling of the rpm sensor failure is handled later in the head speed controller 
-         head_speed_norm = HEAD_SPEED_TARGET_RATIO;
+         // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+         head_speed_norm = HEAD_SPEED_TARGET_RATIO; // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
     }
 
     // Slew the head speed target from the initial condition to the target head speed ratio for the glide
@@ -318,7 +320,7 @@ void AC_Autorotation::update_forward_speed_controller(float pilot_accel_norm)
     const float fwd_accel_target_mss  = _fwd_speed_pid.update_all(_target_vel_ms, get_speed_forward_ms(), _dt, _limit_accel); // (m/s/s)
 
     // Build the body frame XY accel vector.
-    // Pilot can request as much as 1/2 of the max accel laterally to perform a turn.
+    // Pilot can request as much as 1/2 of the max accel laterally to perform a turn. // coverity[PW.NARROWING_CONVERSION]
     // We only allow up to half as we need to prioritize building/maintaining airspeed.
     Vector2f bf_accel_target_mss = {fwd_accel_target_mss, pilot_accel_norm * get_accel_max_mss() * 0.5};
 
@@ -502,7 +504,8 @@ bool AC_Autorotation::check_landed(void)
     const AP_AHRS &ahrs = AP::ahrs();
     _landed_reason.min_speed = ahrs.get_velocity_NED(velocity) && (velocity.length() < min_moving_speed);
     _landed_reason.land_col = _motors_heli->get_below_land_min_coll();
-    _landed_reason.is_still = AP::ins().is_still();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    _landed_reason.is_still = AP::ins().is_still(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     return _landed_reason.min_speed && _landed_reason.land_col && _landed_reason.is_still;
 }

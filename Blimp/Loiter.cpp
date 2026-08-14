@@ -5,7 +5,7 @@
 #define MA 0.99
 #define MO (1-MA)
 
-void Loiter::run(Vector3f& target_pos, float& target_yaw, Vector4b axes_disabled)
+void Loiter::run(Vector3f& target_pos, float& target_yaw, Vector4b axes_disabled) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const float dt = blimp.scheduler.get_last_loop_time_s();
 
@@ -68,10 +68,10 @@ void Loiter::run(Vector3f& target_pos, float& target_yaw, Vector4b axes_disabled
         blimp.pid_pos_yaw.set_actual_rate(yaw_ef);
     }
 
-    Vector3f target_vel_ef_c{constrain_float(target_vel_ef.x, -blimp.g.max_vel_xy, blimp.g.max_vel_xy),
-                             constrain_float(target_vel_ef.y, -blimp.g.max_vel_xy, blimp.g.max_vel_xy),
-                             constrain_float(target_vel_ef.z, -blimp.g.max_vel_z, blimp.g.max_vel_z)};
-    float target_vel_yaw_c = constrain_float(target_vel_yaw, -blimp.g.max_vel_yaw, blimp.g.max_vel_yaw);
+    Vector3f target_vel_ef_c{constrain_float(target_vel_ef.x, -blimp.g.max_vel_xy, blimp.g.max_vel_xy), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+                             constrain_float(target_vel_ef.y, -blimp.g.max_vel_xy, blimp.g.max_vel_xy), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+                             constrain_float(target_vel_ef.z, -blimp.g.max_vel_z, blimp.g.max_vel_z)}; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    float target_vel_yaw_c = constrain_float(target_vel_yaw, -blimp.g.max_vel_yaw, blimp.g.max_vel_yaw); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     Vector2f target_vel_ef_c_scaled_xy = {target_vel_ef_c.x * scaler_xz, target_vel_ef_c.y * scaler_yyaw};
     Vector2f vel_ned_filtd_scaled_xy = {blimp.vel_ned_filtd.x * scaler_xz, blimp.vel_ned_filtd.y * scaler_yyaw};
@@ -131,7 +131,7 @@ void Loiter::run(Vector3f& target_pos, float& target_yaw, Vector4b axes_disabled
 #endif
 }
 
-void Loiter::run_vel(Vector3f& target_vel_ef, float& target_vel_yaw, Vector4b axes_disabled)
+void Loiter::run_vel(Vector3f& target_vel_ef, float& target_vel_yaw, Vector4b axes_disabled) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const float dt = blimp.scheduler.get_last_loop_time_s();
 
@@ -151,10 +151,10 @@ void Loiter::run_vel(Vector3f& target_vel_ef, float& target_vel_yaw, Vector4b ax
     //Disabled means "don't update PIDs or output anything at all". Zero means actually output zero thrust. I term is limited in either case."
     Vector4b limit = zero || axes_disabled;
 
-    Vector3f target_vel_ef_c{constrain_float(target_vel_ef.x, -blimp.g.max_vel_xy, blimp.g.max_vel_xy),
-                             constrain_float(target_vel_ef.y, -blimp.g.max_vel_xy, blimp.g.max_vel_xy),
-                             constrain_float(target_vel_ef.z, -blimp.g.max_vel_z, blimp.g.max_vel_z)};
-    float target_vel_yaw_c = constrain_float(target_vel_yaw, -blimp.g.max_vel_yaw, blimp.g.max_vel_yaw);
+    Vector3f target_vel_ef_c{constrain_float(target_vel_ef.x, -blimp.g.max_vel_xy, blimp.g.max_vel_xy), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+                             constrain_float(target_vel_ef.y, -blimp.g.max_vel_xy, blimp.g.max_vel_xy), // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+                             constrain_float(target_vel_ef.z, -blimp.g.max_vel_z, blimp.g.max_vel_z)}; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    float target_vel_yaw_c = constrain_float(target_vel_yaw, -blimp.g.max_vel_yaw, blimp.g.max_vel_yaw); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     Vector2f target_vel_ef_c_scaled_xy = {target_vel_ef_c.x * scaler_xz, target_vel_ef_c.y * scaler_yyaw};
     Vector2f vel_ned_filtd_scaled_xy = {blimp.vel_ned_filtd.x * scaler_xz, blimp.vel_ned_filtd.y * scaler_yyaw};

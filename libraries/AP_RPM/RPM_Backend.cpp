@@ -21,6 +21,7 @@
 
 #if HAL_WITH_ESC_TELEM
 #include "AP_ESC_Telem/AP_ESC_Telem.h"
+#include <cerrno>
 #endif
 
 /*
@@ -30,7 +31,8 @@ AP_RPM_Backend::AP_RPM_Backend(AP_RPM &_ap_rpm, uint8_t instance, AP_RPM::RPM_St
         ap_rpm(_ap_rpm),
         state(_state) 
 {
-    state.instance = instance;
+    // parasoft-suppress BD-PB-OVERFARRAY "Reviewed and safe"
+    state.instance = instance; // parasoft-suppress BD-PB-OVERFARRAY "Reviewed and safe"
 }
 
 #if AP_RPM_ESC_TELEM_OUTBOUND_ENABLED

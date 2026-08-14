@@ -18,7 +18,7 @@ AC_P_1D::AC_P_1D(float initial_p) :
 {
     // load parameter values from eeprom
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Computes the P controller output given a target and measurement.
 // Applies position error clamping based on configured limits.

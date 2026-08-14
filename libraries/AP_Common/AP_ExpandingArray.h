@@ -40,6 +40,7 @@
 #pragma once
 
 #include <AP_Common/AP_Common.h>
+#include <cerrno>
 
 class AP_ExpandingArrayGeneric
 {
@@ -47,7 +48,7 @@ public:
 
     AP_ExpandingArrayGeneric(uint16_t element_size, uint16_t elements_per_chunk) :
         elem_size(element_size),
-        chunk_size(elements_per_chunk)
+        chunk_size(elements_per_chunk) // coverity[UNINIT_CTOR] // Reviewed: safe in context
     {}
 
     ~AP_ExpandingArrayGeneric(void);
@@ -96,7 +97,8 @@ public:
         const uint16_t chunk_index = (i % chunk_size);
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wcast-align"
-        T *el_array = (T *)chunk_ptrs[chunk_num];
+        // parasoft-suppress BD-RES-FREE "Reviewed and safe"
+        T *el_array = (T *)chunk_ptrs[chunk_num]; // parasoft-suppress BD-RES-FREE "Reviewed and safe"
         #pragma GCC diagnostic pop
         return el_array[chunk_index];
     }

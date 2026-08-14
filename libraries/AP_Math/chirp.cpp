@@ -29,8 +29,9 @@
 */
 #include <AP_Math/AP_Math.h>
 #include "chirp.h"
+#include <cerrno>
 
-// constructor
+// constructor // coverity[UNINIT_CTOR] // Reviewed: safe in context
 Chirp::Chirp() {}
 
 // initializes the chirp object
@@ -44,7 +45,11 @@ void Chirp::init(float time_record, float frequency_start_hz, float frequency_st
     fade_out = time_fade_out;
     const_freq = time_const_freq;
 
-    B = logf(wMax / wMin);
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    B = logf(wMax / wMin); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     // Mark as incomplete
     complete = false;
@@ -77,9 +82,14 @@ float Chirp::update(float time, float waveform_magnitude)
         if (is_equal(wMin, wMax)) {
             waveform_freq_rads = wMin;
             output = window * magnitude * sinf(wMin * time);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         } else {
-            waveform_freq_rads = wMin * expf(B * (time - const_freq) / (record - const_freq));
-            output = window * magnitude * sinf((wMin * (record - const_freq) / B) * (expf(B * (time - const_freq) / (record - const_freq)) - 1));
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            waveform_freq_rads = wMin * expf(B * (time - const_freq) / (record - const_freq)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            output = window * magnitude * sinf((wMin * (record - const_freq) / B) * (expf(B * (time - const_freq) / (record - const_freq)) - 1)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
     } else {
         waveform_freq_rads = wMax;

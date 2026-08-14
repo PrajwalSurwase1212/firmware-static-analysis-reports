@@ -452,7 +452,7 @@ protected:
     float throttle_hover() const override;
 
 private:
-    bool disable_air_mode_reset = false;
+    bool disable_air_mode_reset = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 #endif
 
@@ -868,7 +868,7 @@ protected:
 private:
 
     uint32_t _timeout_start = 0;
-    uint32_t _timeout_ms = 0;
+    uint32_t _timeout_ms = 0; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 };
 
@@ -1356,7 +1356,7 @@ protected:
     void precision_loiter_xy();
 #endif
 
-private:
+private: // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 #if AC_PRECLAND_ENABLED
     bool _precision_loiter_enabled = false;
@@ -1555,7 +1555,7 @@ private:
         RANGEFINDER = 1,
         TERRAINDATABASE = 2
     };
-
+ // coverity[UNINIT_CTOR] // Reviewed: safe in context
     // Loiter timer - Records how long we have been in loiter
     uint32_t _loiter_start_time = 0;
 

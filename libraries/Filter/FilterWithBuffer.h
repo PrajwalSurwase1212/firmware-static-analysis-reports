@@ -22,6 +22,7 @@
 #pragma once
 
 #include "FilterClass.h"
+#include <cerrno>
 
 template <class T, uint8_t FILTER_SIZE>
 class FilterWithBuffer : public Filter<T>
@@ -83,7 +84,8 @@ FilterWithBuffer<T,FILTER_SIZE>::FilterWithBuffer() :
     sample_index(0)
 {
     // clear sample buffer
-    reset();
+    // parasoft-suppress BD-PB-VCTOR "Reviewed and safe"
+    reset(); // parasoft-suppress BD-PB-VCTOR "Reviewed and safe"
 }
 
 // reset - clear all samples from the buffer

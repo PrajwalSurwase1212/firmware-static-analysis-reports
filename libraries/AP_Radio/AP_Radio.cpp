@@ -144,7 +144,7 @@ AP_Radio *AP_Radio::_singleton;
 AP_Radio::AP_Radio(void)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("Multiple AP_Radio declarations");
     }
     _singleton = this;

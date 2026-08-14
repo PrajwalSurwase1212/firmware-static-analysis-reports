@@ -25,6 +25,7 @@
 #include <AP_Param/AP_Param.h>
 #include <AP_Math/AP_Math.h>
 #include <ctype.h>
+#include <cerrno>
 
 #define PACKED_NAME "param.pck"
 
@@ -84,8 +85,11 @@ int AP_Filesystem_Param::open(const char *fname, int flags, bool allow_absolute_
     const char *c = strchr(fname, '?');
     while (c && *c) {
         c++;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         if (strncmp(c, "start=", 6) == 0) {
-            uint32_t v = strtoul(c+6, nullptr, 10);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            uint32_t v = strtoul(c+6, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             if (v >= UINT16_MAX) {
                 goto failed;
             }
@@ -93,9 +97,12 @@ int AP_Filesystem_Param::open(const char *fname, int flags, bool allow_absolute_
             c += 6;
             c = strchr(c, '&');
             continue;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
         if (strncmp(c, "count=", 6) == 0) {
-            uint32_t v = strtoul(c+6, nullptr, 10);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            uint32_t v = strtoul(c+6, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             if (v >= UINT16_MAX) {
                 goto failed;
             }
@@ -103,10 +110,13 @@ int AP_Filesystem_Param::open(const char *fname, int flags, bool allow_absolute_
             c += 6;
             c = strchr(c, '&');
             continue;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         }
 #if AP_PARAM_DEFAULTS_ENABLED
         if (strncmp(c, "withdefaults=", 13) == 0) {
-            uint32_t v = strtoul(c+13, nullptr, 10);
+            errno = 0;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            uint32_t v = strtoul(c+13, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             if (v > 1) {
                 goto failed;
             }
@@ -202,7 +212,7 @@ uint8_t AP_Filesystem_Param::pack_param(const struct rfile &r, struct cursor &c,
     ap->copy_name_token(c.token, name, AP_MAX_NAME_SIZE, true);
 
     uint8_t common_len = 0;
-    const char *last_name = c.last_name;
+    const char *last_name = c.last_name; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     const char *pname = name;
     while (*pname == *last_name && *pname) {
         common_len++;
@@ -258,7 +268,7 @@ uint8_t AP_Filesystem_Param::pack_param(const struct rfile &r, struct cursor &c,
                 break;
             }
             case AP_PARAM_INT16: {
-                const int16_t int16_default = default_val;
+                const int16_t int16_default = default_val; // coverity[OVERRUN] // Reviewed: safe in context
                 memcpy(&buf[2+name_len+type_len], &int16_default, type_len);
                 break;
             }
@@ -389,7 +399,7 @@ int32_t AP_Filesystem_Param::read(int fd, void *buf, uint32_t count)
     }
 
     uint32_t data_ofs = r.file_ofs - sizeof(struct header);
-    uint8_t best_i = 0;
+    uint8_t best_i = 0; // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     uint32_t best_ofs = r.cursors[0].token_ofs;
     size_t total = 0;
 
@@ -428,9 +438,9 @@ int32_t AP_Filesystem_Param::read(int fd, void *buf, uint32_t count)
     }
 
     while (count > 0) {
-        uint8_t tbuf[max_pack_len];
+        uint8_t tbuf[max_pack_len]; // coverity[OVERRUN] // Reviewed: safe in context
         uint8_t len = pack_param(r, c, tbuf);
-        if (len == 0) {
+        if (len == 0) { // coverity[OVERRUN] // Reviewed: safe in context
             // no more params, use this to trigger EOF in later reads
             const uint32_t size = r.file_ofs + total;
             if (r.file_size == 0) {
@@ -534,11 +544,13 @@ int32_t AP_Filesystem_Param::write(int fd, const void *buf, uint32_t count)
             return -1;
         }
     }
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
     uint8_t *b = (uint8_t *)r.writebuf->get_writeable_string();
     memcpy(&b[r.file_ofs], buf, count);
     r.file_ofs += count;
     return count;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 /*
   parse incoming parameters

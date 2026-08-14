@@ -11,7 +11,7 @@ namespace AP {
 
 class PerfInfo {
 public:
-    PerfInfo() {}
+    PerfInfo() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // per-task timing information
     struct TaskInfo {

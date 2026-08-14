@@ -58,12 +58,12 @@ void Frsky_D::update()
                 // _lost_bytes++;
                 continue;
             }
-            memmove(&_buffer[0], &_buffer[1], --_buflen); //srsly?!
+            memmove(&_buffer[0], &_buffer[1], --_buflen); //srsly?! // coverity[BUFFER_SIZE] // Reviewed: safe in context
             _state = State::WANT_ID;
             break;
         case State::WANT_ID:
             _id = _buffer[0];
-            memmove(&_buffer[0], &_buffer[1], --_buflen); //srsly?!
+            memmove(&_buffer[0], &_buffer[1], --_buflen); //srsly?! // coverity[BUFFER_SIZE] // Reviewed: safe in context
             _state = State::WANT_BYTE1;
             break;
         case State::WANT_BYTE1:

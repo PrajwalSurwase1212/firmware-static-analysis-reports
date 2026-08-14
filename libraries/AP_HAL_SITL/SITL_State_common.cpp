@@ -92,7 +92,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
         // this is an empty clause to ease else-if syntax
 #if !defined(HAL_BUILD_AP_PERIPH)
     } else if (streq(name, "vicon")) {
-        if (vicon != nullptr) {
+        if (vicon) {
             AP_HAL::panic("Only one vicon system at a time");
         }
         vicon = NEW_NOTHROW SITL::Vicon();
@@ -110,27 +110,27 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
         return adsb;
 #endif  // AP_SIM_ADSB_ENABLED
     } else if (streq(name, "frsky-d")) {
-        if (frsky_d != nullptr) {
+        if (frsky_d) {
             AP_HAL::panic("Only one frsky_d at a time");
         }
         frsky_d = NEW_NOTHROW SITL::Frsky_D();
         return frsky_d;
     // } else if (streq(name, "frsky-SPort")) {
-    //     if (frsky_sport != nullptr) {
+    //     if (frsky_sport) {
     //         AP_HAL::panic("Only one frsky_sport at a time");
     //     }
     //     frsky_sport = NEW_NOTHROW SITL::Frsky_SPort();
     //     return frsky_sport;
 
     // } else if (streq(name, "frsky-SPortPassthrough")) {
-    //     if (frsky_sport_passthrough != nullptr) {
+    //     if (frsky_sport_passthrough) {
     //         AP_HAL::panic("Only one frsky_sport passthrough at a time");
     //     }
     //     frsky_sport = NEW_NOTHROW SITL::Frsky_SPortPassthrough();
     //     return frsky_sportpassthrough;
 #if AP_SIM_CRSF_ENABLED
     } else if (streq(name, "crsf")) {
-        if (crsf != nullptr) {
+        if (crsf) {
             AP_HAL::panic("Only one crsf at a time");
         }
         crsf = NEW_NOTHROW SITL::CRSF();
@@ -138,7 +138,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 #endif
 #if AP_SIM_PS_LD06_ENABLED
     } else if (streq(name, "ld06")) {
-        if (ld06 != nullptr) {
+        if (ld06) {
             AP_HAL::panic("Only one ld06 at a time");
         }
         ld06 = NEW_NOTHROW SITL::PS_LD06();
@@ -146,7 +146,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 #endif  // AP_SIM_PS_LD06_ENABLED
 #if AP_SIM_PS_RPLIDARA2_ENABLED
     } else if (streq(name, "rplidara2")) {
-        if (rplidara2 != nullptr) {
+        if (rplidara2) {
             AP_HAL::panic("Only one rplidara2 at a time");
         }
         rplidara2 = NEW_NOTHROW SITL::PS_RPLidarA2();
@@ -154,7 +154,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 #endif
 #if AP_SIM_PS_RPLIDARA1_ENABLED
     } else if (streq(name, "rplidara1")) {
-        if (rplidara1 != nullptr) {
+        if (rplidara1) {
             AP_HAL::panic("Only one rplidara1 at a time");
         }
         rplidara1 = NEW_NOTHROW SITL::PS_RPLidarA1();
@@ -162,7 +162,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 #endif
 #if AP_SIM_PS_TERARANGERTOWER_ENABLED
     } else if (streq(name, "terarangertower")) {
-        if (terarangertower != nullptr) {
+        if (terarangertower) {
             AP_HAL::panic("Only one terarangertower at a time");
         }
         terarangertower = NEW_NOTHROW SITL::PS_TeraRangerTower();
@@ -170,7 +170,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 #endif
 #if AP_SIM_PS_LIGHTWARE_SF45B_ENABLED
     } else if (streq(name, "sf45b")) {
-        if (sf45b != nullptr) {
+        if (sf45b) {
             AP_HAL::panic("Only one sf45b at a time");
         }
         sf45b = NEW_NOTHROW SITL::PS_LightWare_SF45B();
@@ -178,7 +178,7 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 #endif
 #if AP_SIM_ADSB_SAGETECH_MXS_ENABLED
     } else if (streq(name, "sagetech_mxs")) {
-        if (sagetech_mxs != nullptr) {
+        if (sagetech_mxs) {
             AP_HAL::panic("Only one sagetech_mxs at a time");
         }
         sagetech_mxs = NEW_NOTHROW SITL::ADSB_Sagetech_MXS();
@@ -210,39 +210,39 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
         return &_sitl->volz_sim;
 #endif  // AP_SIM_VOLZ_ENABLED
     } else if (streq(name, "megasquirt")) {
-        if (efi_ms != nullptr) {
+        if (efi_ms) {
             AP_HAL::panic("Only one megasquirt at a time");
         }
         efi_ms = NEW_NOTHROW SITL::EFI_MegaSquirt();
         return efi_ms;
     } else if (streq(name, "hirth")) {
-        if (efi_hirth != nullptr) {
+        if (efi_hirth) {
             AP_HAL::panic("Only one hirth at a time");
         }
         efi_hirth = NEW_NOTHROW SITL::EFI_Hirth();
         return efi_hirth;
     } else if (streq(name, "VectorNav")) {
-        if (vectornav != nullptr) {
+        if (vectornav) {
             AP_HAL::panic("Only one VectorNav at a time");
         }
         vectornav = NEW_NOTHROW SITL::VectorNav();
         return vectornav;
     } else if (streq(name, "MicroStrain5")) {
-        if (microstrain5 != nullptr) {
+        if (microstrain5) {
             AP_HAL::panic("Only one MicroStrain5 at a time");
         }
         microstrain5 = NEW_NOTHROW SITL::MicroStrain5();
         return microstrain5;
 
     } else if (streq(name, "MicroStrain7")) {
-        if (microstrain7 != nullptr) {
+        if (microstrain7) {
             AP_HAL::panic("Only one MicroStrain7 at a time");
         }
         microstrain7 = NEW_NOTHROW SITL::MicroStrain7();
         return microstrain7;
 
     } else if (streq(name, "ILabs")) {
-        if (inertiallabs != nullptr) {
+        if (inertiallabs) {
             AP_HAL::panic("Only one InertialLabs INS at a time");
         }
         inertiallabs = NEW_NOTHROW SITL::InertialLabs();
@@ -288,17 +288,17 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
 void SITL_State_Common::sim_update(void)
 {
 #if AP_SIM_SOLOGIMBAL_ENABLED
-    if (gimbal != nullptr) {
+    if (gimbal) {
         gimbal->update(*sitl_model);
     }
 #endif
 #if AP_SIM_ADSB_ENABLED
-    if (adsb != nullptr) {
+    if (adsb) {
         adsb->update(*sitl_model);
     }
 #endif  // AP_SIM_ADSB_ENABLED
 #if AP_SIM_VICON_ENABLED
-    if (vicon != nullptr) {
+    if (vicon) {
         Quaternion attitude;
         sitl_model->get_attitude(attitude);
         vicon->update(sitl_model->get_location(),
@@ -310,84 +310,84 @@ void SITL_State_Common::sim_update(void)
     for (uint8_t i=0; i<num_serial_rangefinders; i++) {
         serial_rangefinders[i]->update(sitl_model->rangefinder_range());
     }
-    if (efi_ms != nullptr) {
+    if (efi_ms) {
         efi_ms->update();
     }
-    if (efi_hirth != nullptr) {
+    if (efi_hirth) {
         efi_hirth->update();
     }
 
-    if (frsky_d != nullptr) {
+    if (frsky_d) {
         frsky_d->update();
     }
-    // if (frsky_sport != nullptr) {
+    // if (frsky_sport) {
     //     frsky_sport->update();
     // }
-    // if (frsky_sportpassthrough != nullptr) {
+    // if (frsky_sportpassthrough) {
     //     frsky_sportpassthrough->update();
     // }
 
 #if AP_SIM_CRSF_ENABLED
-    if (crsf != nullptr) {
+    if (crsf) {
         crsf->update();
     }
 #endif
 
 #if AP_SIM_PS_LD06_ENABLED
-    if (ld06 != nullptr) {
+    if (ld06) {
         ld06->update(sitl_model->get_location());
     }
 #endif  // AP_SIM_PS_LD06_ENABLED
 
 #if AP_SIM_PS_RPLIDARA2_ENABLED
-    if (rplidara2 != nullptr) {
+    if (rplidara2) {
         rplidara2->update(sitl_model->get_location());
     }
 #endif
 
 #if AP_SIM_PS_RPLIDARA1_ENABLED
-    if (rplidara1 != nullptr) {
+    if (rplidara1) {
         rplidara1->update(sitl_model->get_location());
     }
 #endif
 #if AP_SIM_PS_TERARANGERTOWER_ENABLED
-    if (terarangertower != nullptr) {
+    if (terarangertower) {
         terarangertower->update(sitl_model->get_location());
     }
 #endif
 
 #if AP_SIM_PS_LIGHTWARE_SF45B_ENABLED
-    if (sf45b != nullptr) {
+    if (sf45b) {
         sf45b->update(sitl_model->get_location());
     }
 #endif
 
 #if AP_SIM_ADSB_SAGETECH_MXS_ENABLED
-    if (sagetech_mxs != nullptr) {
+    if (sagetech_mxs) {
         sagetech_mxs->update(sitl_model);
     }
 #endif
 
-    if (vectornav != nullptr) {
+    if (vectornav) {
         vectornav->update();
     }
 
-    if (microstrain5 != nullptr) {
+    if (microstrain5) {
         microstrain5->update();
     }
 
-    if (microstrain7 != nullptr) {
+    if (microstrain7) {
         microstrain7->update();
     }
-    if (inertiallabs != nullptr) {
+    if (inertiallabs) {
         inertiallabs->update();
     }
 
 #if AP_SIM_AIS_ENABLED
-    if (ais != nullptr) {
+    if (ais) {
         ais->update(*sitl_model);
     }
-    if (ais_replay != nullptr) {
+    if (ais_replay) {
         ais_replay->update();
     }
 #endif
@@ -397,7 +397,7 @@ void SITL_State_Common::sim_update(void)
         }
     }
 
-    if (elrs != nullptr) {
+    if (elrs) {
         elrs->update();
     }
 }
@@ -410,7 +410,7 @@ void SITL_State_Common::update_voltage_current(struct sitl_input &input, float t
     float voltage = 0;
     float current = 0;
     
-    if (_sitl != nullptr) {
+    if (_sitl) {
         if (_sitl->state.battery_voltage <= 0) {
             if (_vehicle == ArduSub) {
                 voltage = _sitl->batt_voltage;

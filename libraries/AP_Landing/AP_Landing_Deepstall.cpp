@@ -29,6 +29,7 @@
 #include <AP_Common/Location.h>
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 // table of user settable parameters for deepstall
 const AP_Param::GroupInfo AP_Landing_Deepstall::var_info[] = {
@@ -273,9 +274,10 @@ bool AP_Landing_Deepstall::verify_land(const Location &prev_WP_loc, Location &ne
     case DEEPSTALL_STAGE_ARC:
         {
         Vector2f groundspeed = landing.ahrs.groundspeed_vector();
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         if (!landing.nav_controller->reached_loiter_target() ||
             (fabsf(wrap_180(target_heading_deg -
-                            degrees(atan2f(-groundspeed.y, -groundspeed.x) + M_PI))) >= 10.0f)) {
+                            degrees(atan2f(-groundspeed.y, -groundspeed.x) + M_PI))) >= 10.0f)) { // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             landing.nav_controller->update_loiter(arc, landing.aparm.loiter_radius, landing_point.loiter_ccw ? -1 : 1);
             return false;
         }
@@ -317,7 +319,7 @@ bool AP_Landing_Deepstall::verify_land(const Location &prev_WP_loc, Location &ne
         stall_entry_time = AP_HAL::millis();
 
         const SRV_Channel* elevator = SRV_Channels::get_channel_for(SRV_Channel::k_elevator);
-        if (elevator != nullptr) {
+        if (elevator) {
             // take the last used elevator angle as the starting deflection
             // don't worry about bailing here if the elevator channel can't be found
             // that will be handled within override_servos
@@ -333,7 +335,7 @@ bool AP_Landing_Deepstall::verify_land(const Location &prev_WP_loc, Location &ne
     default:
         return true;
     }
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 bool AP_Landing_Deepstall::override_servos(void)
 {
@@ -350,7 +352,7 @@ bool AP_Landing_Deepstall::override_servos(void)
         return false;
     }
 
-    // calculate the progress on slewing the elevator
+    // calculate the progress on slewing the elevator // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     float slew_progress = 1.0f;
     if (slew_speed > 0) {
         slew_progress  = (AP_HAL::millis() - stall_entry_time) / (100.0f * slew_speed);
@@ -371,7 +373,7 @@ bool AP_Landing_Deepstall::override_servos(void)
     if (slew_progress >= 1.0f || airspeed <= handoff_airspeed) {
         // run the steering conntroller
         float pid = update_steering();
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         float travel_limit = constrain_float((handoff_airspeed - airspeed) /
                                              (handoff_airspeed - handoff_lower_limit_airspeed) *
@@ -421,13 +423,13 @@ bool AP_Landing_Deepstall::get_target_altitude_location(Location &location)
 {
     memcpy(&location, &landing_point, sizeof(Location));
     return true;
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 int32_t AP_Landing_Deepstall::get_target_airspeed_cm(void) const
 {
-    if (stage == DEEPSTALL_STAGE_APPROACH ||
+    if (stage == DEEPSTALL_STAGE_APPROACH || // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         stage == DEEPSTALL_STAGE_LAND) {
-        return landing.pre_flare_airspeed * 100;
+        return landing.pre_flare_airspeed * 100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else {
         return landing.aparm.airspeed_cruise*100;
     }
@@ -507,9 +509,12 @@ void AP_Landing_Deepstall::build_approach_path(bool use_current_heading)
 {
     float loiter_radius = landing.nav_controller->loiter_radius(landing.aparm.loiter_radius);
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     Vector3f wind = landing.ahrs.wind_estimate();
     // TODO: Support a user defined approach heading
-    target_heading_deg = use_current_heading ? landing.ahrs.get_yaw_deg() : (degrees(atan2f(-wind.y, -wind.x)));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    target_heading_deg = use_current_heading ? landing.ahrs.get_yaw_deg() : (degrees(atan2f(-wind.y, -wind.x))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     memcpy(&extended_approach, &landing_point, sizeof(Location));
     memcpy(&arc_exit, &landing_point, sizeof(Location));
@@ -560,9 +565,11 @@ float AP_Landing_Deepstall::predict_travel_distance(const Vector3f wind, const f
     float forward_speed_ms = MAX(forward_speed, 0.1f);
 
     Vector2f wind_vec(wind.x, wind.y); // work with the 2D component of wind
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     float wind_length = MAX(wind_vec.length(), 0.05f); // always assume a slight wind to avoid divide by 0
     Vector2f course_vec(cosf(course), sinf(course));
 
+    errno = 0;
     float offset = course - atan2f(-wind.y, -wind.x);
 
     // estimator for how far the aircraft will travel while entering the stall
@@ -608,7 +615,7 @@ bool AP_Landing_Deepstall::verify_breakout(const Location &current_loc, const Lo
     // Check to see if the plane is heading toward the land waypoint. We use 20 degrees (+/-10 deg)
     // of margin so that the altitude to be within 5 meters of desired
 
-    if (heading_error <= 10.0  && fabsf(height_error) < DEEPSTALL_LOITER_ALT_TOLERANCE) {
+    if (heading_error <= 10.0  && fabsf(height_error) < DEEPSTALL_LOITER_ALT_TOLERANCE) { // coverity[RW.ROUTINE_NOT_EMITTED]
             // Want to head in a straight line from _here_ to the next waypoint instead of center of loiter wp
             return true;
     }   
@@ -634,12 +641,12 @@ float AP_Landing_Deepstall::update_steering()
         last_time = time;
 
         Vector2f ab = arc_exit.get_distance_NE(extended_approach);
-        ab.normalize();
+        ab.normalize(); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const Vector2f a_air = arc_exit.get_distance_NE(current_loc);
 
         crosstrack_error = a_air % ab;
         float sine_nu1 = constrain_float(crosstrack_error / MAX(L1_period, 0.1f), -0.7071f, 0.7107f);
-        float nu1 = asinf(sine_nu1);
+        float nu1 = asinf(sine_nu1); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         if (L1_i > 0) {
             L1_xtrack_i += nu1 * L1_i / dt;

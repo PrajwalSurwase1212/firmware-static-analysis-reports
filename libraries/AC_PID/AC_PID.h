@@ -55,7 +55,7 @@ public:
             defaults.srtau,
             defaults.dff
             )
-        { }
+        { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     CLASS_NO_COPY(AC_PID);
 

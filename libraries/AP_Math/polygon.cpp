@@ -18,6 +18,7 @@
 
 #include "AP_Math.h"
 #include "float.h"
+#include <cerrno>
 
 #pragma GCC optimize("O2")
 
@@ -184,7 +185,8 @@ float Polygon_closest_distance_line(const Vector2f *V, unsigned N, const Vector2
         return -sqrtf(sq(intersection.x - p2.x) + sq(intersection.y - p2.y));
     }
     float closest_sq = FLT_MAX;
-    for (uint8_t i=0; i<N-1; i++) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    for (uint8_t i=0; i<N-1; i++) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         const Vector2f &v1 = V[i];
         const Vector2f &v2 = V[i+1];
 

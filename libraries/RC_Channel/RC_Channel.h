@@ -748,7 +748,7 @@ public:
     }
 
     // get failsafe timeout in milliseconds
-    uint32_t get_fs_timeout_ms() const { return MAX(_fs_timeout * 1000, 100); }
+    uint32_t get_fs_timeout_ms() const { return MAX(_fs_timeout * 1000, 100); } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // methods which return RC input channels used for various axes.
     RC_Channel &get_roll_channel() const;

@@ -10,7 +10,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @DisplayName: Eeprom format version number
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
-    GSCALAR(format_version,         "FORMAT_VERSION", 0),
+    GSCALAR(format_version,         "FORMAT_VERSION", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // SYSID_THISMAV was here
 
@@ -21,7 +21,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Description: The identifier of the vehicle being tracked. This should be zero (to auto detect) or be the same as the MAV_SYSID parameter of the vehicle being tracked.
     // @Range: 1 255
     // @User: Advanced
-    GSCALAR(sysid_target,           "SYSID_TARGET",    0),
+    GSCALAR(sysid_target,           "SYSID_TARGET",    0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: YAW_SLEW_TIME
     // @DisplayName: Time for yaw to slew through its full range
@@ -30,7 +30,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: 0 20
     // @User: Standard
-    GSCALAR(yaw_slew_time,          "YAW_SLEW_TIME",    2),
+    GSCALAR(yaw_slew_time,          "YAW_SLEW_TIME",    2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PITCH_SLEW_TIME
     // @DisplayName: Time for pitch to slew through its full range
@@ -39,7 +39,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: 0 20
     // @User: Standard
-    GSCALAR(pitch_slew_time,        "PITCH_SLEW_TIME",  2),
+    GSCALAR(pitch_slew_time,        "PITCH_SLEW_TIME",  2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MIN_REVERSE_TIME
     // @DisplayName: Minimum time to apply a yaw reversal
@@ -48,7 +48,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: 0 20
     // @User: Standard
-    GSCALAR(min_reverse_time,       "MIN_REVERSE_TIME",  1),
+    GSCALAR(min_reverse_time,       "MIN_REVERSE_TIME",  1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: START_LATITUDE
     // @DisplayName: Initial Latitude before GPS lock
@@ -57,7 +57,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.000001
     // @Range: -90 90
     // @User: Standard
-    GSCALAR(start_latitude,         "START_LATITUDE",   0),
+    GSCALAR(start_latitude,         "START_LATITUDE",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: START_LONGITUDE
     // @DisplayName: Initial Longitude before GPS lock
@@ -66,7 +66,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.000001
     // @Range: -180 180
     // @User: Standard
-    GSCALAR(start_longitude,        "START_LONGITUDE",  0),
+    GSCALAR(start_longitude,        "START_LONGITUDE",  0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: STARTUP_DELAY
     // @DisplayName: Delay before first servo movement from trim
@@ -75,21 +75,21 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: 0 10
     // @User: Standard
-    GSCALAR(startup_delay,          "STARTUP_DELAY",   0),
+    GSCALAR(startup_delay,          "STARTUP_DELAY",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SERVO_PITCH_TYPE
     // @DisplayName: Type of servo system being used for pitch
     // @Description: This allows selection of position servos or on/off servos for pitch
     // @Values: 0:Position,1:OnOff,2:ContinuousRotation
     // @User: Standard
-    GSCALAR(servo_pitch_type,          "SERVO_PITCH_TYPE",   SERVO_TYPE_POSITION),
+    GSCALAR(servo_pitch_type,          "SERVO_PITCH_TYPE",   SERVO_TYPE_POSITION), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SERVO_YAW_TYPE
     // @DisplayName: Type of servo system being used for yaw
     // @Description: This allows selection of position servos or on/off servos for yaw
     // @Values: 0:Position,1:OnOff,2:ContinuousRotation
     // @User: Standard
-    GSCALAR(servo_yaw_type,          "SERVO_YAW_TYPE",   SERVO_TYPE_POSITION),
+    GSCALAR(servo_yaw_type,          "SERVO_YAW_TYPE",   SERVO_TYPE_POSITION), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ONOFF_YAW_RATE
     // @DisplayName: Yaw rate for on/off servos
@@ -98,7 +98,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: 0 50
     // @User: Standard
-    GSCALAR(onoff_yaw_rate,      "ONOFF_YAW_RATE", 9.0f),
+    GSCALAR(onoff_yaw_rate,      "ONOFF_YAW_RATE", 9.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ONOFF_PITCH_RATE
     // @DisplayName: Pitch rate for on/off servos
@@ -107,7 +107,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: 0 50
     // @User: Standard
-    GSCALAR(onoff_pitch_rate,      "ONOFF_PITCH_RATE", 1.0f),
+    GSCALAR(onoff_pitch_rate,      "ONOFF_PITCH_RATE", 1.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ONOFF_YAW_MINT
     // @DisplayName: Yaw minimum movement time
@@ -116,7 +116,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.01
     // @Range: 0 2
     // @User: Standard
-    GSCALAR(onoff_yaw_mintime,     "ONOFF_YAW_MINT", 0.1f),
+    GSCALAR(onoff_yaw_mintime,     "ONOFF_YAW_MINT", 0.1f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ONOFF_PITCH_MINT
     // @DisplayName: Pitch minimum movement time
@@ -125,7 +125,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.01
     // @Range: 0 2
     // @User: Standard
-    GSCALAR(onoff_pitch_mintime,   "ONOFF_PITCH_MINT", 0.1f),
+    GSCALAR(onoff_pitch_mintime,   "ONOFF_PITCH_MINT", 0.1f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: YAW_TRIM
     // @DisplayName: Yaw trim
@@ -134,7 +134,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: -10 10
     // @User: Standard
-    GSCALAR(yaw_trim,              "YAW_TRIM", 0),
+    GSCALAR(yaw_trim,              "YAW_TRIM", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PITCH_TRIM
     // @DisplayName: Pitch trim
@@ -143,7 +143,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: -10 10
     // @User: Standard
-    GSCALAR(pitch_trim,              "PITCH_TRIM", 0),
+    GSCALAR(pitch_trim,              "PITCH_TRIM", 0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: YAW_RANGE
     // @DisplayName: Yaw Angle Range
@@ -152,7 +152,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 0.1
     // @Range: 0 360
     // @User: Standard
-    GSCALAR(yaw_range,              "YAW_RANGE", YAW_RANGE_DEFAULT),
+    GSCALAR(yaw_range,              "YAW_RANGE", YAW_RANGE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: DISTANCE_MIN
     // @DisplayName: Distance minimum to target
@@ -161,14 +161,14 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: 0 100
     // @User: Standard
-    GSCALAR(distance_min,           "DISTANCE_MIN", DISTANCE_MIN_DEFAULT),
+    GSCALAR(distance_min,           "DISTANCE_MIN", DISTANCE_MIN_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ALT_SOURCE
     // @DisplayName: Altitude Source
     // @Description: What provides altitude information for vehicle. Vehicle only assumes tracker has same altitude as vehicle's home
     // @Values: 0:Barometer,1:GPS,2:GPS vehicle only
     // @User: Standard
-    GSCALAR(alt_source,				"ALT_SOURCE",	0),
+    GSCALAR(alt_source,				"ALT_SOURCE",	0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: MAV_UPDATE_RATE
     // @DisplayName: Mavlink Update Rate
@@ -177,7 +177,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: 1 10
     // @User: Standard
-    GSCALAR(mavlink_update_rate,	"MAV_UPDATE_RATE",	1),
+    GSCALAR(mavlink_update_rate,	"MAV_UPDATE_RATE",	1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PITCH_MIN
     // @DisplayName: Minimum Pitch Angle
@@ -186,7 +186,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: -90 0
     // @User: Standard
-    GSCALAR(pitch_min,               "PITCH_MIN",	PITCH_MIN_DEFAULT),
+    GSCALAR(pitch_min,               "PITCH_MIN",	PITCH_MIN_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PITCH_MAX
     // @DisplayName: Maximum Pitch Angle
@@ -195,7 +195,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: 0 90
     // @User: Standard
-    GSCALAR(pitch_max,               "PITCH_MAX",	PITCH_MAX_DEFAULT),
+    GSCALAR(pitch_max,               "PITCH_MAX",	PITCH_MAX_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // barometer library
     // @Group: BARO
@@ -215,7 +215,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Description: 4 byte bitmap of log types to enable
     // @Bitmask: 0:ATTITUDE,1:GPS,2:RCIN,3:IMU,4:RCOUT,5:COMPASS,6:Battery
     // @User: Standard
-    GSCALAR(log_bitmask, "LOG_BITMASK", DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask, "LOG_BITMASK", DEFAULT_LOG_BITMASK), // coverity[PW.NARROWING_CONVERSION]
 
     // @Group: INS
     // @Path: ../libraries/AP_InertialSensor/AP_InertialSensor.cpp
@@ -457,7 +457,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Description: Set to 1 if HOME location has been loaded by the ground station. Do not change this manually.
     // @Range: 1 255
     // @User: Advanced
-    GSCALAR(command_total,          "CMD_TOTAL",      0),
+    GSCALAR(command_total,          "CMD_TOTAL",      0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Group: BATT
     // @Path: ../libraries/AP_BattMonitor/AP_BattMonitor.cpp
@@ -468,7 +468,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for
     // @User: Advanced
     // @Bitmask: 0:Pitch,1:Yaw
-    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SCAN_SPEED_YAW
     // @DisplayName: Speed at which to rotate the yaw axis in scan mode
@@ -477,7 +477,7 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: 0 100
     // @User: Standard
-    GSCALAR(scan_speed_yaw,         "SCAN_SPEED_YAW",   2),
+    GSCALAR(scan_speed_yaw,         "SCAN_SPEED_YAW",   2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SCAN_SPEED_PIT
     // @DisplayName: Speed at which to rotate pitch axis in scan mode
@@ -486,26 +486,26 @@ const AP_Param::Info Tracker::var_info[] = {
     // @Increment: 1
     // @Range: 0 100
     // @User: Standard
-    GSCALAR(scan_speed_pitch,       "SCAN_SPEED_PIT",   5),
+    GSCALAR(scan_speed_pitch,       "SCAN_SPEED_PIT",   5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: INITIAL_MODE
     // @DisplayName: Mode tracker will switch into after initialization
     // @Description: 0:MANUAL, 1:STOP, 2:SCAN, 10:AUTO
     // @User: Standard
-    GSCALAR(initial_mode,            "INITIAL_MODE",     10),
+    GSCALAR(initial_mode,            "INITIAL_MODE",     10), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SAFE_DISARM_PWM
     // @DisplayName: PWM that will be output when disarmed or in stop mode
     // @Description: 0:zero pwm, 1:trim pwm
     // @User: Standard
-    GSCALAR(disarm_pwm,              "SAFE_DISARM_PWM",        0),
+    GSCALAR(disarm_pwm,              "SAFE_DISARM_PWM",        0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: AUTO_OPTIONS
     // @DisplayName: Auto mode options
     // @Description: 1: Scan for unknown target
     // @User: Standard
     // @Bitmask: 0:Scan for unknown target
-    GSCALAR(auto_opts,              "AUTO_OPTIONS",        0),
+    GSCALAR(auto_opts,              "AUTO_OPTIONS",        0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Group:
     // @Path: ../libraries/AP_Vehicle/AP_Vehicle.cpp

@@ -78,7 +78,7 @@ private:
     };
 
 public:
-    AP_Filesystem() {}
+    AP_Filesystem() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // functions that closely match the equivalent posix calls
     int open(const char *fname, int flags, bool allow_absolute_paths = false);

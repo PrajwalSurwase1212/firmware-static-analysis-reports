@@ -46,7 +46,7 @@ AP_BattMonitor_Synthetic_Current::AP_BattMonitor_Synthetic_Current(AP_BattMonito
 
 // read - read the voltage and current
 void
-AP_BattMonitor_Synthetic_Current::read()
+AP_BattMonitor_Synthetic_Current::read() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // this copes with changing the pin at runtime
     _state.healthy = _volt_pin_analog_source->set_pin(_volt_pin);
@@ -60,7 +60,7 @@ AP_BattMonitor_Synthetic_Current::read()
     const uint32_t dt_us = tnow - _state.last_time_micros;
 
     // read current
-    _state.current_amps = ((_state.voltage/_max_voltage)*sq(SRV_Channels::get_output_scaled(SRV_Channel::k_throttle)) * 0.0001 * _curr_amp_per_volt) + _curr_amp_offset ;
+    _state.current_amps = ((_state.voltage/_max_voltage)*sq(SRV_Channels::get_output_scaled(SRV_Channel::k_throttle)) * 0.0001 * _curr_amp_per_volt) + _curr_amp_offset ; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     update_consumed(_state, dt_us);
 

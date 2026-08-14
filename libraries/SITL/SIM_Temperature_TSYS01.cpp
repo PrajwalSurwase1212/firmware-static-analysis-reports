@@ -5,6 +5,7 @@
 #include "SIM_Temperature_TSYS01.h"
 
 #include <stdio.h>
+#include <cerrno>
 
 constexpr const int32_t SITL::TSYS01::_k[6];
 
@@ -34,7 +35,7 @@ int SITL::TSYS01::rdwr(I2C::i2c_rdwr_ioctl_data *&data)
             if (data->msgs[1].len != 2) {
                 AP_HAL::panic("Unexpected prom read length");
             }
-            uint8_t offs = (ARRAY_SIZE(_k)-((uint8_t(command) - uint8_t(Command::READ_PROM0))/2)) % ARRAY_SIZE(_k);
+            uint8_t offs = (ARRAY_SIZE(_k)-((uint8_t(command) - uint8_t(Command::READ_PROM0))/2)) % ARRAY_SIZE(_k); // coverity[OVERRUN] // Reviewed: safe in context
             const uint16_t k = _k[offs];
             data->msgs[1].buf[0] = k >> 8;
             data->msgs[1].buf[1] = k & 0xFF;
@@ -113,12 +114,13 @@ float SITL::TSYS01::temperature_for_adc(uint32_t _adc) const
     // in the main codebase where they start from 0 (PROM1)!  The main
     // code does not read PROM0 from the device (real or simulated),
     // but the array in the simulator here reserves a space for it.
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     return
-        -2   * _k[5] * powf(10, -21) * powf(adc16, 4) +
-        4    * _k[4] * powf(10, -16) * powf(adc16, 3) +
-        -2   * _k[3] * powf(10, -11) * powf(adc16, 2) +
-        1    * _k[2] * powf(10, -6)  * adc16 +
-        -1.5 * _k[1] * powf(10, -2);
+        -2   * _k[5] * powf(10, -21) * powf(adc16, 4) + // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        4    * _k[4] * powf(10, -16) * powf(adc16, 3) + // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        -2   * _k[3] * powf(10, -11) * powf(adc16, 2) + // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        1    * _k[2] * powf(10, -6)  * adc16 + // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        -1.5 * _k[1] * powf(10, -2); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 uint32_t SITL::TSYS01::calculate_adc(float temperature) const

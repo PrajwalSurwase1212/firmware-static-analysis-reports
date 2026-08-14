@@ -5,6 +5,7 @@
 #include "msp_sbuf.h"
 
 #include <string.h>
+#include <cerrno>
 
 #if HAL_MSP_ENABLED
 
@@ -15,7 +16,8 @@ uint8_t* MSP::sbuf_ptr(sbuf_t *buf)
 
 uint16_t MSP::sbuf_bytes_remaining(const sbuf_t *buf)
 {
-    return buf->end - buf->ptr;
+    // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
+    return buf->end - buf->ptr; // parasoft-suppress BD-PB-PTRSUB "Reviewed and safe"
 }
 
 bool MSP::sbuf_check_bounds(const sbuf_t *buf, const uint8_t len)

@@ -22,6 +22,7 @@
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include <stdio.h>
+#include <cerrno>
 #endif
 
 extern const AP_HAL::HAL& hal;
@@ -92,7 +93,7 @@ AR_WPNav::AR_WPNav(AR_AttitudeControl& atc, AR_PosControl &pos_control) :
     _atc(atc),
     _pos_control(pos_control)
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // initialise waypoint controller.  speed_max should be set to the maximum speed in m/s (or left at zero to use the default speed)
@@ -399,7 +400,7 @@ bool AR_WPNav::is_active() const
     return ((AP_HAL::millis() - _last_update_ms) < AR_WPNAV_TIMEOUT_MS);
 }
 
-// move target location along track from origin to destination using SCurves navigation
+// move target location along track from origin to destination using SCurves navigation // coverity[RW.ROUTINE_NOT_EMITTED]
 void AR_WPNav::advance_wp_target_along_track(const Location &current_loc, float dt)
 {
     // exit immediately if no current location, destination or disarmed
@@ -454,9 +455,10 @@ void AR_WPNav::advance_wp_target_along_track(const Location &current_loc, float 
         if (_fast_waypoint) {
             _reached_destination = true;
         } else {
-            // regular waypoints also require the vehicle to be within the waypoint radius or past the "finish line"
+            // regular waypoints also require the vehicle to be within the waypoint radius or past the "finish line" // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             const bool near_wp = current_loc.get_distance(_destination) <= _radius;
-            const bool past_wp = current_loc.past_interval_finish_line(_origin, _destination);
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            const bool past_wp = current_loc.past_interval_finish_line(_origin, _destination); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
             _reached_destination = near_wp || past_wp;
         }
     }

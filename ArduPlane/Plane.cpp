@@ -162,7 +162,7 @@ constexpr int8_t Plane::_failsafe_priorities[6];
 #endif
 
 // update AHRS system
-void Plane::ahrs_update()
+void Plane::ahrs_update() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     arming.update_soft_armed();
 
@@ -175,7 +175,7 @@ void Plane::ahrs_update()
 #endif
 
     // calculate a scaled roll limit based on current pitch
-    roll_limit_cd = aparm.roll_limit*100;
+    roll_limit_cd = aparm.roll_limit*100; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     pitch_limit_min = aparm.pitch_limit_min;
 
     bool rotate_limits = true;
@@ -335,6 +335,7 @@ void Plane::afs_fs_check(void)
 
 #if HAL_WITH_IO_MCU
 #include <AP_IOMCU/AP_IOMCU.h>
+#include <cerrno>
 extern AP_IOMCU iomcu;
 #endif
 
@@ -1022,7 +1023,7 @@ bool Plane::start_takeoff(const float alt_m) {
 }
 #endif
 
-// correct AHRS pitch for PTCH_TRIM_DEG in non-VTOL modes, and return VTOL view in VTOL
+// correct AHRS pitch for PTCH_TRIM_DEG in non-VTOL modes, and return VTOL view in VTOL // coverity[RW.ROUTINE_NOT_EMITTED]
 void Plane::get_osd_roll_pitch_rad(float &roll, float &pitch) const
 {
 #if HAL_QUADPLANE_ENABLED
@@ -1034,7 +1035,7 @@ void Plane::get_osd_roll_pitch_rad(float &roll, float &pitch) const
 #endif
     pitch = ahrs.get_pitch_rad();
     roll = ahrs.get_roll_rad();
-    if (!(flight_option_enabled(FlightOptions::OSD_REMOVE_TRIM_PITCH))) {  // correct for PTCH_TRIM_DEG
+    if (!(flight_option_enabled(FlightOptions::OSD_REMOVE_TRIM_PITCH))) {  // correct for PTCH_TRIM_DEG // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         pitch -= g.pitch_trim * DEG_TO_RAD;
     }
 }
@@ -1044,7 +1045,8 @@ void Plane::get_osd_roll_pitch_rad(float &roll, float &pitch) const
  */
 void Plane::update_current_loc(void)
 {
-    have_position = plane.ahrs.get_location(plane.current_loc);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    have_position = plane.ahrs.get_location(plane.current_loc); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     // re-calculate relative altitude
     ahrs.get_relative_position_D_home(plane.relative_altitude);

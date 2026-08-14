@@ -17,7 +17,8 @@ void Rover::init_ardupilot()
     rssi.init();
 #endif
 
-    g2.windvane.init(serial_manager);
+    // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+    g2.windvane.init(serial_manager); // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
     // init baro before we start the GCS, so that the CLI baro test works
     barometer.init();
@@ -287,7 +288,8 @@ void Rover::startup_INS(void)
 // update notify with mode change
 void Rover::notify_mode(const Mode *mode)
 {
-    AP_Notify::flags.autopilot_mode = mode->is_autopilot_mode();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    AP_Notify::flags.autopilot_mode = mode->is_autopilot_mode(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     notify.flags.flight_mode = (uint8_t)mode->mode_number();
     notify.set_flight_mode_str(mode->name4());
 }
@@ -324,6 +326,7 @@ bool Rover::is_boat() const
 }
 
 #include <AP_Avoidance/AP_Avoidance.h>
+#include <cerrno>
 #if AP_ADSB_AVOIDANCE_ENABLED
 // dummy method to avoid linking AP_Avoidance
 AP_Avoidance *AP::ap_avoidance() { return nullptr; }

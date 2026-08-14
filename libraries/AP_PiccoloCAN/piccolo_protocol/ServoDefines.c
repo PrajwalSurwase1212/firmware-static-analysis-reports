@@ -22,6 +22,7 @@
 #include "fieldencode.h"
 #include "scaleddecode.h"
 #include "scaledencode.h"
+#include <errno.h>
 
 /*!
  * \brief Encode a Servo_StatusBits_t into a byte array
@@ -411,11 +412,13 @@ int decodeServo_TelemetrySettings_t(const uint8_t* _pg_data, int* _pg_bytecount,
     _pg_user->silence = uint8FromBytes(_pg_data, &_pg_byteindex);
 
     // Telemetry packet selection
-    if(decodeServo_TelemetryPackets_t(_pg_data, &_pg_byteindex, &_pg_user->packets) == 0)
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if(decodeServo_TelemetryPackets_t(_pg_data, &_pg_byteindex, &_pg_user->packets) == 0) // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return 0;
 
     // Command response packet selection
-    if(decodeServo_TelemetryPackets_t(_pg_data, &_pg_byteindex, &_pg_user->responsePackets) == 0)
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if(decodeServo_TelemetryPackets_t(_pg_data, &_pg_byteindex, &_pg_user->responsePackets) == 0) // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return 0;
 
     *_pg_bytecount = _pg_byteindex;

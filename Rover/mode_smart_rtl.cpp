@@ -1,6 +1,6 @@
 #include "Rover.h"
 
-bool ModeSmartRTL::_enter()
+bool ModeSmartRTL::_enter() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // SmartRTL requires EKF (not DCM)
     Location ekf_origin;
@@ -14,7 +14,7 @@ bool ModeSmartRTL::_enter()
     }
 
     // initialise waypoint navigation library
-    g2.wp_nav.init(MAX(0, g2.rtl_speed));
+    g2.wp_nav.init(MAX(0, g2.rtl_speed)); // coverity[RW.NO_MATCHING_FUNCTION]
 
     // set desired location to reasonable stopping point
     if (!g2.wp_nav.set_desired_location_to_stopping_location()) {

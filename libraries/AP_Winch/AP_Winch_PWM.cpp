@@ -34,7 +34,7 @@ void AP_Winch_PWM::update()
 }
 
 // update pwm outputs to control winch
-void AP_Winch_PWM::control_winch()
+void AP_Winch_PWM::control_winch() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const uint32_t now_ms = AP_HAL::millis();
     float dt = (now_ms - control_update_ms) * 0.001f;
@@ -56,14 +56,14 @@ void AP_Winch_PWM::control_winch()
     // if doing position control, calculate position error to desired rate
     if ((config.control_mode == AP_Winch::ControlMode::POSITION) && healthy()) {
         float position_error = config.length_desired - line_length;
-        config.rate_desired = constrain_float(position_error * config.pos_p, -config.rate_max, config.rate_max);
+        config.rate_desired = constrain_float(position_error * config.pos_p, -config.rate_max, config.rate_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
 
     // apply acceleration limited to rate
     const float rate_limited = get_rate_limited_by_accel(config.rate_desired, dt);
 
     // use linear interpolation to calculate output to move winch at desired rate
-    const float scaled_output = linear_interpolate(-1000, 1000, rate_limited, -config.rate_max, config.rate_max);
+    const float scaled_output = linear_interpolate(-1000, 1000, rate_limited, -config.rate_max, config.rate_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     SRV_Channels::set_output_scaled(SRV_Channel::k_winch, scaled_output);
 
     // update distance estimate assuming winch will move exactly as requested

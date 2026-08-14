@@ -25,7 +25,7 @@ public:
     _use_gcs_snoop(true),
     _started(false),
     _saving(false)
-    { update_status(); }
+    { update_status(); } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // start all the registered calibrations
     void start(GCS_MAVLINK *gcs, uint8_t sysid, uint8_t compid);

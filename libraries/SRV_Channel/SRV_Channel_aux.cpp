@@ -500,7 +500,7 @@ SRV_Channels::set_output_limit(SRV_Channel::Function function, SRV_Channel::Limi
 #if AP_RC_CHANNEL_ENABLED
             if (c.function == SRV_Channel::k_manual) {
                 RC_Channel *cin = rc().channel(c.ch_num);
-                if (cin != nullptr) {
+                if (cin) {
                     // in order for output_ch() to work for k_manual we
                     // also have to override radio_in
                     cin->set_radio_in(pwm);

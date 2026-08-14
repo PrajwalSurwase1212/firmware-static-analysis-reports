@@ -1,5 +1,6 @@
 #include "AP_NavEKF2.h"
 #include "AP_NavEKF2_core.h"
+#include <cerrno>
 
 /********************************************************
 *                   FUSE MEASURED_DATA                  *
@@ -488,11 +489,15 @@ void NavEKF2_core::CalcRangeBeaconPosDownOffset(ftype obsVar, Vector3F &vehicleP
     ftype t8 = t5+t6+t7;
     ftype t9;
     if (t8 > 0.1f) {
-        t9 = 1.0f/sqrtF(t8);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        t9 = 1.0f/sqrtF(t8); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         obsDeriv = t2*t9;
 
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         // Calculate innovation
-        innov = sqrtF(t8) - rngBcnDataDelayed.rng;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        innov = sqrtF(t8) - rngBcnDataDelayed.rng; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
         // calculate a filtered innovation magnitude to be used to select between the high or low offset
         OffsetMaxInnovFilt = (1.0f - filtAlpha) * bcnPosOffsetMaxVar + filtAlpha * fabsF(innov);
@@ -522,14 +527,20 @@ void NavEKF2_core::CalcRangeBeaconPosDownOffset(ftype obsVar, Vector3F &vehicleP
 
     // calculate observation derivative
     t2 = rngBcnDataDelayed.beacon_posNED.z - vehiclePosNED.z + bcnPosOffsetMin;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     t5 = t2*t2;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     t8 = t5+t6+t7;
     if (t8 > 0.1f) {
-        t9 = 1.0f/sqrtF(t8);
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        t9 = 1.0f/sqrtF(t8); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         obsDeriv = t2*t9;
 
         // Calculate innovation
-        innov = sqrtF(t8) - rngBcnDataDelayed.rng;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        innov = sqrtF(t8) - rngBcnDataDelayed.rng; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
         // calculate a filtered innovation magnitude to be used to select between the high or low offset
         OffsetMinInnovFilt = (1.0f - filtAlpha) * OffsetMinInnovFilt + filtAlpha * fabsF(innov);

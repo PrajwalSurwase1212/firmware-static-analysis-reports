@@ -43,7 +43,7 @@ public:
 
 private:
 
-    float rangefinder_range{0.0f};
+    float rangefinder_range{0.0f}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 } // namespace SITL

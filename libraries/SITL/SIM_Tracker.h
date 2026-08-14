@@ -27,7 +27,7 @@ namespace SITL {
  */
 class Tracker : public Aircraft {
 public:
-    using Aircraft::Aircraft;
+    using Aircraft::Aircraft; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update(const struct sitl_input &input) override;
 

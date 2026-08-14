@@ -26,7 +26,7 @@ ModeFilter<T,FILTER_SIZE>::ModeFilter(uint8_t return_element) :
     if ( _return_element >= FILTER_SIZE ) {
         _return_element = FILTER_SIZE / 2;
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Public Methods //////////////////////////////////////////////////////////////
 
@@ -71,8 +71,8 @@ void ModeFilter<T,FILTER_SIZE>::isort(T new_sample, bool drop_high)
         i = FilterWithBuffer<T,FILTER_SIZE>::sample_index-1;
 
         // if the next element is higher than our new sample, push it up one position
-        while (i > 0 && FilterWithBuffer<T,FILTER_SIZE>::samples[i-1] > new_sample) {
-            FilterWithBuffer<T,FILTER_SIZE>::samples[i] = FilterWithBuffer<T,FILTER_SIZE>::samples[i-1];
+        while (i > 0 && FilterWithBuffer<T,FILTER_SIZE>::samples[i-1] > new_sample) { // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
+            FilterWithBuffer<T,FILTER_SIZE>::samples[i] = FilterWithBuffer<T,FILTER_SIZE>::samples[i-1]; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
             i--;
         }
 

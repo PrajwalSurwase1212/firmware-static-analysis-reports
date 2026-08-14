@@ -105,14 +105,14 @@ const AP_Param::GroupInfo AC_HELI_PID::var_info[] = {
 // This is an integrator which tends to decay to zero naturally
 // if the error is zero.
 
-void AC_HELI_PID::update_leaky_i(float leak_rate)
+void AC_HELI_PID::update_leaky_i(float leak_rate) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!is_zero(_ki)){
 
         // integrator does not leak down below Leak Min
         if (_integrator > _leak_min){
             _integrator -= (float)(_integrator - _leak_min) * leak_rate;
-        } else if (_integrator < -_leak_min) {
+        } else if (_integrator < -_leak_min) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             _integrator -= (float)(_integrator + _leak_min) * leak_rate;
         }
 

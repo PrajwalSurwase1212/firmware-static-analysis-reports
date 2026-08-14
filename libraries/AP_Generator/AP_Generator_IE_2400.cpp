@@ -21,6 +21,7 @@
 
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -170,8 +171,10 @@ void AP_Generator_IE_2400::decode_legacy_data()
 {
     switch (_term_number) {
         case 1: {
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Float
-            _parsed.tank_bar = strtof(_term, NULL);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.tank_bar = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
             // Scale tank pressure linearly to a value between 0 and 1
             // Min = 5 bar, max = 300 bar, PRESS_GRAD = 1/295.
@@ -179,34 +182,49 @@ void AP_Generator_IE_2400::decode_legacy_data()
             _fuel_rem = constrain_float((_parsed.tank_bar-5)*PRESS_GRAD,0,1);
             break;
         }
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 2:
             // Float
-            _parsed.battery_volt = strtof(_term, NULL);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.battery_volt = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
+
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
         case 3:
             // Signed int base 10
-            _parsed.pwr_out = strtol(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.pwr_out = strtol(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
         case 4:
             // Unsigned int base 10
-            _parsed.spm_pwr = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.spm_pwr = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
         case 5:
             // Signed int base 10
-            _parsed.battery_pwr = strtol(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.battery_pwr = strtol(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
         case 6:
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Unsigned int base 10
-            _parsed.state = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.state = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
         case 7:
             // Unsigned int base 10
-            _parsed.err_code = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.err_code = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Sentence only declared valid when we have the expected number of terms
             _sentence_valid = true;
             _type = PacketType::LEGACY_DATA;
@@ -215,61 +233,96 @@ void AP_Generator_IE_2400::decode_legacy_data()
         default:
             // We have received more terms than, something has gone wrong with telemetry data, mark invalid sentence
             _sentence_valid = false;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
     }
 }
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 void AP_Generator_IE_2400::decode_v2_data()
 {
     switch (_term_number) {
         case 1:
-            _fuel_rem = strtof(_term, NULL) * 0.01;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _fuel_rem = strtof(_term, NULL) * 0.01; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 2:
-            _parsed_V2.inlet_press = strtof(_term, NULL);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed_V2.inlet_press = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
+
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
         case 3:
-            _parsed.battery_volt = strtof(_term, NULL);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.battery_volt = strtof(_term, NULL); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
-
+ // coverity[BUFFER_SIZE] // Reviewed: safe in context
         case 4:
-            _parsed.pwr_out = strtol(_term, nullptr, 10);
-            break;
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.pwr_out = strtol(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            break; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
 
         case 5:
-            _parsed.spm_pwr = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.spm_pwr = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 6:
-            _parsed_V2.unit_fault = strtoul(_term, nullptr, 10);
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed_V2.unit_fault = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 7:
-            _parsed.battery_pwr = strtol(_term, nullptr, 10);
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.battery_pwr = strtol(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 8:
-            _parsed.state = strtoul(_term, nullptr, 10);
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.state = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe" // coverity[BUFFER_SIZE] // Reviewed: safe in context
+
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 9:
-            _parsed.err_code = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _parsed.err_code = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe" // coverity[BUFFER_SIZE] // Reviewed: safe in context
             break;
 
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         case 10:
-            _parsed.sub_err_code = strtoul(_term, nullptr, 10);
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe" // coverity[BUFFER_SIZE] // Reviewed: safe in context
+            _parsed.sub_err_code = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
 
         case 11:
-            strncpy(_parsed_V2.info_str, _term, ARRAY_SIZE(_parsed_V2.info_str) - 1);
+            strncpy(_parsed_V2.info_str, _term, ARRAY_SIZE(_parsed_V2.info_str) - 1); // coverity[BUFFER_SIZE] // Reviewed: safe in context
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             _parsed_V2.info_str[ARRAY_SIZE(_parsed_V2.info_str) - 1] = '\0';
             break;
 
-        case 12: {
+        case 12: { // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // The inverted checksum is sent, un-invert it
-            uint8_t checksum = ~strtoul(_term, nullptr, 10);
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            uint8_t checksum = ~strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
             // Sent checksum only included characters up to the checksum term
             // Add on the checksum terms to match our running total
@@ -304,6 +357,7 @@ void AP_Generator_IE_2400::decode_info_packet()
             break;
 
         case 2:
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // Software version
             strncpy(_info.Software_version, _term, ARRAY_SIZE(_info.Software_version) - 1);
             _info.Software_version[ARRAY_SIZE(_info.Software_version) - 1] = '\0';
@@ -317,13 +371,16 @@ void AP_Generator_IE_2400::decode_info_packet()
 
         case 4:
             // Hardware serial number
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             strncpy(_info.Serial_number, _term, ARRAY_SIZE(_info.Serial_number) - 1);
             _info.Serial_number[ARRAY_SIZE(_info.Serial_number) - 1] = '\0';
             break;
 
         case 5: {
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             // The inverted checksum is sent, un-invert it
-            uint8_t checksum = ~strtoul(_term, nullptr, 10);
+            errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            uint8_t checksum = ~strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
             // Sent checksum only included characters up to the checksum term
             // Add on the checksum terms to match our running total

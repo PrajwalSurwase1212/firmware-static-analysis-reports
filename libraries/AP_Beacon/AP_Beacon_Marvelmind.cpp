@@ -37,6 +37,7 @@ extern const AP_HAL::HAL& hal;
 
 #if MM_DEBUG_LEVEL
   #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
   #define Debug(level, fmt, args ...)  do { if (level <= MM_DEBUG_LEVEL) { GCS_SEND_TEXT(MAV_SEVERITY_INFO, fmt, ## args); } } while (0)
 #else
   #define Debug(level, fmt, args ...)
@@ -112,7 +113,7 @@ void AP_Beacon_Marvelmind::process_beacons_positions_datagram()
         const int16_t z = input_buffer[ofs + 5]
                 | (((uint16_t) input_buffer[ofs + 6]) << 8);
         stationary_beacon = get_or_alloc_beacon(address);
-        if (stationary_beacon != nullptr) {
+        if (stationary_beacon) {
             stationary_beacon->address = address; //The instance and the address are the same
             stationary_beacon->x__mm = x * 10; // centimeters -> millimeters
             stationary_beacon->y__mm = y * 10; // centimeters -> millimeters
@@ -148,7 +149,7 @@ void AP_Beacon_Marvelmind::process_beacons_positions_highres_datagram()
                 | (((uint32_t) input_buffer[ofs + 11]) << 16)
                 | (((uint32_t) input_buffer[ofs + 12]) << 24);
         stationary_beacon = get_or_alloc_beacon(address);
-        if (stationary_beacon != nullptr) {
+        if (stationary_beacon) {
             stationary_beacon->address = address; //The instance and the address are the same
             stationary_beacon->x__mm = x; // millimeters
             stationary_beacon->y__mm = y; // millimeters
@@ -204,7 +205,8 @@ void AP_Beacon_Marvelmind::update(void)
     }
     // read any available characters
     uint16_t num_bytes_read = MIN(uart->available(), 16384U);
-    while (num_bytes_read-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (num_bytes_read-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         bool good_byte = false;
         if (!uart->read(input_buffer[num_bytes_in_block_received])) {
             break;

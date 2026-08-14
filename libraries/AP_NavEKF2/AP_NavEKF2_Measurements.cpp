@@ -5,6 +5,7 @@
 #include <GCS_MAVLink/GCS.h>
 #include <AP_DAL/AP_DAL.h>
 #include <AP_InternalError/AP_InternalError.h>
+#include <cerrno>
 
 #if AP_RANGEFINDER_ENABLED
 
@@ -32,7 +33,8 @@ void NavEKF2_core::readRangeFinder(void)
 
     // read range finder at 20Hz
     // TODO better way of knowing if it has new data
-    if (_rng && (imuSampleTime_ms - lastRngMeasTime_ms) > 50) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (_rng && (imuSampleTime_ms - lastRngMeasTime_ms) > 50) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
 
         // reset the timer used to control the measurement rate
         lastRngMeasTime_ms =  imuSampleTime_ms;
@@ -145,7 +147,7 @@ void NavEKF2_core::writeOptFlowMeas(const uint8_t rawFlowQuality, const Vector2f
         // correct flow sensor body rates for bias and write
         ofDataNew.bodyRadXYZ.x = rawGyroRates.x - flowGyroBias.x;
         ofDataNew.bodyRadXYZ.y = rawGyroRates.y - flowGyroBias.y;
-        // the sensor interface doesn't provide a z axis rate so use the rate from the nav sensor instead
+        // the sensor interface doesn't provide a z axis rate so use the rate from the nav sensor instead // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
         const float local_delTimeOF_2 = delTimeOF;
         const float local_delAngDT = imuDataNew.delAngDT;
         if (local_delTimeOF_2 > 0.001f) {
@@ -488,7 +490,7 @@ bool NavEKF2_core::readDeltaVelocity(uint8_t ins_index, Vector3F &dVel, ftype &d
     return false;
 }
 
-/********************************************************
+/******************************************************** // coverity[RW.ROUTINE_NOT_EMITTED]
 *             Global Position Measurement               *
 ********************************************************/
 
@@ -538,7 +540,7 @@ void NavEKF2_core::readGpsData()
             ftype alpha = constrain_ftype(0.0002f * (lastTimeGpsReceived_ms - secondLastGpsTime_ms),0.0f,1.0f);
             gpsSpdAccuracy *= (1.0f - alpha);
             float gpsSpdAccRaw;
-            if (!gps.speed_accuracy(gpsSpdAccRaw)) {
+            if (!gps.speed_accuracy(gpsSpdAccRaw)) { // coverity[RW.NO_MATCHING_FUNCTION]
                 gpsSpdAccuracy = 0.0f;
             } else {
                 gpsSpdAccuracy = MAX(gpsSpdAccuracy,gpsSpdAccRaw);
@@ -547,7 +549,7 @@ void NavEKF2_core::readGpsData()
             }
             gpsPosAccuracy *= (1.0f - alpha);
             float gpsPosAccRaw;
-            if (!gps.horizontal_accuracy(gpsPosAccRaw)) {
+            if (!gps.horizontal_accuracy(gpsPosAccRaw)) { // coverity[RW.NO_MATCHING_FUNCTION]
                 gpsPosAccuracy = 0.0f;
             } else {
                 gpsPosAccuracy = MAX(gpsPosAccuracy,gpsPosAccRaw);

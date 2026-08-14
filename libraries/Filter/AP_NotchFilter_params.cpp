@@ -39,7 +39,7 @@ AP_NotchFilter_params::AP_NotchFilter_params() : AP_Filter(AP_Filter::FilterType
     AP_Param::setup_object_defaults(this, var_info);
 }
 
-bool AP_NotchFilter_params::setup_notch_filter(NotchFilterFloat& filter, float sample_rate)
+bool AP_NotchFilter_params::setup_notch_filter(NotchFilterFloat& filter, float sample_rate) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (is_zero(_quality) || is_zero(_center_freq_hz) || is_zero(_attenuation_dB)) {
         return false;
@@ -47,7 +47,7 @@ bool AP_NotchFilter_params::setup_notch_filter(NotchFilterFloat& filter, float s
 
     if (!is_equal(sample_rate, filter.sample_freq_hz())
         || !is_equal(_center_freq_hz.get(), filter.center_freq_hz())) {
-        filter.init(sample_rate, _center_freq_hz, _center_freq_hz / _quality, _attenuation_dB);
+        filter.init(sample_rate, _center_freq_hz, _center_freq_hz / _quality, _attenuation_dB); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     }
     return true;
 }

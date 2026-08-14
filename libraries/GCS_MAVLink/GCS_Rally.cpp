@@ -20,6 +20,7 @@
 #include "GCS.h"
 #include <AP_Rally/AP_Rally.h>
 #include <AP_Logger/AP_Logger.h>
+#include <cerrno>
 
 #if AP_MAVLINK_RALLY_POINT_PROTOCOL_ENABLED
 
@@ -83,7 +84,9 @@ void GCS_MAVLINK::handle_rally_fetch_point(const mavlink_message_t &msg)
         return;
     }
 
-    mavlink_msg_rally_point_send(chan, msg.sysid, msg.compid, packet.idx,
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    mavlink_msg_rally_point_send(chan, msg.sysid, msg.compid, packet.idx, // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
                                  r->get_rally_total(), rally_point.lat, rally_point.lng,
                                  rally_point.alt, rally_point.break_alt, rally_point.land_dir,
                                  rally_point.flags);

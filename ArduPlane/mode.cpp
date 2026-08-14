@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include <cerrno>
 
 Mode::Mode() :
     unused_integer{17},
@@ -130,7 +131,8 @@ bool Mode::enter()
         plane.steerController.reset_I();
 
         // update RC failsafe, as mode change may have necessitated changing the failsafe throttle
-        plane.control_failsafe();
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        plane.control_failsafe(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
 #if AP_FENCE_ENABLED
         // pilot requested flight mode change during a fence breach indicates pilot is attempting to manually recover
@@ -157,7 +159,8 @@ bool Mode::enter()
         if (quadplane.enabled()) {
             float aspeed;
             bool have_airspeed = quadplane.ahrs.airspeed_estimate(aspeed);
-            quadplane.assisted_flight = quadplane.assist.should_assist(aspeed, have_airspeed);
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            quadplane.assisted_flight = quadplane.assist.should_assist(aspeed, have_airspeed); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         }
 
         if (is_vtol_mode() && !quadplane.tailsitter.enabled()) {

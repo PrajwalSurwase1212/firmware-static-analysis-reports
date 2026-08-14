@@ -65,7 +65,7 @@ public:
 
     // Returns the circle radius in meters.
     // If `_radius_m` is non-positive, falls back to the RADIUS parameter.
-    float get_radius_m() const { return is_positive(_radius_m)?_radius_m:_radius_parm_cm * 0.01; }
+    float get_radius_m() const { return is_positive(_radius_m)?_radius_m:_radius_parm_cm * 0.01; } // coverity[RW.ROUTINE_NOT_EMITTED]
 
     // Sets the circle radius in centimeters.
     // See set_radius_m() for full details.

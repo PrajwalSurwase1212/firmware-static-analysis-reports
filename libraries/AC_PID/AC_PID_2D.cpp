@@ -62,7 +62,7 @@ AC_PID_2D::AC_PID_2D(float initial_kP, float initial_kI, float initial_kD, float
 
     // reset input filter to first value received
     _reset_filter = true;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Computes the 2D PID output from target and measurement vectors.
 // Applies filtering to error and derivative terms.

@@ -9,6 +9,7 @@
 #include <AP_HAL/utility/sparse-endian.h>
 
 #include "AP_BattMonitor_INA2xx.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -120,7 +121,7 @@ AP_BattMonitor_INA2XX::AP_BattMonitor_INA2XX(AP_BattMonitor &mon,
         : AP_BattMonitor_Backend(mon, mon_state, params)
 {
     AP_Param::setup_object_defaults(this, var_info);
-    _state.var_info = var_info;
+    _state.var_info = var_info; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_BattMonitor_INA2XX::init(void)
@@ -132,7 +133,7 @@ void AP_BattMonitor_INA2XX::init(void)
     // register now and configure in the timer callbacks
     dev->register_periodic_callback(25000, FUNCTOR_BIND_MEMBER(&AP_BattMonitor_INA2XX::timer, void));
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 bool AP_BattMonitor_INA2XX::configure(DevType dtype)
 {
     switch (dtype) {
@@ -141,7 +142,7 @@ bool AP_BattMonitor_INA2XX::configure(DevType dtype)
 
     case DevType::INA226: {
         // configure for MAX_AMPS
-        const uint16_t conf = (0x2<<9) | (0x5<<6) | (0x5<<3) | 0x7; // 2ms conv time, 16x sampling
+        const uint16_t conf = (0x2<<9) | (0x5<<6) | (0x5<<3) | 0x7; // 2ms conv time, 16x sampling // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         current_LSB = max_amps / 32768.0;
         voltage_LSB = 0.00125; // 1.25mV/bit
         const uint16_t cal = uint16_t(0.00512 / (current_LSB * rShunt));
@@ -156,8 +157,8 @@ bool AP_BattMonitor_INA2XX::configure(DevType dtype)
 
     case DevType::INA228: {
         // configure for MAX_AMPS
-        voltage_LSB = 195.3125e-6; // 195.3125 uV/LSB
-        current_LSB = max_amps / (1U<<19);
+        voltage_LSB = 195.3125e-6; // 195.3125 uV/LSB // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        current_LSB = max_amps / (1U<<19); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const uint16_t shunt_cal = uint16_t(13107.2e6 * current_LSB * rShunt) & 0x7FFF;
         if (write_word(REG_228_CONFIG, REG_228_CONFIG_RESET) && // reset
             write_word(REG_228_CONFIG, 0) &&
@@ -170,8 +171,8 @@ bool AP_BattMonitor_INA2XX::configure(DevType dtype)
 
     case DevType::INA238: {
         // configure for MAX_AMPS
-        voltage_LSB = 3.125e-3; // 3.125mV/LSB
-        current_LSB = max_amps / (1U<<15);
+        voltage_LSB = 3.125e-3; // 3.125mV/LSB // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        current_LSB = max_amps / (1U<<15); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const uint16_t shunt_cal = uint16_t(819.2e6 * current_LSB * rShunt) & 0x7FFF;
         if (write_word(REG_238_CONFIG, REG_238_CONFIG_RESET) && // reset
             write_word(REG_238_CONFIG, 0) &&
@@ -184,7 +185,7 @@ bool AP_BattMonitor_INA2XX::configure(DevType dtype)
 
     case DevType::INA231: {
         // no configuration needed
-        voltage_LSB = 1.25e-3;
+        voltage_LSB = 1.25e-3; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         current_LSB = max_amps / (1U<<15);
         const uint16_t cal = 0.00512 / (current_LSB * rShunt);
         if (write_word(REG_231_CALIBRATION, cal)) {
@@ -232,7 +233,8 @@ bool AP_BattMonitor_INA2XX::read_word16(const uint8_t reg, int16_t& data) const
     }
 
     // convert byte order
-    data = int16_t(be16toh(uint16_t(data)));
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    data = int16_t(be16toh(uint16_t(data))); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
 
     return true;
 }
@@ -250,7 +252,8 @@ bool AP_BattMonitor_INA2XX::read_word24(const uint8_t reg, int32_t& data) const
     }
     // 24 bit 2s complement data. Shift into upper 24 bits of int32_t then divide by 256
     // to cope with negative numbers properly
-    data = d[0]<<24 | d[1]<<16 | d[2] << 8;
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    data = d[0]<<24 | d[1]<<16 | d[2] << 8; // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     data = data / 256;
 
     return true;

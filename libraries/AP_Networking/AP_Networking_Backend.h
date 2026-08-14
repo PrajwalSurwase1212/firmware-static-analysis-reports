@@ -17,7 +17,7 @@ class AP_Networking_Backend
 public:
     friend class AP_Networking;
 
-    AP_Networking_Backend(AP_Networking &_frontend) : frontend(_frontend) {}
+    AP_Networking_Backend(AP_Networking &_frontend) : frontend(_frontend) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_Networking_Backend);

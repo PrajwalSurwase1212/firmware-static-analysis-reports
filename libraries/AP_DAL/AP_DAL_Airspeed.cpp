@@ -10,7 +10,7 @@ AP_DAL_Airspeed::AP_DAL_Airspeed()
         _RASI[i].instance = i;
     }
 #endif
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_DAL_Airspeed::start_frame()
 {

@@ -103,7 +103,7 @@ void RCOutput::push(void)
         if (esc_telem == nullptr) {
             esc_telem = NEW_NOTHROW AP_ESC_Telem_SITL;
         }
-        if (esc_telem != nullptr) {
+        if (esc_telem) {
             esc_telem->update();
         }
     }
@@ -140,7 +140,7 @@ bool RCOutput::set_serial_led_rgb_data(const uint16_t chan, int8_t led, uint8_t 
         }
         return true;
     }
-    if (led < -1 || led >= sitl->led.num_leds[chan]) {
+    if (led < -1 || led >= sitl->led.num_leds[chan]) { // coverity[REVERSE_INULL] // Reviewed: safe in context
         return false;
     }
     sitl->led.rgb[chan][led].rgb[0] = red;

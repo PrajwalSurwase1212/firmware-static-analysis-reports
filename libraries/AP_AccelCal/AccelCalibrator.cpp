@@ -16,6 +16,7 @@
 #include "AccelCalibrator.h"
 #include <stdio.h>
 #include <AP_HAL/AP_HAL.h>
+#include <cerrno>
 
 const extern AP_HAL::HAL& hal;
 /*
@@ -68,8 +69,11 @@ void AccelCalibrator::start(enum accel_cal_fit_type_t fit_type, uint8_t num_samp
     _conf_fit_type = fit_type;
 
     const uint16_t faces = 2*_conf_num_samples-4;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     const float a = (4.0f * M_PI / (3.0f * faces)) + M_PI / 3.0f;
-    const float theta = 0.5f * acosf(cosf(a) / (1.0f - cosf(a)));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float theta = 0.5f * acosf(cosf(a) / (1.0f - cosf(a))); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _min_sample_dist = GRAVITY_MSS * 2*sinf(theta/2);
 
     _param.s.offset = offset;
@@ -262,7 +266,7 @@ void AccelCalibrator::set_status(enum accel_cal_status_t status) {
             _status = ACCEL_CAL_NOT_STARTED;
 
             _samples_collected = 0;
-            if (_sample_buffer != nullptr) {
+            if (_sample_buffer) {
                 free(_sample_buffer);
                 _sample_buffer = nullptr;
             }

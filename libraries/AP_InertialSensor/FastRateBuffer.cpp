@@ -47,7 +47,7 @@ void AP_InertialSensor::enable_fast_rate_buffer()
 void AP_InertialSensor::disable_fast_rate_buffer()
 {
     fast_rate_buffer_enabled = false;
-    if (fast_rate_buffer != nullptr) {
+    if (fast_rate_buffer) {
         fast_rate_buffer->reset();
     }
 }

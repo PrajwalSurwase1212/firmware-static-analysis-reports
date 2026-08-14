@@ -149,7 +149,7 @@ void AP_Parachute::update()
             } else if (_release_type <= AP_PARACHUTE_TRIGGER_TYPE_RELAY_3) {
                 // set relay
                 AP_Relay*_relay = AP::relay();
-                if (_relay != nullptr) {
+                if (_relay) {
                     _relay->set(AP_Relay_Params::FUNCTION::PARACHUTE, true); 
                 }
 #endif
@@ -166,7 +166,7 @@ void AP_Parachute::update()
         } else if (_release_type <= AP_PARACHUTE_TRIGGER_TYPE_RELAY_3) {
             // set relay back to zero volts
             AP_Relay*_relay = AP::relay();
-            if (_relay != nullptr) {
+            if (_relay) {
                 _relay->set(AP_Relay_Params::FUNCTION::PARACHUTE, false);
             }
 #endif
@@ -180,10 +180,10 @@ void AP_Parachute::update()
 }
 
 // set_sink_rate - set vehicle sink rate
-void AP_Parachute::set_sink_rate(float sink_rate)
+void AP_Parachute::set_sink_rate(float sink_rate) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // reset sink time if critical sink rate check is disabled or vehicle is not flying
-    if ((_critical_sink <= 0) || !_is_flying) {
+    if ((_critical_sink <= 0) || !_is_flying) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         _sink_time_ms = 0;
         return;
     }

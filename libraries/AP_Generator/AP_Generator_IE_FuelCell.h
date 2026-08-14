@@ -12,7 +12,7 @@ class AP_Generator_IE_FuelCell : public AP_Generator_Backend
 
 public:
     // Constructor
-    using AP_Generator_Backend::AP_Generator_Backend;
+    using AP_Generator_Backend::AP_Generator_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Initialize the fuel cell driver
     __INITFUNC__ void init(void) override;

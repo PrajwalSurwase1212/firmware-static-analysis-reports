@@ -3,6 +3,7 @@
 #include <AP_InertialSensor/AP_InertialSensor.h>
 
 #include <AP_Logger/LogStructure.h>
+#include <cerrno>
 
 class AP_DAL_InertialSensor {
 public:
@@ -54,7 +55,8 @@ public:
     }
     void handle_message(const log_RISI &msg) {
         _RISI[msg.instance] = msg;
-        pos[msg.instance] = AP::ins().get_imu_pos_offset(msg.instance);
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        pos[msg.instance] = AP::ins().get_imu_pos_offset(msg.instance); // parasoft-suppress BD-PB-NP "Reviewed and safe"
         update_filtered(msg.instance);
     }
 

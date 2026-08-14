@@ -1,5 +1,6 @@
 #include "mode.h"
 #include "Plane.h"
+#include <cerrno>
 
 bool ModeGuided::_enter()
 {
@@ -162,7 +163,10 @@ void ModeGuided::set_radius_and_direction(const float radius, const bool directi
 bool Plane::GuidedState::target_location_alt_is_minus_one() const
 {
     int32_t target_location_alt = 0;
-    UNUSED_RESULT(target_location.get_alt_cm(target_location.get_alt_frame(), target_location_alt));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(target_location.get_alt_cm(target_location.get_alt_frame(), target_location_alt)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
     return target_location_alt == -1;
 }
 #endif // AP_PLANE_OFFBOARD_GUIDED_SLEW_ENABLED

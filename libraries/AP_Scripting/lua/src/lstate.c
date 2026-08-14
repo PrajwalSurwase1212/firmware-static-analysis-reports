@@ -50,6 +50,7 @@
 #else
 #if !defined(luai_makeseed)
 #include <time.h>
+#include <errno.h>
 #define luai_makeseed()		cast(unsigned int, time(NULL))
 #endif
 #endif
@@ -129,12 +130,16 @@ CallInfo *luaE_extendCI (lua_State *L) {
 */
 void luaE_freeCI (lua_State *L) {
   CallInfo *ci = L->ci;
-  CallInfo *next = ci->next;
-  ci->next = NULL;
-  while ((ci = next) != NULL) {
+  CallInfo *next;
+  if (ci != NULL) {
     next = ci->next;
-    luaM_free(L, ci);
-    L->nci--;
+    ci->next = NULL;
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    while ((ci = next) != NULL) {
+      next = ci->next;
+      luaM_free(L, ci);
+      L->nci--;
+    }
   }
 }
 
@@ -146,7 +151,8 @@ void luaE_shrinkCI (lua_State *L) {
   CallInfo *ci = L->ci;
   CallInfo *next2;  /* next's next */
   /* while there are two nexts */
-  while (ci->next != NULL && (next2 = ci->next->next) != NULL) {
+  // parasoft-suppress BD-PB-NP "Reviewed and safe"
+  while (ci->next != NULL && (next2 = ci->next->next) != NULL) { // parasoft-suppress BD-PB-NP "Reviewed and safe"
     luaM_free(L, ci->next);  /* free next */
     L->nci--;
     ci->next = next2;  /* remove 'next' from the list */

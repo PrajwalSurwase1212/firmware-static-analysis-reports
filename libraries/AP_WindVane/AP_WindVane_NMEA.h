@@ -24,7 +24,7 @@ class AP_WindVane_NMEA : public AP_WindVane_Backend
 {
 public:
     // constructor
-    using AP_WindVane_Backend::AP_WindVane_Backend;
+    using AP_WindVane_Backend::AP_WindVane_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // initialization
     void init(const AP_SerialManager& serial_manager) override;

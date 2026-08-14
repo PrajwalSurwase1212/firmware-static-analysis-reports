@@ -153,7 +153,7 @@ void Shared_DMA::lock_core(void)
     }
 #endif
     // update contention stats
-    if (_contention_stats != nullptr) {
+    if (_contention_stats) {
         if (stream_id1 < SHARED_DMA_MAX_STREAM_ID) {
             if (contention) {
                 _contention_stats[stream_id1].contended_locks++;
@@ -188,7 +188,7 @@ bool Shared_DMA::lock_nonblock(void)
         chSysDisable();
         if (locks[stream_id1].obj != nullptr && locks[stream_id1].obj != this) {
             locks[stream_id1].obj->contention = true;
-            if (_contention_stats != nullptr) {
+            if (_contention_stats) {
                 _contention_stats[stream_id1].contended_locks++;
             }
         }
@@ -206,7 +206,7 @@ bool Shared_DMA::lock_nonblock(void)
         chSysDisable();
         if (locks[stream_id2].obj != nullptr && locks[stream_id2].obj != this) {
             locks[stream_id2].obj->contention = true;
-            if (_contention_stats != nullptr) {
+            if (_contention_stats) {
                 _contention_stats[stream_id2].contended_locks++;
             }
         }

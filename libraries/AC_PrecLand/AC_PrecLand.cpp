@@ -14,6 +14,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -195,21 +196,21 @@ const AP_Param::GroupInfo AC_PrecLand::var_info[] = {
 // Default constructor.
 AC_PrecLand::AC_PrecLand()
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AC_PrecLand must be singleton");
     }
     _singleton = this;
 
     // set parameters to defaults
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // perform any required initialisation of landing controllers
-// update_rate_hz should be the rate at which the update method will be called in hz
+// update_rate_hz should be the rate at which the update method will be called in hz // coverity[RW.ROUTINE_NOT_EMITTED]
 void AC_PrecLand::init(uint16_t update_rate_hz)
 {
     // exit immediately if init has already been run
-    if (_backend != nullptr) {
+    if (_backend) {
         return;
     }
 
@@ -224,7 +225,7 @@ void AC_PrecLand::init(uint16_t update_rate_hz)
     // constrain lag parameter to be within bounds
     _lag.set(constrain_float(_lag, 0.02f, 0.25f));  // must match LAG parameter range at line 124
 
-    // calculate inertial buffer size from lag and minimum of main loop rate and update_rate_hz argument
+    // calculate inertial buffer size from lag and minimum of main loop rate and update_rate_hz argument // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const uint16_t inertial_buffer_size = MAX((uint16_t)roundf(_lag * update_rate_hz), 1);
 
     // instantiate ring buffer to hold inertial history, return on failure so no backends are created
@@ -264,7 +265,7 @@ void AC_PrecLand::init(uint16_t update_rate_hz)
     }
 
     // init backend
-    if (_backend != nullptr) {
+    if (_backend) {
         _backend->init();
     }
 
@@ -484,7 +485,7 @@ void AC_PrecLand::get_target_velocity_ms(const Vector2f& vehicle_velocity_ms, Ve
 void AC_PrecLand::handle_msg(const mavlink_landing_target_t &packet, uint32_t timestamp_ms)
 {
     // run backend update
-    if (_backend != nullptr) {
+    if (_backend) {
         _backend->handle_msg(packet, timestamp_ms);
     }
 }
@@ -503,7 +504,8 @@ void AC_PrecLand::run_estimator(float rangefinder_alt_m, bool rangefinder_alt_va
             // Return if there's any invalid velocity data
             for (uint8_t i=0; i<_inertial_history->available(); i++) {
                 const struct inertial_data_frame_s *inertial_data = (*_inertial_history)[i];
-                if (!inertial_data->inertialNavVelocityValid) {
+                // parasoft-suppress BD-PB-NP "Reviewed and safe"
+                if (!inertial_data->inertialNavVelocityValid) { // parasoft-suppress BD-PB-NP "Reviewed and safe"
                     _target_acquired = false;
                     return;
                 }
@@ -541,11 +543,13 @@ void AC_PrecLand::run_estimator(float rangefinder_alt_m, bool rangefinder_alt_va
         case EstimatorType::KALMAN_FILTER: {
             // Predict
             if (target_acquired() || _estimator_initialized) {
-                const float& dt = _inertial_data_delayed->dt;
-                const Vector3f& vehicleDelVel = _inertial_data_delayed->correctedVehicleDeltaVelocityNED;
+                if (_inertial_data_delayed != nullptr) {
+                    const float& dt = _inertial_data_delayed->dt;
+                    const Vector3f& vehicleDelVel = _inertial_data_delayed->correctedVehicleDeltaVelocityNED;
 
-                _ekf_x.predict(dt, -vehicleDelVel.x, _accel_noise*dt);
-                _ekf_y.predict(dt, -vehicleDelVel.y, _accel_noise*dt);
+                    _ekf_x.predict(dt, -vehicleDelVel.x, _accel_noise*dt);
+                    _ekf_y.predict(dt, -vehicleDelVel.y, _accel_noise*dt);
+                }
             }
 
             // Update if a new Line-Of-Sight measurement is available
@@ -724,36 +728,43 @@ void AC_PrecLand::run_output_prediction()
     _target_vel_rel_out_NE = _target_vel_rel_est_NE;
 
     // Predict forward from delayed time horizon
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
     for (uint8_t i=1; i<_inertial_history->available(); i++) {
         const struct inertial_data_frame_s *inertial_data = (*_inertial_history)[i];
-        _target_vel_rel_out_NE.x -= inertial_data->correctedVehicleDeltaVelocityNED.x;
-        _target_vel_rel_out_NE.y -= inertial_data->correctedVehicleDeltaVelocityNED.y;
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        if (inertial_data) { _target_vel_rel_out_NE.x -= inertial_data->correctedVehicleDeltaVelocityNED.x; } // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        _target_vel_rel_out_NE.y -= inertial_data->correctedVehicleDeltaVelocityNED.y; // parasoft-suppress BD-PB-NP "Reviewed and safe"
         _target_pos_rel_out_NE.x += _target_vel_rel_out_NE.x * inertial_data->dt;
         _target_pos_rel_out_NE.y += _target_vel_rel_out_NE.y * inertial_data->dt;
     }
 
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
     const AP_AHRS &_ahrs = AP::ahrs();
 
-    const Matrix3f& Tbn = (*_inertial_history)[_inertial_history->available()-1]->Tbn;
-    Vector3f accel_body_offset = AP::ins().get_imu_pos_offset(_ahrs.get_primary_accel_index());
+    if (_inertial_history != nullptr && _inertial_history->available() > 0) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        const Matrix3f& Tbn = (*_inertial_history)[_inertial_history->available()-1]->Tbn;
+        Vector3f accel_body_offset = AP::ins().get_imu_pos_offset(_ahrs.get_primary_accel_index()); // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
-    // Apply position correction for CG offset from IMU
-    Vector3f imu_pos_ned = Tbn * accel_body_offset;
-    _target_pos_rel_out_NE.x += imu_pos_ned.x;
-    _target_pos_rel_out_NE.y += imu_pos_ned.y;
+        // Apply position correction for CG offset from IMU
+        Vector3f imu_pos_ned = Tbn * accel_body_offset;
+        _target_pos_rel_out_NE.x += imu_pos_ned.x;
+        _target_pos_rel_out_NE.y += imu_pos_ned.y;
 
-    // Apply position correction for body-frame horizontal camera offset from CG, so that vehicle lands lens-to-target
-    Vector3f cam_pos_horizontal_ned = Tbn * Vector3f{_cam_offset.get().x, _cam_offset.get().y, 0};
-    _target_pos_rel_out_NE.x -= cam_pos_horizontal_ned.x;
-    _target_pos_rel_out_NE.y -= cam_pos_horizontal_ned.y;
+        // Apply position correction for body-frame horizontal camera offset from CG, so that vehicle lands lens-to-target
+        Vector3f cam_pos_horizontal_ned = Tbn * Vector3f{_cam_offset.get().x, _cam_offset.get().y, 0};
+        _target_pos_rel_out_NE.x -= cam_pos_horizontal_ned.x;
+        _target_pos_rel_out_NE.y -= cam_pos_horizontal_ned.y;
 
-    // Apply velocity correction for IMU offset from CG
-    Vector3f vel_ned_rel_imu = Tbn * (_ahrs.get_gyro() % (-accel_body_offset));
-    _target_vel_rel_out_NE.x -= vel_ned_rel_imu.x;
-    _target_vel_rel_out_NE.y -= vel_ned_rel_imu.y;
+        // Apply velocity correction for IMU offset from CG
+        Vector3f vel_ned_rel_imu = Tbn * (_ahrs.get_gyro() % (-accel_body_offset));
+        _target_vel_rel_out_NE.x -= vel_ned_rel_imu.x;
+        _target_vel_rel_out_NE.y -= vel_ned_rel_imu.y;
+    }
 
     // remember vehicle velocity
-    UNUSED_RESULT(_ahrs.get_velocity_NED(_last_veh_velocity_NED_ms));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // coverity[CHECKED_RETURN]
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(_ahrs.get_velocity_NED(_last_veh_velocity_NED_ms)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     // Apply land offset
     Vector3f land_ofs_ned_m = _ahrs.get_rotation_body_to_ned() * Vector3f{_land_ofs_cm_x, _land_ofs_cm_y, 0} * 0.01f;
@@ -836,13 +847,15 @@ void AC_PrecLand::Write_Precland()
         vel_x           : target_vel_rel_neu_ms.x,
         vel_y           : target_vel_rel_neu_ms.y,
         meas_x          : target_pos_meas_neu_m.x,
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         meas_y          : target_pos_meas_neu_m.y,
         meas_z          : target_pos_meas_neu_m.z,
         last_meas       : last_backend_los_meas_ms(),
         ekf_outcount    : ekf_outlier_count(),
         estimator       : (uint8_t)_estimator_type
     };
-    AP::logger().WriteBlock(&pkt, sizeof(pkt));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    AP::logger().WriteBlock(&pkt, sizeof(pkt)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 #endif
 

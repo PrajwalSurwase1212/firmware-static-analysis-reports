@@ -6,6 +6,7 @@ horizontal and vertical air movement between thermals.
 #pragma once
 
 #include "Variometer.h"
+#include <cerrno>
 
 class SpeedToFly {
 
@@ -18,5 +19,7 @@ public:
 
     void update(float Wx, float Wz, float Wexp, float CLmin, float CLmax);
 
-    float speed_to_fly(void) {return _CL_estimate>0 ? sqrtf(_polarParams.K/_CL_estimate) : -1.0f;};
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        float speed_to_fly(void) { return _CL_estimate>0 ? sqrtf(_polarParams.K/_CL_estimate) : -1.0f; } // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 };

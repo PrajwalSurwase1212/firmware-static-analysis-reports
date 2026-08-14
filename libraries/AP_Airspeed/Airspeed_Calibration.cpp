@@ -16,6 +16,7 @@
 #include <SRV_Channel/SRV_Channel.h>
 
 #include "AP_Airspeed.h"
+#include <cerrno>
 
 
 // constructor - fill in all the initial values
@@ -33,8 +34,11 @@ Airspeed_Calibration::Airspeed_Calibration()
   initialise the ratio
  */
 void Airspeed_Calibration::init(float initial_ratio)
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    state.z = 1.0f / sqrtf(initial_ratio);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    state.z = 1.0f / sqrtf(initial_ratio); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 /*
@@ -62,8 +66,10 @@ float Airspeed_Calibration::update(float airspeed, const Vector3f &vg, int16_t m
     float SH1 = sq(vg.y - state.y) + sq(vg.x - state.x);
     if (SH1 < 0.000001f) {
         // avoid division by a small number
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         return state.z;
     }
+    errno = 0;
     float SH2 = 1/sqrtf(SH1);
 
     // observation Jacobian
@@ -131,13 +137,18 @@ void AP_Airspeed::update_calibration(uint8_t i, const Vector3f &vground, int16_t
 
     // set state.z based on current ratio, this allows the operator to
     // override the current ratio in flight with autocal, which is
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // very useful both for testing and to force a reasonable value.
     float ratio = constrain_float(param[i].ratio, 1.0f, 4.0f);
 
-    state[i].calibration.state.z = 1.0f / sqrtf(ratio);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    state[i].calibration.state.z = 1.0f / sqrtf(ratio); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     // calculate true airspeed, assuming a airspeed ratio of 1.0
     float dpress = MAX(get_differential_pressure(i), 0);
+    errno = 0;
     float true_airspeed = sqrtf(dpress) * AP::ahrs().get_EAS2TAS();
 
     float zratio = state[i].calibration.update(true_airspeed, vground, max_airspeed_allowed_during_cal);

@@ -235,7 +235,7 @@ void AP_MAVLinkCAN::_handle_can_filter_modify(const mavlink_message_t &msg)
             return;
         }
         new_ids = NEW_NOTHROW uint16_t[p.num_ids];
-        if (new_ids != nullptr) {
+        if (new_ids) {
             num_new_ids = p.num_ids;
             memcpy((void*)new_ids, (const void *)p.ids, p.num_ids*sizeof(uint16_t));
         }
@@ -255,7 +255,7 @@ void AP_MAVLinkCAN::_handle_can_filter_modify(const mavlink_message_t &msg)
             return;
         }
         if (can_forward.num_filter_ids != 0) {
-            memcpy(new_ids, can_forward.filter_ids, can_forward.num_filter_ids*sizeof(uint16_t));
+            memcpy(new_ids, can_forward.filter_ids, can_forward.num_filter_ids*sizeof(uint16_t)); // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
         }
         memcpy(&new_ids[can_forward.num_filter_ids], p.ids, p.num_ids*sizeof(uint16_t));
         insertion_sort_uint16(new_ids, can_forward.num_filter_ids+p.num_ids);
@@ -277,7 +277,7 @@ void AP_MAVLinkCAN::_handle_can_filter_modify(const mavlink_message_t &msg)
         break;
     }
     }
-    if (new_ids != nullptr) {
+    if (new_ids) {
         // handle common case of no change
         if (num_new_ids == can_forward.num_filter_ids &&
             memcmp(new_ids, can_forward.filter_ids, num_new_ids*sizeof(uint16_t)) == 0) {

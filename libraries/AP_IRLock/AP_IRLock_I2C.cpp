@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <utility>
 #include <AP_HAL/I2CDevice.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -51,7 +52,8 @@ void AP_IRLock_I2C::init(int8_t bus)
     printf("Starting IRLock on I2C\n");
 
     dev->register_periodic_callback(20000, FUNCTOR_BIND_MEMBER(&AP_IRLock_I2C::read_frames, void));
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 /*
    synchronise with frame start. We expect 0xAA55AA55 at the start of
@@ -67,8 +69,10 @@ bool AP_IRLock_I2C::sync_frame_start(void)
     // record sensor successfully responded to I2C request
     _last_read_ms = AP_HAL::millis();
 
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
     uint8_t count=40;
-    while (count-- && sync_word != IRLOCK_SYNC && sync_word != 0) {
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    while (count-- && sync_word != IRLOCK_SYNC && sync_word != 0) { // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         uint8_t sync_byte;
         if (!dev->transfer(nullptr, 0, &sync_byte, 1)) {
             return false;

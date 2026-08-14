@@ -11,7 +11,7 @@ class AP_Airspeed_NMEA : public AP_Airspeed_Backend
 {
 public:
 
-    using AP_Airspeed_Backend::AP_Airspeed_Backend;
+    using AP_Airspeed_Backend::AP_Airspeed_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // probe and initialise the sensor
     bool init(void) override;

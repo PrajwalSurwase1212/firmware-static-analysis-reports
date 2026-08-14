@@ -93,7 +93,7 @@ const AP_Param::GroupInfo Tiltrotor::var_info[] = {
 Tiltrotor::Tiltrotor(QuadPlane& _quadplane, AP_MotorsMulticopter*& _motors):quadplane(_quadplane),motors(_motors)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void Tiltrotor::setup()
 {
@@ -197,15 +197,15 @@ void Tiltrotor::slew(float newtilt)
 
 // return the current tilt value that represents forward flight
 // tilt wings can sustain forward flight with some amount of wing tilt
-float Tiltrotor::get_fully_forward_tilt() const
+float Tiltrotor::get_fully_forward_tilt() const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    return 1.0 - (flap_angle_deg * (1/90.0));
+    return 1.0 - (flap_angle_deg * (1/90.0)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
 // return the target tilt value for forward flight
-float Tiltrotor::get_forward_flight_tilt() const
+float Tiltrotor::get_forward_flight_tilt() const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    return 1.0 - ((flap_angle_deg * (1/90.0)) * SRV_Channels::get_slew_limited_output_scaled(SRV_Channel::k_flap_auto) * 0.01);
+    return 1.0 - ((flap_angle_deg * (1/90.0)) * SRV_Channels::get_slew_limited_output_scaled(SRV_Channel::k_flap_auto) * 0.01); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
 /*
@@ -398,7 +398,7 @@ void Tiltrotor::update(void)
 
 #if HAL_LOGGING_ENABLED
 // Write tiltrotor specific log
-void Tiltrotor::write_log()
+void Tiltrotor::write_log() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Only valid on a tiltrotor
     if (!enabled()) {
@@ -408,7 +408,7 @@ void Tiltrotor::write_log()
     struct log_tiltrotor pkt {
         LOG_PACKET_HEADER_INIT(LOG_TILT_MSG),
         time_us      : AP_HAL::micros64(),
-        current_tilt : current_tilt * 90.0,
+        current_tilt : current_tilt * 90.0, // coverity[PW.NARROWING_CONVERSION]
     };
 
     if (type != TILT_TYPE_VECTORED_YAW) {
@@ -418,7 +418,7 @@ void Tiltrotor::write_log()
 
     } else {
         // Calculate tilt angle from servo outputs
-        const float total_angle = 90.0 + tilt_yaw_angle + fixed_angle;
+        const float total_angle = 90.0 + tilt_yaw_angle + fixed_angle; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const float scale = total_angle * 0.001;
         pkt.front_left_tilt = (SRV_Channels::get_output_scaled(SRV_Channel::k_tiltMotorLeft) * scale) - tilt_yaw_angle;
         pkt.front_right_tilt = (SRV_Channels::get_output_scaled(SRV_Channel::k_tiltMotorRight) * scale) - tilt_yaw_angle;
@@ -470,7 +470,7 @@ void Tiltrotor::tilt_compensate_angle(float *thrust, uint8_t num_motors, float n
     }
 
     float largest_tilted = 0;
-    const float sin_tilt = sinf(radians(current_tilt*90));
+    const float sin_tilt = sinf(radians(current_tilt*90)); // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     // yaw_gain relates the amount of differential thrust we get from
     // tilt, so that the scaling of the yaw control is the same at any
     // tilt angle
@@ -547,10 +547,10 @@ bool Tiltrotor::fully_up(void) const
         return false;
     }
     return (current_tilt <= 0);
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 /*
-  control vectoring for tilt multicopters
+  control vectoring for tilt multicopters // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
  */
 void Tiltrotor::vectoring(void)
 {
@@ -585,11 +585,11 @@ void Tiltrotor::vectoring(void)
                 const float gain = fixed_gain * fixed_tilt_limit;
                 // base the tilt on elevon mixing, which means it
                 // takes account of the MIXING_GAIN. The rear tilt is
-                // based on elevator
-                const float right = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_right) * (1/4500.0);
-                const float left  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_left) * (1/4500.0);
-                const float mid  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) * (1/4500.0);
-                // front tilt is effective canards, so need to swap and use negative. Rear motors are treated live elevons.
+                // based on elevator // coverity[RW.NO_MATCHING_FUNCTION]
+                const float right = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_right) * (1/4500.0); // coverity[RW.NO_MATCHING_FUNCTION]
+                const float left  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_left) * (1/4500.0); // coverity[RW.NO_MATCHING_FUNCTION]
+                const float mid  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) * (1/4500.0); // coverity[RW.NO_MATCHING_FUNCTION]
+                // front tilt is effective canards, so need to swap and use negative. Rear motors are treated live elevons. // coverity[RW.NO_MATCHING_FUNCTION]
                 SRV_Channels::set_output_scaled(SRV_Channel::k_tiltMotorLeft,1000 * constrain_float(base_output - right,0,1));
                 SRV_Channels::set_output_scaled(SRV_Channel::k_tiltMotorRight,1000 * constrain_float(base_output - left,0,1));
                 SRV_Channels::set_output_scaled(SRV_Channel::k_tiltMotorRearLeft,1000 * constrain_float(base_output + left,0,1));
@@ -604,11 +604,11 @@ void Tiltrotor::vectoring(void)
     if (no_yaw) {
         // fixed wing  We need to apply inverse scaling with throttle, and remove the surface speed scaling as
         // we don't want tilt impacted by airspeed
-        const float scaler = plane.control_mode == &plane.mode_manual?1:(quadplane.FW_vector_throttle_scaling() / plane.get_speed_scaler());
-        const float gain = fixed_gain * fixed_tilt_limit * scaler;
-        const float right = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_right) * (1/4500.0);
-        const float left  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_left) * (1/4500.0);
-        const float mid  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) * (1/4500.0);
+        const float scaler = plane.control_mode == &plane.mode_manual?1:(quadplane.FW_vector_throttle_scaling() / plane.get_speed_scaler()); // coverity[RW.NO_MATCHING_FUNCTION]
+        const float gain = fixed_gain * fixed_tilt_limit * scaler; // coverity[RW.NO_MATCHING_FUNCTION]
+        const float right = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_right) * (1/4500.0); // coverity[RW.NO_MATCHING_FUNCTION]
+        const float left  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevon_left) * (1/4500.0); // coverity[RW.NO_MATCHING_FUNCTION]
+        const float mid  = gain * SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) * (1/4500.0); // coverity[RW.NO_MATCHING_FUNCTION]
         SRV_Channels::set_output_scaled(SRV_Channel::k_tiltMotorLeft,1000 * constrain_float(base_output - right,0,1));
         SRV_Channels::set_output_scaled(SRV_Channel::k_tiltMotorRight,1000 * constrain_float(base_output - left,0,1));
         SRV_Channels::set_output_scaled(SRV_Channel::k_tiltMotorRearLeft,1000 * constrain_float(base_output + left,0,1));
@@ -690,10 +690,10 @@ void Tiltrotor::bicopter_output(void)
         quadplane.motors_output(true);
     } else {
         quadplane.motors_output(false);
-    }
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // bicopter assumes that trim is up so we scale down so match
-    float tilt_left = SRV_Channels::get_output_scaled(SRV_Channel::k_tiltMotorLeft);
+    float tilt_left = SRV_Channels::get_output_scaled(SRV_Channel::k_tiltMotorLeft); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     float tilt_right = SRV_Channels::get_output_scaled(SRV_Channel::k_tiltMotorRight);
 
     if (is_negative(tilt_left)) {

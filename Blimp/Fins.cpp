@@ -32,7 +32,7 @@ Fins::Fins(uint16_t loop_rate) :
     _loop_rate(loop_rate)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void Fins::setup_fins()
 {

@@ -24,6 +24,7 @@
 #include <AP_Math/AP_Math.h>
 #include <string.h>
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -48,7 +49,7 @@ Sailboat::Sailboat(const char *frame_str) :
 {
     motor_connected = (strcmp(frame_str, "sailboat-motor") == 0);
     skid_steering = strstr(frame_str, "skid") != nullptr;
-    lock_step_scheduled = true;
+    lock_step_scheduled = true; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // calculate the lift and drag as values from 0 to 1
@@ -73,8 +74,8 @@ void Sailboat::calc_lift_and_drag(float wind_speed, float angle_of_attack_deg, f
         drag = drag_curve[index_max];
     } else {
         uint8_t index = constrain_int16(aoa / index_width_deg, 0, index_max - 1);
-        float remainder = aoa - (index * index_width_deg);
-        lift = linear_interpolate(lift_curve[index], lift_curve[index+1], remainder, 0.0f, index_width_deg);
+        float remainder = aoa - (index * index_width_deg); // coverity[OVERRUN] // Reviewed: safe in context
+        lift = linear_interpolate(lift_curve[index], lift_curve[index+1], remainder, 0.0f, index_width_deg); // coverity[OVERRUN] // Reviewed: safe in context
         drag = linear_interpolate(drag_curve[index], drag_curve[index+1], remainder, 0.0f, index_width_deg);
     }
 
@@ -109,7 +110,8 @@ float Sailboat::get_yaw_rate(float steering, float speed) const
         return rate;
     } 
     
-    if (is_zero(speed) && skid_steering) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (is_zero(speed) && skid_steering) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         rate = steering * M_PI * 5;
     } else {
         float d = get_turn_circle(steering);

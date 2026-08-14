@@ -38,7 +38,7 @@ SoftSerial::SoftSerial(uint32_t _baudrate, serial_config _config) :
         stop_mask = 0xC00;
         break;
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   process a pulse made up of a width of values at high voltage

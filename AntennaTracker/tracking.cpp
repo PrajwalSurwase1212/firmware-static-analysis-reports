@@ -82,7 +82,7 @@ void Tracker::update_bearing_and_distance()
 /**
   main antenna tracking code, called at 50Hz
  */
-void Tracker::update_tracking(void)
+void Tracker::update_tracking(void) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // update vehicle position estimate
     update_vehicle_pos_estimate();
@@ -94,8 +94,8 @@ void Tracker::update_tracking(void)
     update_bearing_and_distance();
 
     // do not perform any servo updates until startup delay has passed
-    if (g.startup_delay > 0 &&
-        AP_HAL::millis() - start_time_ms < g.startup_delay*1000) {
+    if (g.startup_delay > 0 && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        AP_HAL::millis() - start_time_ms < g.startup_delay*1000) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         return;
     }
 

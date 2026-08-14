@@ -356,7 +356,7 @@ void AnalogIn::_timer_tick()
 {
     for (uint8_t j = 0; j < ANALOG_MAX_CHANNELS; j++) {
         ESP32::AnalogSource *c = _channels[j];
-        if (c != nullptr) {
+        if (c) {
             // add a value
             c->_add_value();
         }

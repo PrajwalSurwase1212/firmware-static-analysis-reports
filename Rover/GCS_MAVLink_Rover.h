@@ -13,7 +13,7 @@ class GCS_MAVLINK_Rover : public GCS_MAVLINK
 {
 public:
 
-    using GCS_MAVLINK::GCS_MAVLINK;
+    using GCS_MAVLINK::GCS_MAVLINK; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 protected:
 

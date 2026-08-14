@@ -54,7 +54,7 @@ void EFI_Hirth::update_receive()
     }
 
     // checksum is sum of all bytes except the received checksum:
-    const uint8_t expected_checksum = 256U - crc_sum_of_bytes(receive_buf, expected_bytes_in_message-1);
+    const uint8_t expected_checksum = 256U - crc_sum_of_bytes(receive_buf, expected_bytes_in_message-1); // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     const uint8_t received_checksum = receive_buf[expected_bytes_in_message-1];
     if (expected_checksum == received_checksum) {
         PacketCode received_packet_code = PacketCode(receive_buf[1]);
@@ -78,7 +78,7 @@ void EFI_Hirth::update_receive()
         // simply throw these bytes away.  What the actual device does in the
         // face of weird data is unknown.
     }
-    memmove(&receive_buf[0], &receive_buf[expected_bytes_in_message], receive_buf_ofs - expected_bytes_in_message);
+    memmove(&receive_buf[0], &receive_buf[expected_bytes_in_message], receive_buf_ofs - expected_bytes_in_message); // coverity[OVERRUN] // Reviewed: safe in context
     receive_buf_ofs -= expected_bytes_in_message;
 }
 

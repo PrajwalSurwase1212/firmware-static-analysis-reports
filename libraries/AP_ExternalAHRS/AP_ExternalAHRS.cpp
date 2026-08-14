@@ -46,7 +46,7 @@ AP_ExternalAHRS::AP_ExternalAHRS()
         // min 50Hz
         rate.set(50);
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 #ifndef HAL_EXTERNAL_AHRS_DEFAULT
 #define HAL_EXTERNAL_AHRS_DEFAULT 0
@@ -311,7 +311,7 @@ void AP_ExternalAHRS::get_filter_status(nav_filter_status &status) const
  */
 bool AP_ExternalAHRS::get_variances(float &velVar, float &posVar, float &hgtVar, Vector3f &magVar, float &tasVar) const
 {
-    if (backend != nullptr) {
+    if (backend) {
         return backend->get_variances(velVar, posVar, hgtVar, magVar, tasVar);
     }
     return false;

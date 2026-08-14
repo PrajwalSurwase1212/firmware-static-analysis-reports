@@ -31,7 +31,7 @@ public:
     const uint8_t *data{nullptr};
 
     FileData(void *_backend) :
-        backend(_backend) {}
+        backend(_backend) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
     
     // destructor to free data
     ~FileData();

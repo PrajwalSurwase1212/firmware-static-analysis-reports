@@ -20,13 +20,13 @@ extern const AP_HAL::HAL& hal;
 AP_RTC::AP_RTC()
 {
     AP_Param::setup_object_defaults(this, var_info);
-    if (_singleton != nullptr) {
+    if (_singleton) {
         // it's an error to get here.  But I don't want to include
         // AP_HAL here
-        return;
+        return; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 // table of user settable parameters

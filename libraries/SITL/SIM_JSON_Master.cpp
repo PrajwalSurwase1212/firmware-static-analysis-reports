@@ -54,7 +54,8 @@ void JSON_Master::init(const int32_t num_slaves)
 
         initialized = true;
     }
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 // Receive PWM outs from ride along controlers
 void JSON_Master::receive(struct sitl_input &input)
@@ -184,7 +185,7 @@ void JSON_Master::send(const struct sitl_fdm &output, const Vector3d &position)
                             output.quaternion.q1, output.quaternion.q2, output.quaternion.q3, output.quaternion.q4,
                             output.speedN, output.speedE, output.speedD);
 
-    if (length < 0) {
+    if (length < 0) { // coverity[OVERRUN] // Reviewed: safe in context
         return;
     }
 

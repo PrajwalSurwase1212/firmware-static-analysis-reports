@@ -178,7 +178,7 @@ void Sub::notify_flight_mode()
 
 // get_pilot_desired_angle_rates - transform pilot's roll pitch and yaw input into a desired lean angle rates
 // returns desired angle rates in centi-degrees-per-second
-void Mode::get_pilot_desired_angle_rates(int16_t roll_in, int16_t pitch_in, int16_t yaw_in, float &roll_out, float &pitch_out, float &yaw_out)
+void Mode::get_pilot_desired_angle_rates(int16_t roll_in, int16_t pitch_in, int16_t yaw_in, float &roll_out, float &pitch_out, float &yaw_out) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float rate_limit;
     Vector3f rate_ef_level, rate_bf_level, rate_bf_request;
@@ -193,9 +193,9 @@ void Mode::get_pilot_desired_angle_rates(int16_t roll_in, int16_t pitch_in, int1
     }
 
     // calculate roll, pitch rate requests
-    if (g.acro_expo <= 0) {
-        rate_bf_request.x = roll_in * g.acro_rp_p;
-        rate_bf_request.y = pitch_in * g.acro_rp_p;
+    if (g.acro_expo <= 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        rate_bf_request.x = roll_in * g.acro_rp_p; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+        rate_bf_request.y = pitch_in * g.acro_rp_p; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else {
         // expo variables
         float rp_in, rp_in3, rp_out;
@@ -208,29 +208,29 @@ void Mode::get_pilot_desired_angle_rates(int16_t roll_in, int16_t pitch_in, int1
         // roll expo
         rp_in = float(roll_in)/ROLL_PITCH_INPUT_MAX;
         rp_in3 = rp_in*rp_in*rp_in;
-        rp_out = (g.acro_expo * rp_in3) + ((1 - g.acro_expo) * rp_in);
+        rp_out = (g.acro_expo * rp_in3) + ((1 - g.acro_expo) * rp_in); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         rate_bf_request.x = ROLL_PITCH_INPUT_MAX * rp_out * g.acro_rp_p;
 
         // pitch expo
         rp_in = float(pitch_in)/ROLL_PITCH_INPUT_MAX;
         rp_in3 = rp_in*rp_in*rp_in;
-        rp_out = (g.acro_expo * rp_in3) + ((1 - g.acro_expo) * rp_in);
+        rp_out = (g.acro_expo * rp_in3) + ((1 - g.acro_expo) * rp_in); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         rate_bf_request.y = ROLL_PITCH_INPUT_MAX * rp_out * g.acro_rp_p;
     }
 
     // calculate yaw rate request
-    rate_bf_request.z = yaw_in * g.acro_yaw_p;
+    rate_bf_request.z = yaw_in * g.acro_yaw_p; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     // calculate earth frame rate corrections to pull the vehicle back to level while in ACRO mode
 
     if (g.acro_trainer != ACRO_TRAINER_DISABLED) {
         // Calculate trainer mode earth frame rate command for roll
         int32_t roll_angle = wrap_180_cd(ahrs.roll_sensor);
-        rate_ef_level.x = -constrain_int32(roll_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_roll;
+        rate_ef_level.x = -constrain_int32(roll_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_roll; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         // Calculate trainer mode earth frame rate command for pitch
         int32_t pitch_angle = wrap_180_cd(ahrs.pitch_sensor);
-        rate_ef_level.y = -constrain_int32(pitch_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_pitch;
+        rate_ef_level.y = -constrain_int32(pitch_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_pitch; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         // Calculate trainer mode earth frame rate command for yaw
         rate_ef_level.z = 0;
@@ -238,15 +238,15 @@ void Mode::get_pilot_desired_angle_rates(int16_t roll_in, int16_t pitch_in, int1
         // Calculate angle limiting earth frame rate commands
         if (g.acro_trainer == ACRO_TRAINER_LIMITED) {
             if (roll_angle > sub.aparm.angle_max) {
-                rate_ef_level.x -=  g.acro_balance_roll*(roll_angle-sub.aparm.angle_max);
+                rate_ef_level.x -=  g.acro_balance_roll*(roll_angle-sub.aparm.angle_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             } else if (roll_angle < -sub.aparm.angle_max) {
-                rate_ef_level.x -=  g.acro_balance_roll*(roll_angle+sub.aparm.angle_max);
+                rate_ef_level.x -=  g.acro_balance_roll*(roll_angle+sub.aparm.angle_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
 
             if (pitch_angle > sub.aparm.angle_max) {
-                rate_ef_level.y -=  g.acro_balance_pitch*(pitch_angle-sub.aparm.angle_max);
+                rate_ef_level.y -=  g.acro_balance_pitch*(pitch_angle-sub.aparm.angle_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             } else if (pitch_angle < -sub.aparm.angle_max) {
-                rate_ef_level.y -=  g.acro_balance_pitch*(pitch_angle+sub.aparm.angle_max);
+                rate_ef_level.y -=  g.acro_balance_pitch*(pitch_angle+sub.aparm.angle_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
         }
 

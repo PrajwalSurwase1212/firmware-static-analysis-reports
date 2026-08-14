@@ -152,7 +152,7 @@ float AP_L1_Control::loiter_radius(const float radius) const
     float lateral_accel_sea_level = tanf(radians(sanitized_bank_limit)) * GRAVITY_MSS;
 
     float nominal_velocity_sea_level = 0.0f;
-    if(_tecs != nullptr) {
+    if (_tecs) {
         nominal_velocity_sea_level =  _tecs->get_target_airspeed();
     }
 
@@ -203,7 +203,7 @@ void AP_L1_Control::_prevent_indecision(float &Nu)
 }
 
 // update L1 control for waypoint navigation
-void AP_L1_Control::update_waypoint(const Location &prev_WP, const Location &next_WP, float dist_min)
+void AP_L1_Control::update_waypoint(const Location &prev_WP, const Location &next_WP, float dist_min) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
 
     Location _current_loc;
@@ -313,7 +313,7 @@ void AP_L1_Control::update_waypoint(const Location &prev_WP, const Location &nex
         // compute integral error component to converge to a crosstrack of zero when traveling
         // straight but reset it when disabled or if it changes. That allows for much easier
         // tuning by having it re-converge each time it changes.
-        if (_L1_xtrack_i_gain <= 0 || !is_equal(_L1_xtrack_i_gain.get(), _L1_xtrack_i_gain_prev)) {
+        if (_L1_xtrack_i_gain <= 0 || !is_equal(_L1_xtrack_i_gain.get(), _L1_xtrack_i_gain_prev)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             _L1_xtrack_i = 0;
             _L1_xtrack_i_gain_prev = _L1_xtrack_i_gain;
         } else if (fabsf(Nu1) < radians(5)) {

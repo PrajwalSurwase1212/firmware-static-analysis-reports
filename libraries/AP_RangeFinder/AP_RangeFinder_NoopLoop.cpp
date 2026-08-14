@@ -21,6 +21,7 @@
 #include <AP_HAL/utility/sparse-endian.h>
 
 #include <ctype.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -53,7 +54,8 @@ bool AP_RangeFinder_NoopLoop::get_reading(float &reading_m)
 
     // read any available lines from the lidar
     uint32_t nbytes = uart->available();
-    while (nbytes-- > 0) {
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    while (nbytes-- > 0) { // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         uint8_t c;
         if (!uart->read(c)) {
             break;

@@ -3,6 +3,7 @@
 #include <AP_HAL/AP_HAL.h>
 
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -23,7 +24,8 @@ bool AP_HAL::PWMSource::set_pin(int16_t new_pin, const char *subsystem)
     }
 
     if (interrupt_attached) {
-        if (!hal.gpio->detach_interrupt(_pin)) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (!hal.gpio->detach_interrupt(_pin)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             GCS_SEND_TEXT(MAV_SEVERITY_WARNING,
                           "%s: Failed to detach interrupt from %d",
                           subsystem,

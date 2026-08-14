@@ -58,7 +58,7 @@ ModeTakeoff::ModeTakeoff() :
     Mode()
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool ModeTakeoff::_enter()
 {

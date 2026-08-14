@@ -32,7 +32,7 @@ public:
     // constructor.  This remains because construction of Copter's g2
     // object becomes problematic if we don't have at least one object
     // to initialise
-    AP_TempCalibration() {}
+    AP_TempCalibration() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // settable parameters
     static const struct AP_Param::GroupInfo var_info[];

@@ -131,7 +131,7 @@ const AP_Param::GroupInfo AP_Quicktune::var_info[] = {
 };
 
 // Call at loop rate
-void AP_Quicktune::update(bool mode_supports_quicktune)
+void AP_Quicktune::update(bool mode_supports_quicktune) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (enable < 1) {
         if (need_restore) {
@@ -230,8 +230,8 @@ void AP_Quicktune::update(bool mode_supports_quicktune)
 
     if (axis == AxisName::DONE) {
         // Nothing left to do, check autosave time
-        if (tune_done_time_ms != 0 && auto_save > 0) {
-            if (now - tune_done_time_ms > (auto_save*1000)) {
+        if (tune_done_time_ms != 0 && auto_save > 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+            if (now - tune_done_time_ms > (auto_save*1000)) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 need_restore = false;
                 save_all_params();
                 tune_done_time_ms = 0;
@@ -276,7 +276,7 @@ void AP_Quicktune::update(bool mode_supports_quicktune)
     const bool limited = (limit > 0.0 && pval >= limit);
     const float srate = get_slew_rate(axis);
     const bool oscillating = srate > osc_smax;
-    
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     // Check if reached limit
     if (limited || oscillating) {
         float reduction = (100.0-gain_margin)*0.01;
@@ -473,14 +473,14 @@ void AP_Quicktune::adjust_gain(AP_Quicktune::Param param, float value)
 
 void AP_Quicktune::adjust_gain_limited(AP_Quicktune::Param param, float value)
 {
-    adjust_gain(param, limit_gain(param, value));
+    adjust_gain(param, limit_gain(param, value)); // coverity[RW.ROUTINE_NOT_EMITTED]
 }
 
-float AP_Quicktune::limit_gain(AP_Quicktune::Param param, float value)
+float AP_Quicktune::limit_gain(AP_Quicktune::Param param, float value) // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 {
     if (uint8_t(param) >= uint8_t(Param::END)) {
         return value;
-    }
+    } // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     const float saved_value = param_saved[uint8_t(param)];
     if (reduce_max >= 0 && reduce_max < 100 && saved_value > 0) {
         // Check if we exceeded gain reduction
@@ -516,9 +516,9 @@ const char* AP_Quicktune::get_param_name(AP_Quicktune::Param param) const
             return "Yaw I";
         case Param::YAW_D:
             return "Yaw D";
-        default:
+        default: // coverity[RW.ROUTINE_NOT_EMITTED]
             INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
-            return "UNK";
+            return "UNK"; // coverity[RW.NO_MATCHING_FUNCTION]
     }
 }
 
@@ -613,7 +613,7 @@ AP_Float *AP_Quicktune::get_param_pointer(AP_Quicktune::Param param) const
 float AP_Quicktune::get_param_value(AP_Quicktune::Param param) const
 {
     AP_Float *ptr = get_param_pointer(param);
-    if (ptr != nullptr) {
+    if (ptr) {
         return ptr->get();
     }
     return 0.0;
@@ -622,7 +622,7 @@ float AP_Quicktune::get_param_value(AP_Quicktune::Param param) const
 void AP_Quicktune::set_param_value(AP_Quicktune::Param param, float value)
 {
     AP_Float *ptr = get_param_pointer(param);
-    if (ptr != nullptr) {
+    if (ptr) {
        ptr->set(value);
     }
 }
@@ -630,7 +630,7 @@ void AP_Quicktune::set_param_value(AP_Quicktune::Param param, float value)
 void AP_Quicktune::set_and_save_param_value(AP_Quicktune::Param param, float value)
 {
     AP_Float *ptr = get_param_pointer(param);
-    if (ptr != nullptr) {
+    if (ptr) {
        ptr->set_and_save(value);
     }
 }

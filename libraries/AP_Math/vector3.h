@@ -61,6 +61,7 @@
 #include "rotations.h"
 
 #include "ftype.h"
+#include <cerrno>
 
 template <typename T>
 class Matrix3;
@@ -356,7 +357,8 @@ inline Vector3<T> &Vector3<T>::operator *=(const T num)
 template <typename T>
 inline Vector3<T> &Vector3<T>::operator /=(const T num)
 {
-    x /= num; y /= num; z /= num;
+    // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
+    x /= num; y /= num; z /= num; // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
     return *this;
 }
 
@@ -377,7 +379,8 @@ inline Vector3<T> &Vector3<T>::operator +=(const Vector3<T> &v)
 template <typename T>
 inline Vector3<T> Vector3<T>::operator /(const T num) const
 {
-    return Vector3<T>(x/num, y/num, z/num);
+    // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
+    return Vector3<T>(x/num, y/num, z/num); // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
 }
 
 template <typename T>

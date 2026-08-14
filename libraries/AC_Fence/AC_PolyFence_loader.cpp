@@ -41,7 +41,7 @@ void AC_PolyFence_loader::init()
 #if AP_SDCARD_STORAGE_ENABLED
     // check for extra storage on microsd
     const auto *bc = AP::boardConfig();
-    if (bc != nullptr) {
+    if (bc) {
         const auto size_kb = bc->get_sdcard_fence_kb();
         if (size_kb > 0) {
             _failed_sdcard_storage = !fence_storage.attach_file(AC_FENCE_SDCARD_FILENAME, size_kb);
@@ -461,7 +461,7 @@ void AC_PolyFence_loader::scan_eeprom_count_fences(const AC_PolyFenceType type, 
     }
     _eeprom_fence_count++;
     switch (type) {
-    case AC_PolyFenceType::END_OF_STORAGE:
+    case AC_PolyFenceType::END_OF_STORAGE: // coverity[DEADCODE]
         INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
         break;
     case AC_PolyFenceType::POLYGON_EXCLUSION:
@@ -503,7 +503,7 @@ void AC_PolyFence_loader::scan_eeprom_index_fences(const AC_PolyFenceType type, 
     index.type = type;
     index.storage_offset = read_offset;
     switch (type) {
-    case AC_PolyFenceType::END_OF_STORAGE:
+    case AC_PolyFenceType::END_OF_STORAGE: // coverity[DEADCODE]
         INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
         break;
     case AC_PolyFenceType::POLYGON_EXCLUSION:
@@ -871,13 +871,13 @@ bool AC_PolyFence_loader::load_from_storage()
             break;
         }
         case AC_PolyFenceType::RETURN_POINT:
-            if (_loaded_return_point != nullptr) {
+            if (_loaded_return_point) {
                 GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "PolyFence: Multiple return points found");
                 storage_valid = false;
                 break;
             }
             _loaded_return_point = next_storage_point;
-            if (_loaded_return_point_lla != nullptr) {
+            if (_loaded_return_point_lla) {
                 GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "PolyFence: Multiple return points found");
                 storage_valid = false;
                 break;
@@ -1222,7 +1222,7 @@ bool AC_PolyFence_loader::get_return_point(Vector2l &ret)
     }
 
     const FenceIndex *rp = find_first_fence(AC_PolyFenceType::RETURN_POINT);
-    if (rp != nullptr) {
+    if (rp) {
         uint16_t read_offset = rp->storage_offset + 1;
         return read_latlon_from_storage(read_offset, ret);
     }
@@ -1387,7 +1387,7 @@ AC_PolyFence_loader::FenceIndex *AC_PolyFence_loader::get_or_create_return_point
         return nullptr;
     }
     FenceIndex *return_point = find_first_fence(AC_PolyFenceType::RETURN_POINT);
-    if (return_point != nullptr) {
+    if (return_point) {
         return return_point;
     }
 
@@ -1396,7 +1396,7 @@ AC_PolyFence_loader::FenceIndex *AC_PolyFence_loader::get_or_create_return_point
     // we receive fence points
     uint16_t offset;
     const FenceIndex *inclusion_fence = find_first_fence(AC_PolyFenceType::POLYGON_INCLUSION);
-    if (inclusion_fence != nullptr) {
+    if (inclusion_fence) {
         offset = inclusion_fence->storage_offset;
         // the "9"s below represent the size of a return point in storage
         for (uint8_t i=0; i<inclusion_fence->count; i++) {
@@ -1469,7 +1469,7 @@ AC_PolyFence_loader::FenceIndex *AC_PolyFence_loader::get_or_create_include_fenc
         return nullptr;
     }
     FenceIndex *inclusion = find_first_fence(AC_PolyFenceType::POLYGON_INCLUSION);
-    if (inclusion != nullptr) {
+    if (inclusion) {
         return inclusion;
     }
     if (_total < 5) {

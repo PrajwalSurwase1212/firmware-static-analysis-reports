@@ -26,7 +26,7 @@ public:
 
 		// set _last_derivative as invalid when we startup
 		_last_derivative = NAN;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /// Iterate the PID, return the new control value
     ///

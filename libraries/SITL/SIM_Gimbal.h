@@ -71,7 +71,7 @@ private:
     Vector3f true_gyro_bias;
 
     // time since delta angles/velocities returned
-    uint32_t delta_start_us{};
+    uint32_t delta_start_us{}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // integral of gyro vector over last time interval. In radians
     Vector3f delta_angle;

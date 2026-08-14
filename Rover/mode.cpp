@@ -11,7 +11,7 @@ Mode::Mode() :
     channel_pitch(rover.channel_pitch),
     channel_walking_height(rover.channel_walking_height),
     attitude_control(g2.attitude_control)
-{ }
+{ } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void Mode::exit()
 {
@@ -186,12 +186,12 @@ void Mode::get_pilot_desired_heading_and_speed(float &heading_out, float &speed_
 // outputs are in the range -1 to +1
 void Mode::get_pilot_desired_roll_and_pitch(float &roll_out, float &pitch_out) const
 {
-    if (channel_roll != nullptr) {
+    if (channel_roll) {
         roll_out = channel_roll->norm_input();
     } else {
         roll_out = 0.0f;
     }
-    if (channel_pitch != nullptr) {
+    if (channel_pitch) {
         pitch_out = channel_pitch->norm_input();
     } else {
         pitch_out = 0.0f;
@@ -202,7 +202,7 @@ void Mode::get_pilot_desired_roll_and_pitch(float &roll_out, float &pitch_out) c
 // outputs are in the range -1 to +1
 void Mode::get_pilot_desired_walking_height(float &walking_height_out) const
 {
-    if (channel_walking_height != nullptr) {
+    if (channel_walking_height) {
         walking_height_out = channel_walking_height->norm_input();
     } else {
         walking_height_out = 0.0f;

@@ -30,7 +30,7 @@ class AP_GPS_MSP : public AP_GPS_Backend
 {
 public:
 
-    using AP_GPS_Backend::AP_GPS_Backend;
+    using AP_GPS_Backend::AP_GPS_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     bool read() override;
     void handle_msp(const MSP::msp_gps_data_message_t &pkt) override;

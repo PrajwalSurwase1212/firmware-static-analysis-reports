@@ -1,6 +1,7 @@
 #include "mode.h"
 #include "Plane.h"
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 #if MODE_AUTOLAND_ENABLED
 
@@ -62,7 +63,7 @@ const AP_Param::GroupInfo ModeAutoLand::var_info[] = {
 ModeAutoLand::ModeAutoLand() :
     Mode()
 {
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool ModeAutoLand::_enter()
@@ -162,7 +163,8 @@ bool ModeAutoLand::_enter()
 #else
         const bool use_terrain = false;
 #endif
-        const float dist_to_climb = terrain_alt_min - plane.relative_ground_altitude(RangeFinderUse::CLIMB, use_terrain);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        const float dist_to_climb = terrain_alt_min - plane.relative_ground_altitude(RangeFinderUse::CLIMB, use_terrain); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         if (is_positive(dist_to_climb)) {
             // Copy loiter and update target altitude to current altitude plus climb altitude
             cmd_climb = cmd_loiter;

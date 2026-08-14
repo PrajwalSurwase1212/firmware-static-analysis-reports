@@ -23,7 +23,7 @@ ScriptingLED *ScriptingLED::_singleton;
 ScriptingLED::ScriptingLED() :
     RGBLed(0, 255, 170, 85)
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("ScriptingLED must be singleton");
     }
     _singleton = this;

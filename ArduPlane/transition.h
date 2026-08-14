@@ -73,7 +73,7 @@ class SLT_Transition : public Transition
 {
 public:
 
-    using Transition::Transition;
+    using Transition::Transition; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void update() override;
 

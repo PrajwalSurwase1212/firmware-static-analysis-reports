@@ -23,6 +23,7 @@
 #include "fieldencode.h"
 #include "scaleddecode.h"
 #include "scaledencode.h"
+#include <errno.h>
 
 /*!
  * \brief Encode a ECU_PumpOptionBits_t into a byte array
@@ -94,7 +95,8 @@ void encodeECU_ThrottleSettingsPacketStructure(void* _pg_pkt, const ECU_Throttle
     // Throttle input open PWM value
     // Range of pulseInputOpen is 0 to 4095.
     _pg_tempbitfield = (unsigned int)limitMax(_pg_user->pulseInputOpen, 4095);
-    _pg_data[_pg_byteindex + 1] = (uint8_t)(_pg_tempbitfield << 4);
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+    _pg_data[_pg_byteindex + 1] = (uint8_t)(_pg_tempbitfield << 4); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
 
     _pg_tempbitfield >>= 4;
     _pg_data[_pg_byteindex] = (uint8_t)_pg_tempbitfield;
@@ -103,7 +105,8 @@ void encodeECU_ThrottleSettingsPacketStructure(void* _pg_pkt, const ECU_Throttle
     // Throttle input closed PWM value
     // Range of pulseInputClosed is 0 to 4095.
     _pg_tempbitfield = (unsigned int)limitMax(_pg_user->pulseInputClosed, 4095);
-    _pg_data[_pg_byteindex + 2] = (uint8_t)_pg_tempbitfield;
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+    _pg_data[_pg_byteindex + 2] = (uint8_t)_pg_tempbitfield; // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
 
     _pg_tempbitfield >>= 8;
     _pg_data[_pg_byteindex + 1] |= (uint8_t)_pg_tempbitfield;

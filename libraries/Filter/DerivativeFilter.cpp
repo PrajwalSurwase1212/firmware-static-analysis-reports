@@ -68,7 +68,7 @@ float DerivativeFilter<T,FILTER_SIZE>::slope(void)
     }
 
     // N in the paper is FILTER_SIZE
-    switch (FILTER_SIZE) {
+    switch (FILTER_SIZE) { // coverity[PW.SWITCH_SELECTOR_EXPR_IS_CONSTANT]
     case 5:
         result = 2*2*(f(1) - f(-1)) / (x(1) - x(-1))
                  + 4*1*(f(2) - f(-2)) / (x(2) - x(-2));

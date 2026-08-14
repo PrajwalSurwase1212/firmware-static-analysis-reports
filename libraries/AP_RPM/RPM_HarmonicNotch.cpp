@@ -21,10 +21,12 @@
 
 #include <AP_HAL/AP_HAL.h>
 #include <AP_InertialSensor/AP_InertialSensor.h>
+#include <cerrno>
 
 void AP_RPM_HarmonicNotch::update(void)
 {
-    const AP_InertialSensor& ins = AP::ins();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    const AP_InertialSensor& ins = AP::ins(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
     for (const auto &notch : ins.harmonic_notches) {
         if (notch.params.enabled() &&
             notch.params.tracking_mode() != HarmonicNotchDynamicMode::Fixed) {

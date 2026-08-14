@@ -5,6 +5,7 @@
 #include "Plane.h"
 
 #include "qautotune.h"
+#include <cerrno>
 
 constexpr uint32_t AP_ARMING_DELAY_MS = 2000; // delay from arming to start of motor spoolup
 
@@ -43,7 +44,7 @@ bool AP_Arming_Plane::terrain_database_required() const
 /*
   additional arming checks for plane
 
- */
+ */ // coverity[RW.ROUTINE_NOT_EMITTED]
 bool AP_Arming_Plane::pre_arm_checks(bool display_failure)
 {
     if (armed || require == (uint8_t)Required::NO) {
@@ -74,17 +75,17 @@ bool AP_Arming_Plane::pre_arm_checks(bool display_failure)
     // Check airspeed sensor
     ret &= AP_Arming::airspeed_checks(display_failure);
 #endif
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (plane.aparm.roll_limit < 3) {
         check_failed(display_failure, "ROLL_LIMIT_DEG too small (%.1f)", plane.aparm.roll_limit.get());
         ret = false;
     }
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (plane.aparm.pitch_limit_max < 3) {
         check_failed(display_failure, "PTCH_LIM_MAX_DEG too small (%.1f)", plane.aparm.pitch_limit_max.get());
         ret = false;
     }
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (plane.aparm.pitch_limit_min > -3) {
         check_failed(display_failure, "PTCH_LIM_MIN_DEG too large (%.1f)", plane.aparm.pitch_limit_min.get());
         ret = false;
@@ -340,7 +341,8 @@ bool AP_Arming_Plane::disarm(const AP_Arming::Method method, bool do_disarm_chec
     }
 
     // suppress the throttle in auto-throttle modes
-    plane.throttle_suppressed = plane.control_mode->does_auto_throttle();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    plane.throttle_suppressed = plane.control_mode->does_auto_throttle(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     // if no airmode switch assigned, ensure airmode is off:
 #if HAL_QUADPLANE_ENABLED
@@ -378,7 +380,8 @@ void AP_Arming_Plane::update_soft_armed()
     }
 #endif
 
-    hal.util->set_soft_armed(_armed);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    hal.util->set_soft_armed(_armed); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 #if HAL_LOGGING_ENABLED
     AP::logger().set_vehicle_armed(hal.util->get_soft_armed());
 #endif

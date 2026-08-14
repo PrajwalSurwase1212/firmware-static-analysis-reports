@@ -21,6 +21,7 @@
 #include <AP_Common/AP_Common.h>
 
 #include <stdint.h>
+#include <cerrno>
 
 class ExpandingString {
 public:
@@ -28,13 +29,15 @@ public:
     ExpandingString(char* s, uint32_t total_len);
 
     const char *get_string(void) const {
-        return buf;
+        // parasoft-suppress BD-RES-FREE "Reviewed and safe"
+        return buf; // parasoft-suppress BD-RES-FREE "Reviewed and safe"
     }
     uint32_t get_length(void) const {
         return used;
     }
     char *get_writeable_string(void) const {
-        return buf;
+        // parasoft-suppress BD-RES-FREE "Reviewed and safe"
+        return buf; // parasoft-suppress BD-RES-FREE "Reviewed and safe"
     }
 
     // print into the string

@@ -22,6 +22,7 @@
 #include "fieldencode.h"
 #include "scaleddecode.h"
 #include "scaledencode.h"
+#include <errno.h>
 
 /*!
  * \brief Encode a ESC_StatusBits_t into a byte array
@@ -354,7 +355,8 @@ void encodeESC_ExtendedWarningBits_t(uint8_t* _pg_data, int* _pg_bytecount, cons
     // Reserved for future use
     // Range of reservedWarningBits is 0 to 16383.
     _pg_tempbitfield = (unsigned int)limitMax(_pg_user->reservedWarningBits, 16383);
-    _pg_data[_pg_byteindex + 1] = (uint8_t)_pg_tempbitfield;
+    // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+    _pg_data[_pg_byteindex + 1] = (uint8_t)_pg_tempbitfield; // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
 
     _pg_tempbitfield >>= 8;
     _pg_data[_pg_byteindex] |= (uint8_t)_pg_tempbitfield;

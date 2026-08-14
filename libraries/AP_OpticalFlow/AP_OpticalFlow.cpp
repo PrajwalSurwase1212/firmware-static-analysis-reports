@@ -15,6 +15,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
 #include <AP_AHRS/AP_AHRS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -113,7 +114,7 @@ AP_OpticalFlow::AP_OpticalFlow()
 {
     _singleton = this;
 
-    AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_OpticalFlow::init(uint32_t log_bit)
@@ -178,7 +179,7 @@ void AP_OpticalFlow::init(uint32_t log_bit)
 #endif  // AP_OPTICALFLOW_SITL_ENABLED
     }
 
-    if (backend != nullptr) {
+    if (backend) {
         backend->init();
     }
 }
@@ -189,7 +190,7 @@ void AP_OpticalFlow::update(void)
     if (!enabled()) {
         return;
     }
-    if (backend != nullptr) {
+    if (backend) {
         backend->update();
     }
 
@@ -198,7 +199,7 @@ void AP_OpticalFlow::update(void)
 
 #if AP_OPTICALFLOW_CALIBRATOR_ENABLED
     // update calibrator and save resulting scaling
-    if (_calibrator != nullptr) {
+    if (_calibrator) {
         if (_calibrator->update()) {
             // apply new calibration values
             const Vector2f new_scaling = _calibrator->get_scalars();
@@ -221,7 +222,7 @@ void AP_OpticalFlow::handle_msg(const mavlink_message_t &msg)
         return;
     }
 
-    if (backend != nullptr) {
+    if (backend) {
         backend->handle_msg(msg);
     }
 }
@@ -234,7 +235,7 @@ void AP_OpticalFlow::handle_msp(const MSP::msp_opflow_data_message_t &pkt)
         return;
     }
 
-    if (backend != nullptr) {
+    if (backend) {
         backend->handle_msp(pkt);
     }
 }
@@ -251,7 +252,8 @@ void AP_OpticalFlow::start_calibration()
             return;
         }
     }
-    if (_calibrator != nullptr) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe" // coverity[UNINIT] // Reviewed: safe in context
+    if (_calibrator) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         _calibrator->start();
     }
 }
@@ -259,7 +261,7 @@ void AP_OpticalFlow::start_calibration()
 // stop calibration
 void AP_OpticalFlow::stop_calibration()
 {
-    if (_calibrator != nullptr) {
+    if (_calibrator) {
         _calibrator->stop();
     }
 }

@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 void Copter::update_ground_effect_detector(void)
 {
@@ -34,7 +35,8 @@ void Copter::update_ground_effect_detector(void)
 
     // get altitude estimate
     float pos_d_m = 0;
-    UNUSED_RESULT(AP::ahrs().get_relative_position_D_origin_float(pos_d_m));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(AP::ahrs().get_relative_position_D_origin_float(pos_d_m)); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     // if we aren't taking off yet, reset the takeoff timer, altitude and complete flag
     const bool throttle_up = flightmode->has_manual_throttle() && channel_throttle->get_control_in() > 0;

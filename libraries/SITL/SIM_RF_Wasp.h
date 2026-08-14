@@ -84,7 +84,7 @@ private:
     };
 
     char _buffer[256]; // from-autopilot
-    uint8_t _buflen{0};
+    uint8_t _buflen{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 };
 

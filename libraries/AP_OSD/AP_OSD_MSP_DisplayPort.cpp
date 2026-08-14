@@ -55,7 +55,7 @@ bool AP_OSD_MSP_DisplayPort::init(void)
 // called by the OSD thread once
 void AP_OSD_MSP_DisplayPort::osd_thread_run_once()
 {
-    if (_displayport != nullptr) {
+    if (_displayport) {
         _displayport->init_uart();
     }
 }

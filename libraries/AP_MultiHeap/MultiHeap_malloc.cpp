@@ -35,7 +35,7 @@ struct heap {
 void *MultiHeap::heap_create(uint32_t size)
 {
     struct heap *new_heap = (struct heap*)malloc(sizeof(struct heap));
-    if (new_heap != nullptr) {
+    if (new_heap) {
         new_heap->magic = HEAP_MAGIC;
         new_heap->max_heap_size = size;
     }

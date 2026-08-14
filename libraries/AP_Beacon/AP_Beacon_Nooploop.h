@@ -11,7 +11,7 @@ class AP_Beacon_Nooploop : public AP_Beacon_Backend
 
 public:
     // constructor
-    using AP_Beacon_Backend::AP_Beacon_Backend;
+    using AP_Beacon_Backend::AP_Beacon_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // return true if sensor is basically healthy (we are receiving data)
     bool healthy() override;

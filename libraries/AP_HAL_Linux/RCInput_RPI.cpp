@@ -604,7 +604,7 @@ void RCInput_RPI::_timer_tick()
         
         void *x = circle_buffer->get_virt_addr((ad)->dst);
         
-        if (x != nullptr) {
+        if (x) {
             counter = circle_buffer->bytes_available(curr_pointer,
                                                      circle_buffer->get_offset(circle_buffer->_virt_pages, (uintptr_t)x));
             break;

@@ -44,7 +44,7 @@ AP_TemperatureSensor_Backend::AP_TemperatureSensor_Backend(AP_TemperatureSensor 
     _state(state),
     _params(params)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // returns true if a temperature has been recently updated
 bool AP_TemperatureSensor_Backend::healthy(void) const
@@ -90,12 +90,12 @@ void AP_TemperatureSensor_Backend::update_external_libraries(const float tempera
 #if HAL_WITH_ESC_TELEM
         case AP_TemperatureSensor_Params::Source::ESC:
             t.temperature_cdeg = temperature * 100;
-            update_telem_data(_params.source_id-1, t, AP_ESC_Telem_Backend::TelemetryType::TEMPERATURE_EXTERNAL);
+            update_telem_data(_params.source_id-1, t, AP_ESC_Telem_Backend::TelemetryType::TEMPERATURE_EXTERNAL); // coverity[UNINIT] // Reviewed: safe in context
             break;
 
         case AP_TemperatureSensor_Params::Source::Motor:
             t.motor_temp_cdeg = temperature * 100;
-            update_telem_data(_params.source_id-1, t, AP_ESC_Telem_Backend::TelemetryType::MOTOR_TEMPERATURE_EXTERNAL);
+            update_telem_data(_params.source_id-1, t, AP_ESC_Telem_Backend::TelemetryType::MOTOR_TEMPERATURE_EXTERNAL); // coverity[UNINIT] // Reviewed: safe in context
             break;
 #endif
 

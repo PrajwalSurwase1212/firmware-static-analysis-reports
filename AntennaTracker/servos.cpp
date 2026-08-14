@@ -101,12 +101,12 @@ void Tracker::update_pitch_position_servo()
    update the pitch (elevation) servo. The aim is to drive the boards ahrs pitch to the
    requested pitch, so the board (and therefore the antenna) will be pointing at the target
  */
-void Tracker::update_pitch_onoff_servo(float pitch) const
+void Tracker::update_pitch_onoff_servo(float pitch) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     int32_t pitch_min_cd = g.pitch_min*100;
     int32_t pitch_max_cd = g.pitch_max*100;
 
-    float acceptable_error = g.onoff_pitch_rate * g.onoff_pitch_mintime;
+    float acceptable_error = g.onoff_pitch_rate * g.onoff_pitch_mintime; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (fabsf(nav_status.angle_error_pitch) < acceptable_error) {
         SRV_Channels::set_output_scaled(SRV_Channel::k_tracker_pitch, 0);
     } else if ((nav_status.angle_error_pitch > 0) && (pitch*100>pitch_min_cd)) {
@@ -217,9 +217,9 @@ void Tracker::update_yaw_position_servo()
    yaw to the requested yaw, so the board (and therefore the antenna)
    will be pointing at the target
  */
-void Tracker::update_yaw_onoff_servo(float yaw) const
+void Tracker::update_yaw_onoff_servo(float yaw) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
-    float acceptable_error = g.onoff_yaw_rate * g.onoff_yaw_mintime;
+    float acceptable_error = g.onoff_yaw_rate * g.onoff_yaw_mintime; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     if (fabsf(nav_status.angle_error_yaw * 0.01f) < acceptable_error) {
         SRV_Channels::set_output_scaled(SRV_Channel::k_tracker_yaw, 0);
     } else if (nav_status.angle_error_yaw * 0.01f > 0) {

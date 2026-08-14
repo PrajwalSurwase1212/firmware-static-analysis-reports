@@ -45,7 +45,7 @@ AC_CustomControl::AC_CustomControl(AP_AHRS_View*& ahrs, AC_AttitudeControl*& att
     _motors(motors)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AC_CustomControl::init(void)
 {
@@ -193,7 +193,7 @@ void AC_CustomControl::log_switch(void) {
 void AC_CustomControl::set_notch_sample_rate(float sample_rate)
 {
 #if AP_FILTER_ENABLED
-    if (_backend != nullptr) {
+    if (_backend) {
         _backend->set_notch_sample_rate(sample_rate);
     }
 #endif

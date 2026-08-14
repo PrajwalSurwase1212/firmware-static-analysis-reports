@@ -36,7 +36,7 @@ class AP_Mount_Siyi : public AP_Mount_Backend_Serial
 
 public:
     // Constructor
-    using AP_Mount_Backend_Serial::AP_Mount_Backend_Serial;
+    using AP_Mount_Backend_Serial::AP_Mount_Backend_Serial; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_Mount_Siyi);

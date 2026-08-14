@@ -136,12 +136,12 @@ AP_Proximity::AP_Proximity()
 {
     AP_Param::setup_object_defaults(this, var_info);
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_Proximity must be singleton");
     }
 #endif // CONFIG_HAL_BOARD == HAL_BOARD_SITL
     _singleton = this;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // initialise the Proximity class. We do detection of attached sensors here
 // we don't allow for hot-plugging of sensors (i.e. reboot required)

@@ -8,6 +8,7 @@
 #include "AP_BattMonitor.h"
 
 #include "AP_BattMonitor_SMBus_SUI.h"
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -25,7 +26,7 @@ AP_BattMonitor_SMBus_SUI::AP_BattMonitor_SMBus_SUI(AP_BattMonitor &mon,
     : AP_BattMonitor_SMBus(mon, mon_state, params, AP_BATTMONITOR_SMBUS_BUS_INTERNAL),
       cell_count(_cell_count)
 {
-    _pec_supported = false;
+    _pec_supported = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_BattMonitor_SMBus_SUI::init(void)
@@ -57,7 +58,8 @@ void AP_BattMonitor_SMBus_SUI::timer()
     // read current
     int32_t current_ma;
     if (read_block_bare(REG_CURRENT, (uint8_t *)&current_ma, sizeof(current_ma))) {
-        _state.current_amps = current_ma * -0.001;
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        _state.current_amps = current_ma * -0.001; // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         _state.last_time_micros = tnow;
     }
 

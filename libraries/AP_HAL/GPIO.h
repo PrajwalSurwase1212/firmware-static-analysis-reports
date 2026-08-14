@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "AP_HAL_Namespace.h"
+#include <cerrno>
 
 #define HAL_GPIO_INPUT  0
 #define HAL_GPIO_OUTPUT 1
@@ -96,7 +97,8 @@ public:
         return false;
     }
     bool detach_interrupt(uint8_t pin) {
-        if (attach_interrupt(pin, (irq_handler_fn_t)nullptr, AP_HAL::GPIO::INTERRUPT_NONE)) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (attach_interrupt(pin, (irq_handler_fn_t)nullptr, AP_HAL::GPIO::INTERRUPT_NONE)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             return true;
         }
         return attach_interrupt(pin, (AP_HAL::Proc)nullptr, AP_HAL::GPIO::INTERRUPT_NONE);

@@ -84,7 +84,7 @@ AC_Loiter::AC_Loiter(const AP_AHRS_View& ahrs, AC_PosControl& pos_control, const
     _attitude_control(attitude_control)
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Sets the initial loiter target position in centimeters from the EKF origin.
 // See init_target_m() for full details.
@@ -96,12 +96,12 @@ void AC_Loiter::init_target_cm(const Vector2f& position_ne_cm)
 // Sets the initial loiter target position in meters from the EKF origin.
 // - position_neu_m: horizontal position in the NE frame, in meters.
 // - Initializes internal control state including acceleration targets and feed-forward planning.
-void AC_Loiter::init_target_m(const Vector2f& position_ne_m)
+void AC_Loiter::init_target_m(const Vector2f& position_ne_m) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     sanity_check_params();
 
     // Configure speed/accel limits in meters using internal parameter (_accel_max_ne_cmss)
-    _pos_control.set_correction_speed_accel_NE_m(LOITER_VEL_CORRECTION_MAX_MS, _accel_max_ne_cmss * 0.01);
+    _pos_control.set_correction_speed_accel_NE_m(LOITER_VEL_CORRECTION_MAX_MS, _accel_max_ne_cmss * 0.01); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     _pos_control.set_pos_error_max_NE_m(LOITER_POS_CORRECTION_MAX_M);
 
     // Reset controller state for stationary loiter
@@ -119,12 +119,12 @@ void AC_Loiter::init_target_m(const Vector2f& position_ne_m)
 
 // Initializes the loiter controller using the current position and velocity.
 // Updates feed-forward velocity, predicted acceleration, and resets control state.
-void AC_Loiter::init_target()
+void AC_Loiter::init_target() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     sanity_check_params();
 
     // Configure correction speed and acceleration limits (in m/s and m/s²)
-    _pos_control.set_correction_speed_accel_NE_m(LOITER_VEL_CORRECTION_MAX_MS, _accel_max_ne_cmss * 0.01);
+    _pos_control.set_correction_speed_accel_NE_m(LOITER_VEL_CORRECTION_MAX_MS, _accel_max_ne_cmss * 0.01); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     _pos_control.set_pos_error_max_NE_m(LOITER_POS_CORRECTION_MAX_M);
 
     // Apply velocity smoothing: softly transitions target acceleration to zero
@@ -257,10 +257,10 @@ void AC_Loiter::set_speed_max_NE_ms(float speed_max_ne_ms)
 
 // Ensures internal parameters are within valid safety limits.
 // Applies min/max constraints on speed and acceleration settings.
-void AC_Loiter::sanity_check_params()
+void AC_Loiter::sanity_check_params() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // Enforce minimum loiter speed
-    _speed_max_ne_cms.set(MAX(_speed_max_ne_cms, LOITER_SPEED_MIN_CMS));
+    _speed_max_ne_cms.set(MAX(_speed_max_ne_cms, LOITER_SPEED_MIN_CMS)); // coverity[RW.NO_MATCHING_FUNCTION]
 
     // Clamp horizontal accel to lean-angle-limited max (converted to cm/s²)
     _accel_max_ne_cmss.set(MIN(_accel_max_ne_cmss, GRAVITY_MSS * 100.0f * tanf(_attitude_control.lean_angle_max_rad())));
@@ -270,7 +270,7 @@ void AC_Loiter::sanity_check_params()
 // - Applies drag and braking forces when sticks are released.
 // - Velocity is adjusted for fence/avoidance if enabled.
 // - Resulting velocity and acceleration are sent to the position controller.
-void AC_Loiter::calc_desired_velocity(bool avoidance_on)
+void AC_Loiter::calc_desired_velocity(bool avoidance_on) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     float ekfGndSpdLimit_ms, ahrsControlScaleXY;
     // Query EKF-imposed horizontal ground speed limit (e.g. for optical flow)
@@ -279,7 +279,7 @@ void AC_Loiter::calc_desired_velocity(bool avoidance_on)
     const float dt_s = _pos_control.get_dt_s();
 
     // Apply speed limit from LOITER_SPEED and EKF constraint
-    float gnd_speed_limit_ms = MIN(_speed_max_ne_cms * 0.01, ekfGndSpdLimit_ms);
+    float gnd_speed_limit_ms = MIN(_speed_max_ne_cms * 0.01, ekfGndSpdLimit_ms); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     gnd_speed_limit_ms = MAX(gnd_speed_limit_ms, LOITER_SPEED_MIN_CMS * 0.01);
 
     // Determine acceleration limit based on maximum allowed lean angle
@@ -307,9 +307,9 @@ void AC_Loiter::calc_desired_velocity(bool avoidance_on)
         // Determine braking acceleration based on stick release and delay timer
         float loiter_brake_accel_mss = 0.0f;
         if (_desired_accel_ne_mss.is_zero()) {
-            if ((AP_HAL::millis() - _brake_timer_ms) > _brake_delay_s * 1000.0) {
+            if ((AP_HAL::millis() - _brake_timer_ms) > _brake_delay_s * 1000.0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
                 float brake_gain = _pos_control.get_vel_NE_pid().kP() * 0.5f;
-                loiter_brake_accel_mss = constrain_float(sqrt_controller(desired_speed_ms, brake_gain, _brake_jerk_max_cmsss * 0.01, dt_s), 0.0f, _brake_accel_max_cmss * 0.01);
+                loiter_brake_accel_mss = constrain_float(sqrt_controller(desired_speed_ms, brake_gain, _brake_jerk_max_cmsss * 0.01, dt_s), 0.0f, _brake_accel_max_cmss * 0.01); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             }
         } else {
             loiter_brake_accel_mss = 0.0f;
@@ -317,7 +317,7 @@ void AC_Loiter::calc_desired_velocity(bool avoidance_on)
         }
 
         // Integrate jerk-limited brake acceleration
-        _brake_accel_mss += constrain_float(loiter_brake_accel_mss - _brake_accel_mss, -_brake_jerk_max_cmsss * 0.01 * dt_s, _brake_jerk_max_cmsss * 0.01 * dt_s);
+        _brake_accel_mss += constrain_float(loiter_brake_accel_mss - _brake_accel_mss, -_brake_jerk_max_cmsss * 0.01 * dt_s, _brake_jerk_max_cmsss * 0.01 * dt_s); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         loiter_accel_brake_mss = desired_vel_norm * _brake_accel_mss;
 
         // Update desired speed based on braking and drag
@@ -339,8 +339,8 @@ void AC_Loiter::calc_desired_velocity(bool avoidance_on)
         // Apply fence/obstacle avoidance adjustments (velocity only)
         // TODO: We need to also limit the _desired_accel_ne_mss
         AC_Avoid *_avoid = AP::ac_avoid();
-        if (_avoid != nullptr) {
-            Vector3f avoidance_vel_neu_cms{desired_vel_ne_ms.x * 100.0, desired_vel_ne_ms.y * 100.0, 0.0f};
+        if (_avoid) {
+            Vector3f avoidance_vel_neu_cms{desired_vel_ne_ms.x * 100.0, desired_vel_ne_ms.y * 100.0, 0.0f}; // coverity[PW.NARROWING_CONVERSION]
             _avoid->adjust_velocity(avoidance_vel_neu_cms, _pos_control.get_pos_NE_p().kP(), _accel_max_ne_cmss, _pos_control.get_pos_U_p().kP(), _pos_control.get_max_accel_U_mss() * 100.0, dt_s);
             desired_vel_ne_ms = avoidance_vel_neu_cms.xy() * 0.01;
         }

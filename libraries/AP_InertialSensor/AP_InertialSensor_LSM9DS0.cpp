@@ -18,6 +18,7 @@
 #include "AP_InertialSensor_LSM9DS0.h"
 
 #include <utility>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -388,7 +389,7 @@ AP_InertialSensor_LSM9DS0::AP_InertialSensor_LSM9DS0(AP_InertialSensor &imu,
     , _rotation_a(rotation_a)
     , _rotation_g(rotation_g)
     , _rotation_gH(rotation_gH)
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_InertialSensor_Backend *AP_InertialSensor_LSM9DS0::probe(AP_InertialSensor &_imu,
@@ -450,7 +451,8 @@ bool AP_InertialSensor_LSM9DS0::_init_sensor()
 
 bool AP_InertialSensor_LSM9DS0::_hardware_init()
 {
-    _spi_sem->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_spi_sem) { _spi_sem->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     uint8_t tries, whoami;
 
@@ -526,7 +528,8 @@ void AP_InertialSensor_LSM9DS0::start(void)
 
     /* start the timer process to read samples */
     _dev_gyro->register_periodic_callback(1000, FUNCTOR_BIND_MEMBER(&AP_InertialSensor_LSM9DS0::_poll_data, void));
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 
 uint8_t AP_InertialSensor_LSM9DS0::_register_read_xm(uint8_t reg)
@@ -708,7 +711,7 @@ void AP_InertialSensor_LSM9DS0::_poll_data()
 
 bool AP_InertialSensor_LSM9DS0::_accel_data_ready()
 {
-    if (_drdy_pin_a != nullptr) {
+    if (_drdy_pin_a) {
         return _drdy_pin_a->read() != 0;
     }
 
@@ -718,7 +721,7 @@ bool AP_InertialSensor_LSM9DS0::_accel_data_ready()
 
 bool AP_InertialSensor_LSM9DS0::_gyro_data_ready()
 {
-    if (_drdy_pin_g != nullptr) {
+    if (_drdy_pin_g) {
         return _drdy_pin_g->read() != 0;
     }
 

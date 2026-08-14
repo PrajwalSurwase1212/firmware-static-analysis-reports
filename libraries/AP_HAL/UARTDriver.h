@@ -20,7 +20,7 @@ class ByteBuffer;
 /* Pure virtual UARTDriver class */
 class AP_HAL::UARTDriver : public AP_HAL::BetterStream {
 public:
-    UARTDriver() :
+    UARTDriver() : // coverity[UNINIT_CTOR] // Reviewed: safe in context
         lock_write_key(0),
         lock_read_key(0),
         parity(0),

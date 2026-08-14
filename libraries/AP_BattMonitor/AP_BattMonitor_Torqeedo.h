@@ -29,7 +29,7 @@ class AP_BattMonitor_Torqeedo: public AP_BattMonitor_Backend
 public:
 
     // inherit constructor
-    using AP_BattMonitor_Backend::AP_BattMonitor_Backend;
+    using AP_BattMonitor_Backend::AP_BattMonitor_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // read the latest battery voltage
     void read() override;

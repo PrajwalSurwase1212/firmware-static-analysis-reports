@@ -23,7 +23,7 @@ using namespace SITL;
 
 InertialLabs::InertialLabs() : SerialDevice::SerialDevice()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void InertialLabs::send_packet(void)
 {

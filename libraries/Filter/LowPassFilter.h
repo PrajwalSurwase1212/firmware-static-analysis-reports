@@ -78,7 +78,7 @@ class LowPassFilterConstDt : public DigitalLPF<T> {
 public:
 
     // constructors
-    LowPassFilterConstDt() {};
+    LowPassFilterConstDt() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     LowPassFilterConstDt(const float &sample_freq, const float &cutoff_freq);
 
     CLASS_NO_COPY(LowPassFilterConstDt);
@@ -107,7 +107,7 @@ class LowPassFilter : public DigitalLPF<T> {
 public:
 
     // constructors
-    LowPassFilter() {};
+    LowPassFilter() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     LowPassFilter(const float &cutoff_freq);
 
     CLASS_NO_COPY(LowPassFilter);

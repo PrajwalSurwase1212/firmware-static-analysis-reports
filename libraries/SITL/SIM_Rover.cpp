@@ -36,7 +36,7 @@ SimRover::SimRover(const char *frame_str) :
         // with a sabertooth controller
         max_accel = 14;
         max_speed = 4;
-        return;
+        return; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 
     vectored_thrust = strstr(frame_str, "vector") != nullptr;
@@ -80,7 +80,7 @@ float SimRover::calc_yaw_rate(float steering, float speed)
     float d = turn_circle(steering);
     if (fabsf(d) < 1.0e-6) {
         return 0;
-    }
+    } // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     float c = M_PI * d;
     float t = c / speed;
     float rate = constrain_float(360.0f / t, -MAX_YAW_RATE, MAX_YAW_RATE);

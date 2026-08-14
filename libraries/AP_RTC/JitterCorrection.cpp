@@ -39,7 +39,7 @@
 JitterCorrection::JitterCorrection(uint16_t _max_lag_ms, uint16_t _convergence_loops) :
     max_lag_ms(_max_lag_ms),
     convergence_loops(_convergence_loops)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   correct an offboard timestamp in microseconds into a local

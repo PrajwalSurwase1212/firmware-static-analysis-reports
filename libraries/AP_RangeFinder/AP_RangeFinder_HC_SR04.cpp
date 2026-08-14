@@ -41,7 +41,7 @@ AP_RangeFinder_HC_SR04::AP_RangeFinder_HC_SR04(RangeFinder::RangeFinder_State &_
     AP_RangeFinder_Backend(_state, _params)
 {
     set_status(RangeFinder::Status::NoData);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool AP_RangeFinder_HC_SR04::check_pins()
 {

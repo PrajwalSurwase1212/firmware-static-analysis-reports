@@ -121,7 +121,7 @@ const AP_Param::GroupInfo AP_SteerController::var_info[] = {
   steering rate controller. Returns servo out -4500 to 4500 given
   desired yaw rate in degrees/sec. Positive yaw rate means clockwise yaw.
 */
-int32_t AP_SteerController::get_steering_out_rate(float desired_rate)
+int32_t AP_SteerController::get_steering_out_rate(float desired_rate) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
 	uint32_t tnow = AP_HAL::millis();
 	uint32_t dt = tnow - _last_t;
@@ -156,8 +156,8 @@ int32_t AP_SteerController::get_steering_out_rate(float desired_rate)
 	
 	// Calculate equivalent gains so that values for K_P and K_I can be taken across from the old PID law
     // No conversion is required for K_D
-	float ki_rate = _K_I * _tau * 45.0f;
-	float kp_ff = MAX((_K_P - _K_I * _tau) * _tau  - _K_D , 0) * 45.0f;
+	float ki_rate = _K_I * _tau * 45.0f; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+	float kp_ff = MAX((_K_P - _K_I * _tau) * _tau  - _K_D , 0) * 45.0f; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 	float k_ff = _K_FF * 45.0f;
 	float delta_time    = (float)dt * 0.001f;
 	

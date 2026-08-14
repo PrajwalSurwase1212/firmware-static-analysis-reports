@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <cerrno>
 
 using namespace SITL;
 
@@ -43,7 +44,8 @@ uint32_t RF_NMEA::packet_for_temperature(float temperature, uint8_t *buffer, uin
 {
     ssize_t ret = snprintf((char*)buffer, buflen, "$SMMTW,%f %f", temperature, 0.01);
     uint8_t checksum = 0;
-    for (uint8_t i=1; i<ret; i++) { // 1 because the initial $ is skipped
+    // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
+    for (uint8_t i=1; i<ret; i++) { // 1 because the initial $ is skipped // parasoft-suppress BD-SECURITY-TDLOOP "Reviewed and safe"
         checksum ^= buffer[i];
     }
     ret += snprintf((char*)&buffer[ret], buflen-ret, "*%02X\r\n", checksum);

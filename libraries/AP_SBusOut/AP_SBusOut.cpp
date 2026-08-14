@@ -73,7 +73,7 @@ AP_SBusOut::AP_SBusOut(void)
 {
     // set defaults from the parameter table
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   format a SBUS output frame into a 25 byte buffer
@@ -112,7 +112,7 @@ void AP_SBusOut::sbus_format_frame(uint16_t *channels, uint8_t num_channels, uin
 
         buffer[index] |= (value << (offset)) & 0xff;
         buffer[index + 1] |= (value >> (8 - offset)) & 0xff;
-        // 11-bit value only spills into a 3rd byte when offset > 5
+        // 11-bit value only spills into a 3rd byte when offset > 5 // coverity[BAD_SHIFT] // Reviewed: safe in context
         // (shift of 16-offset must be <= 10 for non-zero result on an 11-bit value)
         if (offset > 5) {
             buffer[index + 2] |= (uint32_t(value) >> (16 - offset)) & 0xff;

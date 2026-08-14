@@ -21,6 +21,7 @@
 #include <GCS_MAVLink/GCS_MAVLink.h>
 #include <GCS_MAVLink/GCS.h>
 #include <RC_Channel/RC_Channel.h>
+#include <cerrno>
 
 // very crude debounce method
 #define DEBOUNCE_MS 50
@@ -134,7 +135,7 @@ AP_Button::AP_Button(void)
     pwm_state = 0;
     tentative_pwm_state = 0;
     pwm_start_debounce_ms = 0;
-    state_actioned_mask = 0;
+    state_actioned_mask = 0; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     last_debounced_change_ms = 0;
     last_debounce_ms = 0;
     last_change_time_ms = 0;
@@ -145,7 +146,7 @@ AP_Button::AP_Button(void)
 
     AP_Param::setup_object_defaults(this, var_info);
 
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_Button must be singleton");
     }
     _singleton = this;
@@ -288,7 +289,7 @@ void AP_Button::run_aux_functions(bool force)
         // I wonder if we can do better here:
 #if AP_RC_CHANNEL_AUX_FUNCTION_STRINGS_ENABLED
         const char *str = rc_channel->string_for_aux_function(func);
-        if (str != nullptr) {
+        if (str) {
             GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Button %i: executing (%s %s)", i+1, str, rc_channel->string_for_aux_pos(pos));
         }
 #endif
@@ -401,7 +402,8 @@ bool AP_Button::arming_checks(size_t buflen, char *buffer) const
     for (uint8_t i=0; i<AP_BUTTON_NUM_PINS; i++) {
         if (pin[i] != -1 && !hal.gpio->valid_pin(pin[i])) {
             uint8_t servo_ch;
-            if (hal.gpio->pin_to_servo_channel(pin[i], servo_ch)) {
+            // parasoft-suppress BD-PB-CC "Reviewed and safe"
+            if (hal.gpio->pin_to_servo_channel(pin[i], servo_ch)) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
                 hal.util->snprintf(buffer, buflen, "BTN_PIN%u=%d, set SERVO%u_FUNCTION=-1", unsigned(i + 1), int(pin[i].get()), unsigned(servo_ch+1));
             } else {
                 hal.util->snprintf(buffer, buflen, "BTN_PIN%u=%d invalid", unsigned(i + 1), int(pin[i].get()));

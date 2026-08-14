@@ -18,11 +18,11 @@ public:
         // setup parameter defaults
         AP_Param::setup_object_defaults(this, var_info);
         
-        if (_singleton != nullptr) {
+        if (_singleton) {
             AP_HAL::panic("AP_LandingGear must be singleton");
         }
         _singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_LandingGear);

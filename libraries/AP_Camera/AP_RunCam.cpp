@@ -138,7 +138,7 @@ AP_RunCam::AP_RunCam(AP_Camera &frontend, AP_Camera_Params &params, uint8_t inst
     }
     _cam_type.set(constrain_int16(_cam_type, 0, RUNCAM_MAX_DEVICE_TYPES));
     _video_recording = VideoOption(_cam_control_option & uint8_t(ControlOption::VIDEO_RECORDING_AT_BOOT));
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // init the runcam device by finding a serial device configured for the RunCam protocol
 void AP_RunCam::init()
@@ -147,7 +147,7 @@ void AP_RunCam::init()
     if (serial_manager) {
         uart = serial_manager->find_serial(AP_SerialManager::SerialProtocol_RunCam, _runcam_instance);
     }
-    if (uart != nullptr) {
+    if (uart) {
         /*
           if the user has setup a serial port as a runcam then default
           type to the split micro (Andy's development platform!). This makes setup a bit easier for most
@@ -278,7 +278,7 @@ void AP_RunCam::update_osd()
     // prevent runcam stick gestures interfering with osd stick gestures
     if (!use_armed_state_machine) {
         const AP_OSD* osd = AP::osd();
-        if (osd != nullptr) {
+        if (osd) {
             use_armed_state_machine = !osd->is_readonly_screen();
         }
     }

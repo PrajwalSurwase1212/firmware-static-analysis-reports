@@ -10,7 +10,7 @@ class AP_BattMonitor_Scripting : public AP_BattMonitor_Backend
 {
 public:
     // Inherit constructor
-    using AP_BattMonitor_Backend::AP_BattMonitor_Backend;
+    using AP_BattMonitor_Backend::AP_BattMonitor_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     bool has_current() const override { return last_update_us != 0 && !isnan(internal_state.current_amps); }
     bool has_consumed_energy() const override { return has_current(); }

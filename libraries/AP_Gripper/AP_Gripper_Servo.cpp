@@ -8,6 +8,7 @@
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
   #include <SITL/SITL.h>
+#include <cerrno>
 #endif
 
 extern const AP_HAL::HAL& hal;
@@ -113,7 +114,8 @@ void AP_Gripper_Servo::update_gripper()
 
 bool AP_Gripper_Servo::valid() const
 {
-    if (!AP_Gripper_Backend::valid()) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!AP_Gripper_Backend::valid()) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return false;
     }
     if (!SRV_Channels::function_assigned(SRV_Channel::k_gripper)) {

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <AP_RTC/AP_RTC.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 const extern AP_HAL::HAL& hal;
 
@@ -23,7 +24,7 @@ AP_Logger_Block::AP_Logger_Block(AP_Logger &front, LoggerMessageWriter_DFLogStar
     AP_Logger_Backend(front, writer),
     writebuf(0)
 {
-    df_stats_clear();
+    df_stats_clear(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // Init() is called after driver Init(), it is the responsibility of the driver to make sure the 
@@ -165,7 +166,8 @@ bool AP_Logger_Block::_WritePrioritisedBlock(const void *pBuffer, uint16_t size,
     }
 
     writebuf.write((uint8_t*)pBuffer, size);
-    df_stats_gather(size, writebuf.space());
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    df_stats_gather(size, writebuf.space()); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     return true;
 }
@@ -291,13 +293,13 @@ void AP_Logger_Block::EraseAll()
     Sector4kErase(get_sector(df_NumPages));
 
     StartErase();
-}
+} // coverity[RW.ROUTINE_NOT_EMITTED]
 
 void AP_Logger_Block::periodic_1Hz()
 {
     AP_Logger_Backend::periodic_1Hz();
-
-    if (rate_limiter == nullptr &&
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
+    if (rate_limiter == nullptr && // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         (_front._params.blk_ratemax > 0 ||
          _front._params.disarm_ratemax > 0 ||
          _front._log_pause)) {

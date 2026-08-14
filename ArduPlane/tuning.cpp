@@ -248,7 +248,7 @@ void AP_Tuning_Plane::save_value(uint8_t parm)
         break;
     default:
         AP_Float *f = get_param_pointer(parm);
-        if (f != nullptr) {
+        if (f) {
             f->save();
         }
         break;
@@ -272,7 +272,7 @@ void AP_Tuning_Plane::set_value(uint8_t parm, float value)
         break;
     default:
         AP_Float *f = get_param_pointer(parm);
-        if (f != nullptr) {
+        if (f) {
             uint64_t param_bit = (1ULL << parm);
             if (!(param_bit & have_set)) {
                 // first time this param has been set by tuning. We
@@ -308,7 +308,7 @@ void AP_Tuning_Plane::reload_value(uint8_t parm)
         break;
     default:
         AP_Float *f = get_param_pointer(parm);
-        if (f != nullptr) {
+        if (f) {
             uint64_t param_bit = (1ULL << parm);
             // only reload if we have set this parameter at some point
             if (param_bit & have_set) {

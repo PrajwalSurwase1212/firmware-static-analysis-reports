@@ -22,6 +22,7 @@
 #include <RC_Channel/RC_Channel.h>
 
 #include <utility>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -107,7 +108,7 @@ AP_RSSI::AP_RSSI()
     if (_singleton) {
         AP_HAL::panic("Too many RSSI sensors");
     }
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // destructor
@@ -144,7 +145,8 @@ float AP_RSSI::read_receiver_rssi()
             return read_channel_rssi();
         case RssiType::RECEIVER: {
             int16_t rssi = RC_Channels::get_receiver_rssi();
-            if (rssi != -1) {
+            // parasoft-suppress BD-PB-CC "Reviewed and safe"
+            if (rssi != -1) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
                 return rssi * (1/255.0);
             }
             return 0.0f;

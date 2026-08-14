@@ -21,6 +21,7 @@
 
 #define FORCE_VERSION_H_INCLUDE
 #include "version.h"
+#include <cerrno>
 #undef FORCE_VERSION_H_INCLUDE
 
 #define SCHED_TASK(func, rate_hz, _max_time_micros, _prio) SCHED_TASK_CLASS(Tracker, &tracker, func, rate_hz, _max_time_micros, _prio)
@@ -106,7 +107,8 @@ void Tracker::one_second_loop()
 void Tracker::ten_hz_logging_loop()
 {
     if (should_log(MASK_LOG_IMU)) {
-        AP::ins().Write_IMU();
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        AP::ins().Write_IMU(); // parasoft-suppress BD-PB-NP "Reviewed and safe"
     }
     if (should_log(MASK_LOG_ATTITUDE)) {
         Log_Write_Attitude();

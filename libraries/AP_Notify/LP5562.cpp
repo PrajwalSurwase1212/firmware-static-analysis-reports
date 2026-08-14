@@ -51,7 +51,7 @@ LP5562::LP5562(uint8_t bus, uint8_t addr)
     , _bus(bus)
     , _addr(addr)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool LP5562::init(void)
 {

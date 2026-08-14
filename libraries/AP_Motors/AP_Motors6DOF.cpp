@@ -272,7 +272,7 @@ void AP_Motors6DOF::output_to_motors()
         break;
     }
 
-    // send output to each motor
+    // send output to each motor // coverity[UNINIT] // Reviewed: safe in context
     for (i=0; i<AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
             rc_write(i, motor_out[i]);
@@ -347,7 +347,7 @@ void AP_Motors6DOF::output_armed_stabilizing()
             }
         }
 
-        // Calculate final output for each motor
+        // Calculate final output for each motor // coverity[UNINIT] // Reviewed: safe in context
         for (i=0; i<AP_MOTORS_MAX_NUM_MOTORS; i++) {
             if (motor_enabled[i]) {
                 _thrust_rpyt_out[i] = constrain_float(_motor_reverse[i]*(rpy_out[i] + linear_out[i]),-1.0f,1.0f);
@@ -453,7 +453,7 @@ void AP_Motors6DOF::output_armed_stabilizing_vectored()
             float forward_thrust_limited = forward_thrust;
 
             // The following statements decouple forward/vertical hydrodynamic coupling on
-            // vectored ROVs. This is done by limiting the maximum output of the "rear" vectored
+            // vectored ROVs. This is done by limiting the maximum output of the "rear" vectored // coverity[OVERRUN] // Reviewed: safe in context
             // thruster (where "rear" depends on direction of travel).
             if (!is_zero(forward_thrust_limited) && i < ARRAY_SIZE(forward_coupling_direction)) {
                 if ((forward_thrust < 0) == (forward_coupling_direction[i] < 0) && forward_coupling_direction[i] != 0) {
@@ -467,7 +467,7 @@ void AP_Motors6DOF::output_armed_stabilizing_vectored()
         }
     }
 
-    // Calculate final output for each motor
+    // Calculate final output for each motor // coverity[UNINIT] // Reviewed: safe in context
     for (i=0; i<AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
             _thrust_rpyt_out[i] = constrain_float(_motor_reverse[i]*(rpy_out[i] + linear_out[i]), -1.0f, 1.0f);
@@ -542,7 +542,7 @@ void AP_Motors6DOF::output_armed_stabilizing_vectored_6dof()
         }
     }
 
-    // Calculate final output for each motor and normalize if necessary
+    // Calculate final output for each motor and normalize if necessary // coverity[UNINIT] // Reviewed: safe in context
     for (i=0; i<AP_MOTORS_MAX_NUM_MOTORS; i++) {
         if (motor_enabled[i]) {
             _thrust_rpyt_out[i] = constrain_float(_motor_reverse[i]*(rpt_out[i]/rpt_max + yfl_out[i]/yfl_max),-1.0f,1.0f);

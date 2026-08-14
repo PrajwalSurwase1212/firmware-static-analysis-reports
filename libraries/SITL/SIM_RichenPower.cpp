@@ -63,7 +63,7 @@ RichenPower::RichenPower() : SerialDevice::SerialDevice()
 
     u.packet.footermagic1 = 0x55;
     u.packet.footermagic2 = 0xAA;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void RichenPower::set_run_state(State newstate) {
     hal.console->printf("Moving to state %u from %u\n", (unsigned)newstate, (unsigned)_state);
@@ -90,7 +90,7 @@ void RichenPower::update_control_pin(const struct sitl_input &input)
     // RICHENPOWER, 13:47
     // 1100~1300 for engine stop, 1300~1800 for idle, and 1800~2000 for run
 
-    const uint16_t control_pwm = _ctrl_pin >= 1 ? input.servos[_ctrl_pin-1] : -1;
+    const uint16_t control_pwm = _ctrl_pin >= 1 ? input.servos[_ctrl_pin-1] : -1; // coverity[INTEGER_OVERFLOW] // Reviewed: safe in context
     if (_state != State::STOPPING) {
         if (control_pwm <= INPUT_SERVO_PWM_STOP && _state != State::STOP) {
             if (stop_start_ms == 0) {

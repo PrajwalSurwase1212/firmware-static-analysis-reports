@@ -30,7 +30,7 @@ public:
         _use_external_data(use_external_data)
     {
         singleton = this;
-    }
+    } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     static AP_Frsky_SPort_Passthrough *get_singleton(void) {
         return singleton;

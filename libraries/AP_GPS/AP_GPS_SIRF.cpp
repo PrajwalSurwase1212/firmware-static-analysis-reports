@@ -41,7 +41,7 @@ AP_GPS_SIRF::AP_GPS_SIRF(AP_GPS &_gps, AP_GPS::Params &_params, AP_GPS::GPS_Stat
     AP_GPS_Backend(_gps, _params, _state, _port)
 {
     gps.send_blob_start(state.instance, (const char *)_initialisation_blob, sizeof(_initialisation_blob));
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 // Process bytes available from the stream

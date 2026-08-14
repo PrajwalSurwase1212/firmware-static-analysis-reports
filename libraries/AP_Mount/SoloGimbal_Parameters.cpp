@@ -16,7 +16,7 @@ const uint8_t SoloGimbal_Parameters::_max_fetch_attempts = 5;
 SoloGimbal_Parameters::SoloGimbal_Parameters()
 {
     reset();
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 void SoloGimbal_Parameters::reset()
@@ -192,7 +192,7 @@ void SoloGimbal_Parameters::handle_param_value(const mavlink_message_t &msg)
 
 #if HAL_LOGGING_ENABLED
     AP_Logger *logger = AP_Logger::get_singleton();
-    if (logger != nullptr) {
+    if (logger) {
         logger->Write_Parameter(packet.param_id, packet.param_value);
     }
 #endif

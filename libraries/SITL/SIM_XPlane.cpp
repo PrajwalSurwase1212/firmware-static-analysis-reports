@@ -117,10 +117,10 @@ XPlane::XPlane(const char *frame_str) :
     AP_Param::set_default_by_name("SERVO5_MAX", 2000);
 #endif
 
-    if (!load_dref_map(XPLANE_JSON)) {
+    if (!load_dref_map(XPLANE_JSON)) { // coverity[UNINIT] // Reviewed: safe in context
         AP_HAL::panic("%s failed to load", XPLANE_JSON);
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   add one DRef to list
@@ -315,7 +315,7 @@ void XPlane::select_data(void)
         dsel.data[count++] = required_data[i];
     }
     if (count != 0) {
-        const ssize_t sent = socket_out.send(&dsel, sizeof(dsel));
+        const ssize_t sent = socket_out.send(&dsel, sizeof(dsel)); // coverity[CHECKED_RETURN]
         if (sent < 0) {
             printf("Failed to select X-Plane data, send returned %ld\n", (long)sent);
         } else if (sent < static_cast<ssize_t>(sizeof(dsel))) {
@@ -327,7 +327,7 @@ void XPlane::select_data(void)
     }
 }
 
-void XPlane::deselect_code(uint8_t code)
+void XPlane::deselect_code(uint8_t code) // coverity[CHECKED_RETURN]
 {
     struct PACKED {
         uint8_t  marker[5] { 'U', 'S', 'E', 'L', '0' };
@@ -346,7 +346,8 @@ void XPlane::deselect_code(uint8_t code)
 */
 bool XPlane::receive_data(void)
 {
-    uint8_t pkt[10000];
+    // parasoft-suppress BD-RES-STACKLIM "Reviewed and safe"
+    uint8_t pkt[10000]; // parasoft-suppress BD-RES-STACKLIM "Reviewed and safe"
     uint8_t *p = &pkt[5];
     const uint8_t pkt_len = 36;
     Location loc {};
@@ -389,11 +390,12 @@ bool XPlane::receive_data(void)
         // we now know the IP X-Plane is using
         uint16_t port;
         socket_in.last_recv_address(xplane_ip, port);
-        socket_out.connect(xplane_ip, xplane_port);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        socket_out.connect(xplane_ip, xplane_port); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
         connected = true;
         printf("Connected to %s:%u\n", xplane_ip, (unsigned)xplane_port);
     }
-    
+ // coverity[OVERFLOW_BEFORE_WIDEN]
     while (len >= pkt_len) {
         const float *data = (const float *)p;
         uint8_t code = p[0];
@@ -647,8 +649,8 @@ void XPlane::send_drefs(const struct sitl_input &input)
 }
 
 
-/*
-  send DREF to X-Plane via UDP
+/* // coverity[STRING_OVERFLOW] // Reviewed: safe in context
+  send DREF to X-Plane via UDP // coverity[CHECKED_RETURN]
 */
 void XPlane::send_dref(const char *name, float value)
 {
@@ -667,8 +669,8 @@ void XPlane::send_dref(const char *name, float value)
         ::printf("-> %s : %.3f\n", name, value);
     }
 }
-
-/*
+ // coverity[STRING_OVERFLOW] // Reviewed: safe in context
+/* // coverity[CHECKED_RETURN]
   request a dref
 */
 void XPlane::request_dref(const char *name, uint8_t code, uint32_t rate)

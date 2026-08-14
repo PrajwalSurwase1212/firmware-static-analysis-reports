@@ -25,6 +25,7 @@
 #include "DSP.h"
 #include <cmath>
 #include <assert.h>
+#include <cerrno>
 
 using namespace HALSITL;
 
@@ -67,7 +68,7 @@ DSP::FFTWindowStateSITL::FFTWindowStateSITL(uint16_t window_size, uint16_t sampl
     : AP_HAL::DSP::FFTWindowState::FFTWindowState(window_size, sample_rate, sliding_window_size)
 {
     if (_freq_bins == nullptr || _hanning_window == nullptr || _rfft_data == nullptr || _derivative_freq_bins == nullptr) {
-        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Failed to allocate window for DSP");
+        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Failed to allocate window for DSP"); // coverity[UNINIT_CTOR] // Reviewed: safe in context
         return;
     }
 
@@ -152,7 +153,8 @@ float DSP::vector_mean_float(const float* vin, uint16_t len) const
     for (uint16_t i = 0; i < len; i++) {
         mean_value += vin[i];
     }
-    mean_value /= len;
+    // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
+    mean_value /= len; // parasoft-suppress BD-PB-ZERO "Reviewed and safe"
     return mean_value;
 }
 

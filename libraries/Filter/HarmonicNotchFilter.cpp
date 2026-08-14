@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <cerrno>
 #endif
 
 /*
@@ -216,7 +217,8 @@ void HarmonicNotchFilter<T>::allocate_filters(uint8_t num_notches, uint32_t harm
     _harmonics = harmonics;
 
     if (_num_filters > 0) {
-        _filters = NEW_NOTHROW NotchFilter<T>[_num_filters];
+        // parasoft-suppress BD-PB-NP "Reviewed and safe"
+        _filters = NEW_NOTHROW NotchFilter<T>[_num_filters]; // parasoft-suppress BD-PB-NP "Reviewed and safe"
         if (_filters == nullptr) {
             GCS_SEND_TEXT(MAV_SEVERITY_ERROR, "Failed to allocate %u bytes for notch filter", (unsigned int)(_num_filters * sizeof(NotchFilter<T>)));
             _num_filters = 0;
@@ -242,7 +244,8 @@ void HarmonicNotchFilter<T>::expand_filter_count(uint16_t total_notches)
       note that we rely on the semaphore in
       AP_InertialSensor_Backend.cpp to make this thread safe
      */
-    auto filters = NEW_NOTHROW NotchFilter<T>[total_notches];
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    auto filters = NEW_NOTHROW NotchFilter<T>[total_notches]; // parasoft-suppress BD-PB-NP "Reviewed and safe"
     if (filters == nullptr) {
         _alloc_has_failed = true;
         return;

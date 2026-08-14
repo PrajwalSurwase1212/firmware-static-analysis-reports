@@ -36,7 +36,7 @@ SlewLimiter::SlewLimiter(const float &_slew_rate_max, const float &_slew_rate_ta
 {
     slew_filter.set_cutoff_frequency(DERIVATIVE_CUTOFF_FREQ);
     slew_filter.reset(0.0);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   apply filter to sample, returning multiplier between 0 and 1 to keep

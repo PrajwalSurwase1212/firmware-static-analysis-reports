@@ -28,7 +28,7 @@
 
 class AP_MAVLinkCAN {
 public:
-    AP_MAVLinkCAN() {}
+    AP_MAVLinkCAN() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Handle commands to forward CAN frames to GCS
     static bool handle_can_forward(mavlink_channel_t chan, const mavlink_command_int_t &packet, const mavlink_message_t &msg);

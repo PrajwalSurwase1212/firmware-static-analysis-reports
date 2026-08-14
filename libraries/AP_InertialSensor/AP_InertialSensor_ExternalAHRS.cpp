@@ -11,7 +11,7 @@ AP_InertialSensor_ExternalAHRS::AP_InertialSensor_ExternalAHRS(AP_InertialSensor
     AP_InertialSensor_Backend(imu),
     serial_port(_serial_port)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_InertialSensor_ExternalAHRS::handle_external(const AP_ExternalAHRS::ins_data_message_t &pkt)
 {

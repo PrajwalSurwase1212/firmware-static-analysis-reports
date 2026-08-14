@@ -9,7 +9,7 @@ extern const AP_HAL::HAL& hal;
 bool AP_Camera_Mount::trigger_pic()
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->take_picture(get_mount_instance());
     }
     return false;
@@ -20,7 +20,7 @@ bool AP_Camera_Mount::trigger_pic()
 bool AP_Camera_Mount::record_video(bool start_recording)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->record_video(get_mount_instance(), start_recording);
     }
     return false;
@@ -30,7 +30,7 @@ bool AP_Camera_Mount::record_video(bool start_recording)
 bool AP_Camera_Mount::set_zoom(ZoomType zoom_type, float zoom_value)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->set_zoom(get_mount_instance(), zoom_type, zoom_value);
     }
     return false;
@@ -41,7 +41,7 @@ bool AP_Camera_Mount::set_zoom(ZoomType zoom_type, float zoom_value)
 SetFocusResult AP_Camera_Mount::set_focus(FocusType focus_type, float focus_value)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->set_focus(get_mount_instance(), focus_type, focus_value);
     }
     return SetFocusResult::FAILED;
@@ -53,7 +53,7 @@ SetFocusResult AP_Camera_Mount::set_focus(FocusType focus_type, float focus_valu
 bool AP_Camera_Mount::set_tracking(TrackingType tracking_type, const Vector2f& p1, const Vector2f& p2)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->set_tracking(get_mount_instance(), tracking_type, p1, p2);
     }
     return false;
@@ -64,7 +64,7 @@ bool AP_Camera_Mount::set_tracking(TrackingType tracking_type, const Vector2f& p
 bool AP_Camera_Mount::set_lens(uint8_t lens)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->set_lens(get_mount_instance(), lens);
     }
     return false;
@@ -75,7 +75,7 @@ bool AP_Camera_Mount::set_lens(uint8_t lens)
 bool AP_Camera_Mount::set_camera_source(AP_Camera::CameraSource primary_source, AP_Camera::CameraSource secondary_source)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->set_camera_source(get_mount_instance(), (uint8_t)primary_source, (uint8_t)secondary_source);
     }
     return false;
@@ -86,7 +86,7 @@ bool AP_Camera_Mount::set_camera_source(AP_Camera::CameraSource primary_source, 
 void AP_Camera_Mount::send_camera_information(mavlink_channel_t chan) const
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->send_camera_information(get_mount_instance(), chan);
     }
 }
@@ -95,7 +95,7 @@ void AP_Camera_Mount::send_camera_information(mavlink_channel_t chan) const
 void AP_Camera_Mount::send_camera_settings(mavlink_channel_t chan) const
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->send_camera_settings(get_mount_instance(), chan);
     }
 }
@@ -104,7 +104,7 @@ void AP_Camera_Mount::send_camera_settings(mavlink_channel_t chan) const
 void AP_Camera_Mount::send_camera_capture_status(mavlink_channel_t chan) const
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->send_camera_capture_status(get_mount_instance(), chan);
     }
 }
@@ -115,7 +115,7 @@ void AP_Camera_Mount::send_camera_thermal_range(mavlink_channel_t chan) const
 {
 #if AP_MOUNT_SEND_THERMAL_RANGE_ENABLED
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         mount->send_camera_thermal_range(get_mount_instance(), chan);
     }
 #endif
@@ -127,7 +127,7 @@ void AP_Camera_Mount::send_camera_thermal_range(mavlink_channel_t chan) const
 bool AP_Camera_Mount::change_setting(CameraSetting setting, float value)
 {
     AP_Mount* mount = AP::mount();
-    if (mount != nullptr) {
+    if (mount) {
         return mount->change_setting(get_mount_instance(), setting, value);
     }
     return false;

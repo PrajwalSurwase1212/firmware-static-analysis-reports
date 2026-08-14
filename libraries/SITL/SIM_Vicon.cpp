@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -146,7 +147,7 @@ const AP_Param::GroupInfo SIM::ViconParms::var_info[] = {
 
 Vicon::Vicon() :
     SerialDevice::SerialDevice()
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void Vicon::maybe_send_heartbeat()
@@ -195,7 +196,7 @@ bool Vicon::get_free_msg_buf_index(uint8_t &index)
     }
     return false;
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 void Vicon::update_vicon_position_estimate(const Location &loc,
                                            const Vector3d &position,
                                            const Vector3f &velocity,
@@ -206,8 +207,10 @@ void Vicon::update_vicon_position_estimate(const Location &loc,
     // calculate a random time offset to the time sent in the message
     // simulates a time difference between the remote computer and autopilot
     if (time_offset_us == 0) {
-        time_offset_us = (unsigned(random()) % 7000) * 1000000ULL;
-        printf("time_offset_us %llu\n", (long long unsigned)time_offset_us);
+        // parasoft-suppress BD-SECURITY-RAND "Reviewed and safe"
+        time_offset_us = (unsigned(random()) % 7000) * 1000000ULL; // parasoft-suppress BD-SECURITY-RAND "Reviewed and safe"
+        // parasoft-suppress BD-SECURITY-TDCONSOLE "Reviewed and safe"
+        printf("time_offset_us %llu\n", (long long unsigned)time_offset_us); // parasoft-suppress BD-SECURITY-TDCONSOLE "Reviewed and safe"
     }
 
     // send all messages in the buffer
@@ -301,7 +304,7 @@ void Vicon::update_vicon_position_estimate(const Location &loc,
     uint64_t time_send_us = now_us + delay_ms * 1000UL;
 
 
-    float pose_cov[21];
+    float pose_cov[21]; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     memset(pose_cov, 0, sizeof(pose_cov));
     // Set variances (diagonal elements), assume no cross-correlation. TODO: figure out attitude variances
     const float pos_variance = _sitl->vicon.pos_stddev*_sitl->vicon.pos_stddev;
@@ -355,7 +358,7 @@ void Vicon::update_vicon_position_estimate(const Location &loc,
 
     // send vision speed estimate
     if (should_send(ViconTypeMask::VISION_SPEED_ESTIMATE) && get_free_msg_buf_index(msg_buf_index)) {
-        float cov[9];
+        float cov[9]; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         memset(cov, 0, sizeof(cov));
         // Set variances (diagonal elements), assume no cross-correlation
         const float vel_variance = _sitl->vicon.vel_stddev*_sitl->vicon.vel_stddev;
@@ -384,7 +387,7 @@ void Vicon::update_vicon_position_estimate(const Location &loc,
     // send ODOMETRY message
     if (should_send(ViconTypeMask::ODOMETRY) && get_free_msg_buf_index(msg_buf_index)) {
         const Vector3f vel_corrected_frd = attitude.inverse() * vel_corrected;
-        float vel_cov[21];
+        float vel_cov[21]; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         memset(vel_cov, 0, sizeof(vel_cov));
         // Set variances (diagonal elements), assume no cross-correlation. TODO: figure out angular velocity variances
         const float vel_variance = _sitl->vicon.vel_stddev*_sitl->vicon.vel_stddev;

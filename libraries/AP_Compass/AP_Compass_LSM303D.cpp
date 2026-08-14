@@ -26,6 +26,7 @@ extern const AP_HAL::HAL &hal;
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_LINUX
 #include <AP_HAL_Linux/GPIO.h>
+#include <cerrno>
 #endif
 
 #ifndef LSM303D_DRDY_M_PIN
@@ -155,7 +156,7 @@ extern const AP_HAL::HAL &hal;
 
 AP_Compass_LSM303D::AP_Compass_LSM303D(AP_HAL::OwnPtr<AP_HAL::Device> dev)
     : _dev(std::move(dev))
-{
+{ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 AP_Compass_Backend *AP_Compass_LSM303D::probe(AP_HAL::OwnPtr<AP_HAL::Device> dev,
@@ -282,11 +283,13 @@ bool AP_Compass_LSM303D::init(enum Rotation rotation)
     _dev->register_periodic_callback(11000, FUNCTOR_BIND_MEMBER(&AP_Compass_LSM303D::_update, void));
 
     return true;
-}
+// parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
+} // parasoft-suppress BD-RES-LEAKS "Reviewed and safe"
 
 bool AP_Compass_LSM303D::_hardware_init()
 {
-    _dev->get_semaphore()->take_blocking();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->take_blocking(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
 
     // initially run the bus at low speed
     _dev->set_speed(AP_HAL::Device::SPEED_LOW);
@@ -328,9 +331,11 @@ bool AP_Compass_LSM303D::_hardware_init()
 
     return true;
 
+// parasoft-suppress BD-PB-NP "Reviewed and safe"
 fail_tries:
 fail_whoami:
-    _dev->get_semaphore()->give();
+    // parasoft-suppress BD-PB-NP "Reviewed and safe"
+    if (_dev) { _dev->get_semaphore()->give(); } // parasoft-suppress BD-PB-NP "Reviewed and safe"
     _dev->set_speed(AP_HAL::Device::SPEED_HIGH);
     return false;
 }

@@ -29,7 +29,7 @@ static const uint8_t LTM_SFRAME_SIZE = 11;
 class AP_LTM_Telem {
 public:
     // Constructor
-    AP_LTM_Telem() {}
+    AP_LTM_Telem() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_LTM_Telem);

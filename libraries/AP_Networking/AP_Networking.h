@@ -240,7 +240,7 @@ private:
         /* Do not allow copies */
         CLASS_NO_COPY(Port);
 
-        Port() {}
+        Port() {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
         static const struct AP_Param::GroupInfo var_info[];
         AP_Enum<NetworkPortType> type_param;

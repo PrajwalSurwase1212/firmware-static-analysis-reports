@@ -198,7 +198,7 @@ void RCOutput::send_pwm_output(void)
     AP_BoardConfig *boardconfig = AP_BoardConfig::get_singleton();
     uint32_t safety_mask = 0;
 
-    if (boardconfig != nullptr) {
+    if (boardconfig) {
         // mask of channels to allow with safety on
         safety_mask = boardconfig->get_safety_mask();
     }

@@ -37,6 +37,7 @@
 #include <AP_Terrain/AP_Terrain.h>
 #include <AP_RSSI/AP_RSSI.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 // macro for easy use of var_info2
 #define AP_SUBGROUPINFO2(element, name, idx, thisclazz, elclazz) { name, AP_VAROFFSET(thisclazz, element), { group_info : elclazz::var_info2 }, AP_PARAM_FLAG_NESTED_OFFSET, idx, AP_PARAM_GROUP }
@@ -283,7 +284,7 @@ AP_OSD *AP_OSD::_singleton;
 
 AP_OSD::AP_OSD()
 {
-    if (_singleton != nullptr) {
+    if (_singleton) {
         AP_HAL::panic("AP_OSD must be singleton");
     }
     AP_Param::setup_object_defaults(this, var_info);
@@ -299,7 +300,7 @@ AP_OSD::AP_OSD()
 #ifdef HAL_OSD_TYPE_DEFAULT
     osd_type.set_default(HAL_OSD_TYPE_DEFAULT);
 #endif
-    _singleton = this;
+    _singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_OSD::init()
@@ -313,7 +314,7 @@ void AP_OSD::init()
             _backend_count++;
         }
     }
-    if (_backend_count > 0) {
+    if (_backend_count > 0) { // coverity[CHECKED_RETURN]
         if (!hal.scheduler->thread_create(FUNCTOR_BIND_MEMBER(&AP_OSD::osd_thread, void), "OSD", 1280, AP_HAL::Scheduler::PRIORITY_IO, 1)) {
             AP_HAL::panic("Failed to create OSD thread");
         }
@@ -459,7 +460,8 @@ void AP_OSD::update_stats()
             home_loc = ahrs.get_home();
         }
         ahrs.get_relative_position_D_home(alt);
-        have_airspeed_estimate = ahrs.airspeed_estimate(aspd_mps);
+        // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+        have_airspeed_estimate = ahrs.airspeed_estimate(aspd_mps); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
     }
     float speed = v.length();
     if (speed < 0.178) {

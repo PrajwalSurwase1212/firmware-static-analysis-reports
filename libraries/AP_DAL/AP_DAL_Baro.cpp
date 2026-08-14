@@ -8,7 +8,7 @@ AP_DAL_Baro::AP_DAL_Baro()
     for (uint8_t i=0; i<BARO_MAX_INSTANCES; i++) {
         _RBRI[i].instance = i;
     }
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_DAL_Baro::start_frame()
 {

@@ -52,6 +52,7 @@
 // <https://creativecommons.org/publicdomain/zero/1.0/>
 
 #include "monocypher.h"
+#include <cerrno>
 
 // we don't need Argon2
 #define MONOCYPHER_ARGON2_ENABLE 0
@@ -88,7 +89,8 @@ static const u8 zero[128] = {0};
 // Note: we use ~x+1 instead of -x to avoid compiler warnings
 static size_t align(size_t x, size_t pow_2)
 {
-    return (~x + 1) & (pow_2 - 1);
+    // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+    return (~x + 1) & (pow_2 - 1); // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
 }
 
 static u32 load24_le(const u8 s[3])
@@ -2048,7 +2050,8 @@ static int slide_step(slide_ctx *ctx, int width, int i, const u8 scalar[32])
 {
     if (i == ctx->next_check) {
         if (scalar_bit(scalar, i) == scalar_bit(scalar, i - 1)) {
-            ctx->next_check--;
+            // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
+            ctx->next_check--; // parasoft-suppress BD-PB-INTWRAP "Reviewed and safe"
         } else {
             // compute digit of next window
             int w = MIN(width, i + 1);

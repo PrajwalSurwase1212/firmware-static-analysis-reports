@@ -2,6 +2,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_Scheduler/AP_Scheduler.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -256,15 +257,15 @@ void AC_AttitudeControl::reset_rate_controller_I_terms_smoothly()
     get_rate_yaw_pid().relax_integrator(0.0, _dt_s, AC_ATTITUDE_RATE_RELAX_TC);
 }
 
-// Reduce attitude control gains while landed to stop ground resonance
+// Reduce attitude control gains while landed to stop ground resonance // coverity[RW.ROUTINE_NOT_EMITTED]
 void AC_AttitudeControl::landed_gain_reduction(bool landed)
 {
     if (is_positive(_input_tc)) {
-        // use 2.0 x tc to match the response time to 86% commanded
+        // use 2.0 x tc to match the response time to 86% commanded // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         const float spool_step = _dt_s / (2.0 * _input_tc);
-        if (landed) {
+        if (landed) { // coverity[RW.NO_MATCHING_FUNCTION]
             _landed_gain_ratio = MIN(1.0, _landed_gain_ratio + spool_step);
-        } else {
+        } else { // coverity[RW.NO_MATCHING_FUNCTION]
             _landed_gain_ratio = MAX(0.0, _landed_gain_ratio - spool_step);
         }
     } else {
@@ -914,8 +915,10 @@ Quaternion AC_AttitudeControl::attitude_from_thrust_vector(Vector3f thrust_vecto
     // the cross product of the desired and target thrust vector defines the rotation vector
     Vector3f thrust_vec_cross = thrust_vector_up % thrust_vector;
 
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     // the dot product is used to calculate the angle between the target and desired thrust vectors
-    const float thrust_vector_angle = acosf(constrain_float(thrust_vector_up * thrust_vector, -1.0f, 1.0f));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    const float thrust_vector_angle = acosf(constrain_float(thrust_vector_up * thrust_vector, -1.0f, 1.0f)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 
     // Normalize the thrust rotation vector
     const float thrust_vector_length = thrust_vec_cross.length();
@@ -984,7 +987,7 @@ void AC_AttitudeControl::attitude_controller_run_quat()
     // finally update the attitude target
     _ang_vel_body_rads = ang_vel_body_rads;
 }
-
+ // coverity[RW.ROUTINE_NOT_EMITTED]
 // thrust_heading_rotation_angles - calculates two ordered rotations to move the attitude_body quaternion to the attitude_target quaternion.
 // The maximum error in the yaw axis is limited based on static output saturation.
 void AC_AttitudeControl::thrust_heading_rotation_angles(Quaternion& attitude_target, const Quaternion& attitude_body, Vector3f& attitude_error_rad, float& thrust_angle_rad, float& thrust_error_angle_rad) const
@@ -996,7 +999,7 @@ void AC_AttitudeControl::thrust_heading_rotation_angles(Quaternion& attitude_tar
 
     // Limit Yaw Error based to the maximum that would saturate the output when yaw rate is zero.
     Quaternion heading_vec_correction_quat;
-
+ // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     float heading_accel_max = constrain_float(get_accel_yaw_max_radss() / 2.0f, AC_ATTITUDE_ACCEL_Y_CONTROLLER_MIN_RADSS, AC_ATTITUDE_ACCEL_Y_CONTROLLER_MAX_RADSS);
     if (!is_zero(get_rate_yaw_pid().kP())) {
         float heading_error_max = MIN(inv_sqrt_controller(1.0 / get_rate_yaw_pid().kP(), _p_angle_yaw.kP(), heading_accel_max), AC_ATTITUDE_YAW_MAX_ERROR_ANGLE_RAD);

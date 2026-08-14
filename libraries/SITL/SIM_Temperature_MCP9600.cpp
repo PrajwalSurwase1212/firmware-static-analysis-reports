@@ -55,7 +55,7 @@ void MCP9600::update(const class Aircraft &aircraft)
     get_reg_value(MCP9600DevReg::SENSOR_STATUS, status);
 
     if (status & (uint8_t)MCP9600StatusBits::TH_UPDATE) {
-        return;
+        return; // coverity[DEADCODE]
     }
 
     static constexpr uint16_t factor = (1/0.0625);

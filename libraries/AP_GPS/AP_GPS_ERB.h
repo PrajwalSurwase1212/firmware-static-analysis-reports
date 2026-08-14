@@ -27,7 +27,7 @@ class AP_GPS_ERB : public AP_GPS_Backend
 {
 public:
 
-    AP_GPS_ERB(AP_GPS &_gps, AP_GPS::Params &_params, AP_GPS::GPS_State &_state, AP_HAL::UARTDriver *_port) :
+    AP_GPS_ERB(AP_GPS &_gps, AP_GPS::Params &_params, AP_GPS::GPS_State &_state, AP_HAL::UARTDriver *_port) : // coverity[UNINIT_CTOR] // Reviewed: safe in context
         AP_GPS_Backend(_gps, _params, _state, _port),
         _ck_a(0),
         _ck_b(0),

@@ -49,7 +49,7 @@ AP_BattMonitor_SMBus_Generic::AP_BattMonitor_SMBus_Generic(AP_BattMonitor &mon,
                                                    AP_BattMonitor::BattMonitor_State &mon_state,
                                                    AP_BattMonitor_Params &params)
     : AP_BattMonitor_SMBus(mon, mon_state, params, AP_BATTMONITOR_SMBUS_BUS_EXTERNAL)
-{}
+{} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_BattMonitor_SMBus_Generic::timer()
 {

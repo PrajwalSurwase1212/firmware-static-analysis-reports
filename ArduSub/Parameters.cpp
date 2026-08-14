@@ -30,13 +30,13 @@ const AP_Param::Info Sub::var_info[] = {
     // @Units: cm
     // @Range: -100 0
     // @User: Standard
-    GSCALAR(surface_depth, "SURFACE_DEPTH", SURFACE_DEPTH_DEFAULT),
+    GSCALAR(surface_depth, "SURFACE_DEPTH", SURFACE_DEPTH_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FORMAT_VERSION
     // @DisplayName: Eeprom format version number
     // @Description: This value is incremented when changes are made to the eeprom format
     // @User: Advanced
-    GSCALAR(format_version, "FORMAT_VERSION",   0),
+    GSCALAR(format_version, "FORMAT_VERSION",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // SYSID_THISMAV was here
 
@@ -49,7 +49,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Units: Hz
     // @Range: 0 10
     // @Increment: 0.5
-    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0),
+    GSCALAR(throttle_filt,  "PILOT_THR_FILT",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // AP_SerialManager was here
 
@@ -58,14 +58,14 @@ const AP_Param::Info Sub::var_info[] = {
     // @Description: bitmask of PIDs to send MAVLink PID_TUNING messages for
     // @User: Advanced
     // @Bitmask: 0:Roll,1:Pitch,2:Yaw
-    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0),
+    GSCALAR(gcs_pid_mask,           "GCS_PID_MASK",     0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_GCS_ENABLE
     // @DisplayName: Ground Station Failsafe Enable
     // @Description: Controls what action to take when GCS heartbeat is lost.
     // @Values: 0:Disabled,1:Warn only,2:Disarm,3:Enter depth hold mode,4:Enter surface mode
     // @User: Standard
-    GSCALAR(failsafe_gcs, "FS_GCS_ENABLE", FS_GCS_DISARM),
+    GSCALAR(failsafe_gcs, "FS_GCS_ENABLE", FS_GCS_DISARM), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_GCS_TIMEOUT
     // @DisplayName: GCS failsafe timeout
@@ -73,28 +73,28 @@ const AP_Param::Info Sub::var_info[] = {
     // @Units: s
     // @Increment: 1
     // @User: Standard
-    GSCALAR(failsafe_gcs_timeout, "FS_GCS_TIMEOUT", FS_GCS_TIMEOUT_S),
+    GSCALAR(failsafe_gcs_timeout, "FS_GCS_TIMEOUT", FS_GCS_TIMEOUT_S), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_LEAK_ENABLE
     // @DisplayName: Leak Failsafe Enable
     // @Description: Controls what action to take if a leak is detected.
     // @Values: 0:Disabled,1:Warn only,2:Enter surface mode
     // @User: Standard
-    GSCALAR(failsafe_leak, "FS_LEAK_ENABLE", FS_LEAK_WARN_ONLY),
+    GSCALAR(failsafe_leak, "FS_LEAK_ENABLE", FS_LEAK_WARN_ONLY), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_PRESS_ENABLE
     // @DisplayName: Internal Pressure Failsafe Enable
     // @Description: Controls what action to take if internal pressure exceeds FS_PRESS_MAX parameter.
     // @Values: 0:Disabled,1:Warn only
     // @User: Standard
-    GSCALAR(failsafe_pressure, "FS_PRESS_ENABLE", FS_PRESS_DISABLED),
+    GSCALAR(failsafe_pressure, "FS_PRESS_ENABLE", FS_PRESS_DISABLED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_TEMP_ENABLE
     // @DisplayName: Internal Temperature Failsafe Enable
     // @Description: Controls what action to take if internal temperature exceeds FS_TEMP_MAX parameter.
     // @Values: 0:Disabled,1:Warn only
     // @User: Standard
-    GSCALAR(failsafe_temperature, "FS_TEMP_ENABLE", FS_TEMP_DISABLED),
+    GSCALAR(failsafe_temperature, "FS_TEMP_ENABLE", FS_TEMP_DISABLED), // coverity[PW.NARROWING_CONVERSION]
     
 #if AP_SUB_RC_ENABLED        
     // @Param: FS_THR_ENABLE
@@ -102,7 +102,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Description: The throttle failsafe allows you to configure a software RC failsafe activated by a setting on the throttle input channel. It also enables RC failsafe on absence of RC signals being recieved.
     // @Values:  0:Disabled,1: Force effective control inputs to trim positions and prevent arming,2:Surface and hold on surface on failsafe 
     // @User: Standard
-    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   0),
+    GSCALAR(failsafe_throttle,  "FS_THR_ENABLE",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_THR_VALUE
     // @DisplayName: Throttle Failsafe Value
@@ -111,72 +111,72 @@ const AP_Param::Info Sub::var_info[] = {
     // @Units: PWM
     // @Increment: 1
     // @User: Standard
-    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",  FS_THR_VALUE_DEFAULT),
+    GSCALAR(failsafe_throttle_value, "FS_THR_VALUE",  FS_THR_VALUE_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
     
     // @Param: FLTMODE1
     // @DisplayName: Flight Mode 1
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is <= 1230
     // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,7:Circle,9:Surface,16:PosHold,19:Manual,20:Motor Detect,21:SurfTrak
     // @User: Standard
-    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1),
+    GSCALAR(flight_mode1, "FLTMODE1",               (uint8_t)FLIGHT_MODE_1), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE2
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 2
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1230, <= 1360
-    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2),
+    GSCALAR(flight_mode2, "FLTMODE2",               (uint8_t)FLIGHT_MODE_2), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE3
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 3
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1360, <= 1490
-    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3),
+    GSCALAR(flight_mode3, "FLTMODE3",               (uint8_t)FLIGHT_MODE_3), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE4
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 4
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1490, <= 1620
-    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4),
+    GSCALAR(flight_mode4, "FLTMODE4",               (uint8_t)FLIGHT_MODE_4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE5
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 5
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >1620, <= 1749
-    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5),
+    GSCALAR(flight_mode5, "FLTMODE5",               (uint8_t)FLIGHT_MODE_5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE6
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 6
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >=1750
-    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6),
+    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FLTMODE_CH
     // @DisplayName: Flightmode channel
     // @Description: RC Channel to use for flight mode control
     // @Values: 0:Disabled,5:Channel5,6:Channel6,7:Channel7,8:Channel8,9:Channel9,10:Channel 10,11:Channel 11,12:Channel 12,13:Channel 13,14:Channel 14,15:Channel 15
     // @User: Advanced
-    GSCALAR(flight_mode_chan, "FLTMODE_CH",         0),
+    GSCALAR(flight_mode_chan, "FLTMODE_CH",         0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_ARM_POS
     // @DisplayName: Throttle arming position
     // @Description: Determines if throttle must be at min or within trim value to arm, if RC checks and RC_OPTION for "0" throttle are enabled.
     // @User: Standard
     // @Bitmask: 0:Throttle at or below min, 1: Throttle within a dead zone of RC trim value
-    GSCALAR(thr_arming_position, "THR_ARM_POS", 1),    
+    GSCALAR(thr_arming_position, "THR_ARM_POS", 1), // coverity[PW.NARROWING_CONVERSION]
 #endif
     // @Param: FS_PRESS_MAX
     // @DisplayName: Internal Pressure Failsafe Threshold
     // @Description: The maximum internal pressure allowed before triggering failsafe. Failsafe action is determined by FS_PRESS_ENABLE parameter
     // @Units: Pa
     // @User: Standard
-    GSCALAR(failsafe_pressure_max, "FS_PRESS_MAX", FS_PRESS_MAX_DEFAULT),
+    GSCALAR(failsafe_pressure_max, "FS_PRESS_MAX", FS_PRESS_MAX_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_TEMP_MAX
     // @DisplayName: Internal Temperature Failsafe Threshold
     // @Description: The maximum internal temperature allowed before triggering failsafe. Failsafe action is determined by FS_TEMP_ENABLE parameter.
     // @Units: degC
     // @User: Standard
-    GSCALAR(failsafe_temperature_max, "FS_TEMP_MAX", FS_TEMP_MAX_DEFAULT),
+    GSCALAR(failsafe_temperature_max, "FS_TEMP_MAX", FS_TEMP_MAX_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SURFACE_MAX_THR
     // @DisplayName: Surface Maximum Throttle
@@ -184,21 +184,21 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 0.0 1.0
     // @User: Standard
     // @Increment: 0.01
-    GSCALAR(surface_max_throttle, "SURFACE_MAX_THR", 0.1f),
+    GSCALAR(surface_max_throttle, "SURFACE_MAX_THR", 0.1f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_TERRAIN_ENAB
     // @DisplayName: Terrain Failsafe Enable
     // @Description: Controls what action to take if terrain information is lost during AUTO mode
     // @Values: 0:Disarm, 1:Hold Position, 2:Surface
     // @User: Standard
-    GSCALAR(failsafe_terrain, "FS_TERRAIN_ENAB", FS_TERRAIN_DISARM),
+    GSCALAR(failsafe_terrain, "FS_TERRAIN_ENAB", FS_TERRAIN_DISARM), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_PILOT_INPUT
     // @DisplayName: Pilot input failsafe action
     // @Description: Controls what action to take if no pilot input has been received after the timeout period specified by the FS_PILOT_TIMEOUT parameter
     // @Values: 0:Disabled, 1:Warn Only, 2:Disarm
     // @User: Standard
-    GSCALAR(failsafe_pilot_input, "FS_PILOT_INPUT", FS_PILOT_INPUT_DISARM),
+    GSCALAR(failsafe_pilot_input, "FS_PILOT_INPUT", FS_PILOT_INPUT_DISARM), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_PILOT_TIMEOUT
     // @DisplayName: Timeout for activation of pilot input failsafe
@@ -206,21 +206,21 @@ const AP_Param::Info Sub::var_info[] = {
     // @Units: s
     // @Range: 0.1 3.0
     // @User: Standard
-    GSCALAR(failsafe_pilot_input_timeout, "FS_PILOT_TIMEOUT", 3.0f),
+    GSCALAR(failsafe_pilot_input_timeout, "FS_PILOT_TIMEOUT", 3.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: XTRACK_ANG_LIM
     // @DisplayName: Crosstrack correction angle limit
     // @Description: Maximum allowed angle (in degrees) between current track and desired heading during waypoint navigation
     // @Range: 10 90
     // @User: Standard
-    GSCALAR(xtrack_angle_limit,"XTRACK_ANG_LIM", 45),
+    GSCALAR(xtrack_angle_limit,"XTRACK_ANG_LIM", 45), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: WP_YAW_BEHAVIOR
     // @DisplayName: Yaw behaviour during missions
     // @Description: Determines how the autopilot controls the yaw during missions and RTL
     // @Values: 0:Never change yaw, 1:Face next waypoint, 2:Face next waypoint except RTL, 3:Face along GPS course, 4:Correct crosstrack error
     // @User: Standard
-    GSCALAR(wp_yaw_behavior,  "WP_YAW_BEHAVIOR",    WP_YAW_BEHAVIOR_DEFAULT),
+    GSCALAR(wp_yaw_behavior,  "WP_YAW_BEHAVIOR",    WP_YAW_BEHAVIOR_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_SPEED_UP
     // @DisplayName: Pilot maximum vertical ascending speed
@@ -229,7 +229,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 20 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_speed_up,     "PILOT_SPEED_UP",   PILOT_VELZ_MAX),
+    GSCALAR(pilot_speed_up,     "PILOT_SPEED_UP",   PILOT_VELZ_MAX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_SPEED_DN
     // @DisplayName: Pilot maximum vertical descending speed
@@ -238,7 +238,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 20 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_speed_dn,     "PILOT_SPEED_DN",   0),
+    GSCALAR(pilot_speed_dn,     "PILOT_SPEED_DN",   0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_SPEED
     // @DisplayName: Pilot maximum horizontal speed
@@ -247,7 +247,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 10 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_speed,     "PILOT_SPEED",   PILOT_SPEED_DEFAULT),
+    GSCALAR(pilot_speed,     "PILOT_SPEED",   PILOT_SPEED_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: PILOT_ACCEL_Z
     // @DisplayName: Pilot vertical acceleration
@@ -256,7 +256,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_accel_z,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT),
+    GSCALAR(pilot_accel_z,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: THR_DZ
     // @DisplayName: Throttle deadzone
@@ -265,14 +265,14 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 0 300
     // @Units: PWM
     // @Increment: 1
-    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT),
+    GSCALAR(throttle_deadzone,  "THR_DZ",    THR_DZ_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
     // @Description: 4 byte bitmap of log types to enable
     // @Bitmask: 0:ATTITUDE_FAST,1:ATTITUDE_MED,2:GPS,3:PM,4:CTUN,5:NTUN,6:RCIN,7:IMU,8:CMD,9:CURRENT,10:RCOUT,11:OPTFLOW,12:PID,13:COMPASS,14:INAV,15:CAMERA,17:MOTBATT,18:IMU_FAST,19:IMU_RAW
     // @User: Standard
-    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK),
+    GSCALAR(log_bitmask,    "LOG_BITMASK",          DEFAULT_LOG_BITMASK), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ANGLE_MAX
     // @DisplayName: Angle Max
@@ -281,56 +281,56 @@ const AP_Param::Info Sub::var_info[] = {
     // @Increment: 10
     // @Range: 1000 8000
     // @User: Advanced
-    ASCALAR(angle_max, "ANGLE_MAX",                 DEFAULT_ANGLE_MAX),
+    ASCALAR(angle_max, "ANGLE_MAX",                 DEFAULT_ANGLE_MAX), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_ACTION
     // @DisplayName: EKF Failsafe Action
     // @Description: Controls the action that will be taken when an EKF failsafe is invoked
     // @Values: 0:Disabled, 1:Warn only, 2:Disarm
     // @User: Advanced
-    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT),
+    GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass and velocity variance
     // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed
     // @User: Advanced
-    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT),
+    GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FS_CRASH_CHECK
     // @DisplayName: Crash check enable
     // @Description: This enables automatic crash checking. When enabled the motors will disarm if a crash is detected.
     // @Values: 0:Disabled,1:Warn only,2:Disarm
     // @User: Advanced
-    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    FS_CRASH_DISABLED),
+    GSCALAR(fs_crash_check, "FS_CRASH_CHECK",    FS_CRASH_DISABLED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: JS_GAIN_DEFAULT
     // @DisplayName: Default gain at boot
     // @Description: Default gain at boot, must be in range [JS_GAIN_MIN , JS_GAIN_MAX]. Current gain value is accessible via NAMED_VALUE_FLOAT MAVLink message with name 'PilotGain'.
     // @User: Standard
     // @Range: 0.1 1.0
-    GSCALAR(gain_default, "JS_GAIN_DEFAULT", 0.5),
+    GSCALAR(gain_default, "JS_GAIN_DEFAULT", 0.5), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: JS_GAIN_MAX
     // @DisplayName: Maximum joystick gain
     // @Description: Maximum joystick gain
     // @User: Standard
     // @Range: 0.2 1.0
-    GSCALAR(maxGain, "JS_GAIN_MAX", 1.0),
+    GSCALAR(maxGain, "JS_GAIN_MAX", 1.0), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: JS_GAIN_MIN
     // @DisplayName: Minimum joystick gain
     // @Description: Minimum joystick gain
     // @User: Standard
     // @Range: 0.1 0.8
-    GSCALAR(minGain, "JS_GAIN_MIN", 0.25),
+    GSCALAR(minGain, "JS_GAIN_MIN", 0.25), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: JS_GAIN_STEPS
     // @DisplayName: Gain steps
     // @Description: Controls the number of steps between minimum and maximum joystick gain when the gain is adjusted using buttons. Set to 1 to always use JS_GAIN_DEFAULT.
     // @User: Standard
     // @Range: 1 10
-    GSCALAR(numGainSettings, "JS_GAIN_STEPS", 4),
+    GSCALAR(numGainSettings, "JS_GAIN_STEPS", 4), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: JS_LIGHTS_STEPS
     // @DisplayName: Lights brightness steps
@@ -338,14 +338,14 @@ const AP_Param::Info Sub::var_info[] = {
     // @User: Standard
     // @Range: 1 10
     // @Units: PWM
-    GSCALAR(lights_steps, "JS_LIGHTS_STEPS", 8),
+    GSCALAR(lights_steps, "JS_LIGHTS_STEPS", 8), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: JS_THR_GAIN
     // @DisplayName: Throttle gain scalar
     // @Description: Scalar for gain on the throttle channel. Gets scaled with the current JS gain
     // @User: Standard
     // @Range: 0.5 4.0
-    GSCALAR(throttle_gain, "JS_THR_GAIN", 1.0f),
+    GSCALAR(throttle_gain, "JS_THR_GAIN", 1.0f), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: FRAME_CONFIG
     // @DisplayName: Frame configuration
@@ -353,7 +353,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @User: Standard
     // @RebootRequired: True
     // @Values: 0:BlueROV1, 1:Vectored, 2:Vectored_6DOF, 3:Vectored_6DOF_90, 4:SimpleROV-3, 5:SimpleROV-4, 6:SimpleROV-5, 7:Custom
-    GSCALAR(frame_configuration, "FRAME_CONFIG", AP_Motors6DOF::SUB_FRAME_VECTORED),
+    GSCALAR(frame_configuration, "FRAME_CONFIG", AP_Motors6DOF::SUB_FRAME_VECTORED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Group: BTN0_
     // @Path: ../libraries/AP_JSButton/AP_JSButton.cpp
@@ -490,21 +490,21 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 50 490
     // @Increment: 1
     // @User: Advanced
-    GSCALAR(rc_speed, "RC_SPEED",              RC_SPEED_DEFAULT),
+    GSCALAR(rc_speed, "RC_SPEED",              RC_SPEED_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_RP_P
     // @DisplayName: Acro Roll and Pitch P gain
     // @Description: Converts pilot roll and pitch into a desired rate of rotation in ACRO and SPORT mode.  Higher values mean faster rate of rotation.
     // @Range: 1 10
     // @User: Standard
-    GSCALAR(acro_rp_p,                 "ACRO_RP_P",           ACRO_RP_P),
+    GSCALAR(acro_rp_p,                 "ACRO_RP_P",           ACRO_RP_P), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_YAW_P
     // @DisplayName: Acro Yaw P gain
     // @Description: Converts pilot yaw input into a desired rate of rotation.  Higher values mean faster rate of rotation.
     // @Range: 1 10
     // @User: Standard
-    GSCALAR(acro_yaw_p,                 "ACRO_YAW_P",           ACRO_YAW_P),
+    GSCALAR(acro_yaw_p,                 "ACRO_YAW_P",           ACRO_YAW_P), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_BAL_ROLL
     // @DisplayName: Acro Balance Roll
@@ -512,7 +512,7 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 0 3
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(acro_balance_roll,      "ACRO_BAL_ROLL",    ACRO_BALANCE_ROLL),
+    GSCALAR(acro_balance_roll,      "ACRO_BAL_ROLL",    ACRO_BALANCE_ROLL), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_BAL_PITCH
     // @DisplayName: Acro Balance Pitch
@@ -520,21 +520,21 @@ const AP_Param::Info Sub::var_info[] = {
     // @Range: 0 3
     // @Increment: 0.1
     // @User: Advanced
-    GSCALAR(acro_balance_pitch,     "ACRO_BAL_PITCH",   ACRO_BALANCE_PITCH),
+    GSCALAR(acro_balance_pitch,     "ACRO_BAL_PITCH",   ACRO_BALANCE_PITCH), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_TRAINER
     // @DisplayName: Acro Trainer
     // @Description: Type of trainer used in acro mode
     // @Values: 0:Disabled,1:Leveling,2:Leveling and Limited
     // @User: Advanced
-    GSCALAR(acro_trainer,   "ACRO_TRAINER",     ACRO_TRAINER_LIMITED),
+    GSCALAR(acro_trainer,   "ACRO_TRAINER",     ACRO_TRAINER_LIMITED), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: ACRO_EXPO
     // @DisplayName: Acro Expo
     // @Description: Acro roll/pitch Expo to allow faster rotation when stick at edges
     // @Values: 0:Disabled,0.1:Very Low,0.2:Low,0.3:Medium,0.4:High,0.5:Very High
     // @User: Advanced
-    GSCALAR(acro_expo,  "ACRO_EXPO",    ACRO_EXPO_DEFAULT),
+    GSCALAR(acro_expo,  "ACRO_EXPO",    ACRO_EXPO_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // variables not in the g class which contain EEPROM saved variables
 
@@ -680,14 +680,14 @@ const AP_Param::Info Sub::var_info[] = {
     // @Description: Minimum signal quality for good rangefinder readings
     // @Range: 0 100
     // @User: Advanced
-    GSCALAR(rangefinder_signal_min, "RNGFND_SQ_MIN", RANGEFINDER_SIGNAL_MIN_DEFAULT),
+    GSCALAR(rangefinder_signal_min, "RNGFND_SQ_MIN", RANGEFINDER_SIGNAL_MIN_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 
     // @Param: SURFTRAK_DEPTH
     // @DisplayName: SURFTRAK minimum depth
     // @Description: Minimum depth to engage SURFTRAK mode
     // @Units: cm
     // @User: Standard
-    GSCALAR(surftrak_depth, "SURFTRAK_DEPTH", SURFTRAK_DEPTH_DEFAULT),
+    GSCALAR(surftrak_depth, "SURFTRAK_DEPTH", SURFTRAK_DEPTH_DEFAULT), // coverity[PW.NARROWING_CONVERSION]
 #endif
 
 #if AP_TERRAIN_AVAILABLE

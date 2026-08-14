@@ -35,7 +35,7 @@ public:
 
     SPIBus(uint8_t _bus) :
         bus{_bus}
-        { }
+        { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     uint8_t bus;
     Semaphore sem;

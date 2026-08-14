@@ -15,6 +15,7 @@
 
 #include "sg.h"
 #include "sgUtil.h"
+#include <errno.h>
 
 #define SG_PAYLOAD_LEN_OPMSG SG_MSG_LEN_OPMSG - 5 /// the payload length.
 
@@ -79,7 +80,8 @@ bool sgEncodeOperating(uint8_t *buffer, sg_operating_t *op, uint8_t msgId)
     {
         rate = 0x8000;
     }
-    uint162Buf(&buffer[PBASE + OFFSET_RATE], rate);
+    // parasoft-suppress BD-PB-INTVC "Reviewed and safe"
+    uint162Buf(&buffer[PBASE + OFFSET_RATE], rate); // parasoft-suppress BD-PB-INTVC "Reviewed and safe"
 
     // populate Heading
     //    conversion: heading * ( pow(2, 15) / 360 )

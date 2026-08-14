@@ -68,7 +68,7 @@ private:
 
     void reset_registers();
 
-    bool colour_update_register_poked = false;
+    bool colour_update_register_poked = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     SIM_RGBLED rgbled{"IS31FL3195"};
 };

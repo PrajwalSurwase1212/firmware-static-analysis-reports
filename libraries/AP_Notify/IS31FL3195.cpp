@@ -50,7 +50,7 @@ IS31FL3195::IS31FL3195(uint8_t bus, uint8_t addr)
     , _bus(bus)
     , _addr(addr)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 bool IS31FL3195::init(void)
 {

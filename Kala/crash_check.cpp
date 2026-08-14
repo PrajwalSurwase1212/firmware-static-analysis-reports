@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 // Code to detect a crash main ArduCopter code
 #define CRASH_CHECK_TRIGGER_SEC         2       // 2 seconds inverted indicates a crash
@@ -255,7 +256,8 @@ void Copter::parachute_check()
 
     // pass sink rate to parachute library
     float vel_d_ms = 0;
-    UNUSED_RESULT(AP::ahrs().get_velocity_D(vel_d_ms, vibration_check.high_vibes));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    UNUSED_RESULT(AP::ahrs().get_velocity_D(vel_d_ms, vibration_check.high_vibes)); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
     parachute.set_sink_rate(vel_d_ms);
 
     // exit immediately if in standby

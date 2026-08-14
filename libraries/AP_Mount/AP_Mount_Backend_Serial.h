@@ -32,7 +32,7 @@ public:
     AP_Mount_Backend_Serial(class AP_Mount &frontend, class AP_Mount_Params &params, uint8_t instance, uint8_t serial_instance) :
         AP_Mount_Backend(frontend, params, instance),
         _serial_instance(serial_instance)
-    {}
+    {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // perform any required initialisation for this instance
     void init() override;

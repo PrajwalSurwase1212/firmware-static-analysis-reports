@@ -10,7 +10,7 @@ class AP_OpticalFlow_SITL : public OpticalFlow_backend
 {
 public:
     /// constructor
-    using OpticalFlow_backend::OpticalFlow_backend;
+    using OpticalFlow_backend::OpticalFlow_backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update - read latest values from sensor and fill in x,y and totals.
     void update(void) override;

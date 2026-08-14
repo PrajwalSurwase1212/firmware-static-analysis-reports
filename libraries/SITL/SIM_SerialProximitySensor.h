@@ -33,7 +33,7 @@ namespace SITL {
 class SerialProximitySensor : public SerialDevice {
 public:
 
-    SerialProximitySensor() {};
+    SerialProximitySensor() {}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // update state
     virtual void update(const Location &location);

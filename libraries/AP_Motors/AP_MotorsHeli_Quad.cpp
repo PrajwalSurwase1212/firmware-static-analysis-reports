@@ -83,7 +83,7 @@ void AP_MotorsHeli_Quad::calculate_armed_scalars()
 }
 
 // calculate_scalars
-void AP_MotorsHeli_Quad::calculate_scalars()
+void AP_MotorsHeli_Quad::calculate_scalars() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // range check collective min, max and mid
     if( _collective_min >= _collective_max ) {
@@ -97,10 +97,10 @@ void AP_MotorsHeli_Quad::calculate_scalars()
 
     if (!is_equal((float)_collective_max_deg, (float)_collective_min_deg)) {
         // calculate collective zero thrust point as a number from 0 to 1
-        _collective_zero_thrust_pct = (_collective_zero_thrust_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg);
+        _collective_zero_thrust_pct = (_collective_zero_thrust_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
         // calculate collective land min point as a number from 0 to 1
-        _collective_land_min_pct = (_collective_land_min_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg);
+        _collective_land_min_pct = (_collective_land_min_deg-_collective_min_deg)/(_collective_max_deg-_collective_min_deg); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
     } else {
         _collective_zero_thrust_pct = 0.0f;
         _collective_land_min_pct = 0.0f;

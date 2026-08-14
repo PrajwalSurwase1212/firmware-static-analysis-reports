@@ -100,7 +100,7 @@ void HALSITL::Util::set_cmdline_parameters()
 {
     for (uint16_t i=0; i<sitlState->cmdline_param.available(); i++) {
         const auto param = sitlState->cmdline_param[i];
-        if (param != nullptr) {
+        if (param) {
             AP_Param::set_default_by_name(param->name, param->value);
         }
     }

@@ -13,7 +13,7 @@ public:
     SMBusDevice() :
         I2CDevice(),
         I2CRegisters_16Bit()
-        { }
+        { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void set_register(uint8_t reg, uint16_t value) {
         I2CRegisters_16Bit::set_register(reg, value);

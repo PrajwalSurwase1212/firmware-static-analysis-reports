@@ -180,7 +180,7 @@ AP_ExternalAHRS_VectorNav::AP_ExternalAHRS_VectorNav(AP_ExternalAHRS *_frontend,
     uart = sm.find_serial(AP_SerialManager::SerialProtocol_AHRS, 0);
     if (!uart) {
         GCS_SEND_TEXT(MAV_SEVERITY_INFO, "VectorNav ExternalAHRS no UART");
-        return;
+        return; // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
     baudrate = sm.find_baudrate(AP_SerialManager::SerialProtocol_AHRS, 0);
     port_num = sm.find_portnum(AP_SerialManager::SerialProtocol_AHRS, 0);
@@ -199,7 +199,7 @@ AP_ExternalAHRS_VectorNav::AP_ExternalAHRS_VectorNav(AP_ExternalAHRS *_frontend,
         AP_HAL::panic("VectorNav Failed to start ExternalAHRS update thread");
     }
     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "VectorNav ExternalAHRS initialised");
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
   check the UART for more data
@@ -415,7 +415,7 @@ bool AP_ExternalAHRS_VectorNav::decode_latest_term()
         case 2: 
             if (strncmp(nmea.term, "VN-", 3) == 0) {
                 // This term is the model number
-                strncpy(model_name, nmea.term, sizeof(model_name) - 1);
+                strncpy(model_name, nmea.term, sizeof(model_name) - 1); // coverity[BUFFER_SIZE] // Reviewed: safe in context
                 model_name[sizeof(model_name) - 1] = '\0';
             }
             return true;

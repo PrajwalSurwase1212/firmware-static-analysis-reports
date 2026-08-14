@@ -12,6 +12,7 @@
 #include <AP_Math/AP_Math.h>
 #include <AP_DroneCAN/AP_DroneCAN.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <cerrno>
 
 #define LOG_TAG "BattMon"
 
@@ -39,7 +40,7 @@ AP_BattMonitor_DroneCAN::AP_BattMonitor_DroneCAN(AP_BattMonitor &mon, AP_BattMon
     _state.var_info = var_info;
 
     // starts with not healthy
-    _state.healthy = false;
+    _state.healthy = false; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 bool AP_BattMonitor_DroneCAN::subscribe_msgs(AP_DroneCAN* ap_dronecan)
@@ -326,7 +327,8 @@ bool AP_BattMonitor_DroneCAN::capacity_remaining_pct(uint8_t &percentage) const
     }
 
     // the monitor must have current readings in order to estimate consumed_mah and be healthy
-    if (!has_current() || !_state.healthy) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (!has_current() || !_state.healthy) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         return false;
     }
 

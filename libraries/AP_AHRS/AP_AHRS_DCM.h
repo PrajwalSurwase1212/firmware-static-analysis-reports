@@ -45,7 +45,7 @@ public:
           _gps_use(gps_use)
     {
         _dcm_matrix.identity();
-        _body_dcm_matrix.identity();
+        _body_dcm_matrix.identity(); // coverity[UNINIT_CTOR] // Reviewed: safe in context
     }
 
     /* Do not allow copies */

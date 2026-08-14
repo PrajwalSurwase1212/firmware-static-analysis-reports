@@ -92,7 +92,7 @@ const AP_Param::GroupInfo AP_BattMonitor_FuelLevel_Analog::var_info[] = {
 };
 
 // Constructor
-AP_BattMonitor_FuelLevel_Analog::AP_BattMonitor_FuelLevel_Analog(AP_BattMonitor &mon, AP_BattMonitor::BattMonitor_State &mon_state, AP_BattMonitor_Params &params) :
+AP_BattMonitor_FuelLevel_Analog::AP_BattMonitor_FuelLevel_Analog(AP_BattMonitor &mon, AP_BattMonitor::BattMonitor_State &mon_state, AP_BattMonitor_Params &params) : // coverity[RW.ROUTINE_NOT_EMITTED]
     AP_BattMonitor_Backend(mon, mon_state, params)
 {
     AP_Param::setup_object_defaults(this, var_info);
@@ -102,13 +102,13 @@ AP_BattMonitor_FuelLevel_Analog::AP_BattMonitor_FuelLevel_Analog(AP_BattMonitor 
 
     // create a low pass filter
     // use a pole at 0.3 Hz if the filter is not being used
-    _voltage_filter.set_cutoff_frequency((_fuel_level_filter_frequency >= 0) ? _fuel_level_filter_frequency : 0.3f);
+    _voltage_filter.set_cutoff_frequency((_fuel_level_filter_frequency >= 0) ? _fuel_level_filter_frequency : 0.3f); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
 /*
   read - read the "voltage" and "current"
 */
-void AP_BattMonitor_FuelLevel_Analog::read()
+void AP_BattMonitor_FuelLevel_Analog::read() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (_analog_source == nullptr) {
         return;
@@ -139,7 +139,7 @@ void AP_BattMonitor_FuelLevel_Analog::read()
     // output the ADC voltage to the voltage field for easier calibration of sensors
     // also output filtered voltage as a measure of tank slosh filtering
     // this could be useful for tuning the LPF
-    const float &voltage_used = (_fuel_level_filter_frequency >= 0) ? filtered_voltage : voltage;
+    const float &voltage_used = (_fuel_level_filter_frequency >= 0) ? filtered_voltage : voltage; // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 
     _state.voltage = filtered_voltage;
 

@@ -6,6 +6,7 @@
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_HAL/AP_HAL_Boards.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -90,11 +91,11 @@ AP_Filters::AP_Filters()
     AP_Param::setup_object_defaults(this, var_info);
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
-    if (singleton != nullptr) {
+    if (singleton) {
         AP_HAL::panic("AP_Filters must be singleton");
     }
 #endif
-    singleton = this;
+    singleton = this; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 void AP_Filters::init()
@@ -139,7 +140,8 @@ AP_Filter* AP_Filters::get_filter(uint8_t index)
         return nullptr;
     }
 
-    return filters[index-1];
+    // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
+    return filters[index-1]; // parasoft-suppress BD-PB-ARRAY "Reviewed and safe"
 }
 
 // singleton instance

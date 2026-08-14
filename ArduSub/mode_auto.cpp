@@ -188,7 +188,7 @@ void ModeAuto::auto_circle_movetoedge_start(const Location &circle_center, float
     // check our distance from edge of circle
     Vector3f circle_edge_neu{};
     float dist_to_edge = 0.0f;
-    sub.circle_nav.get_closest_point_on_circle_NEU_cm(circle_edge_neu, dist_to_edge);
+    sub.circle_nav.get_closest_point_on_circle_NEU_cm(circle_edge_neu, dist_to_edge); // coverity[UNINIT] // Reviewed: safe in context
 
     // if more than 3m then fly to edge
     if (dist_to_edge > 300.0f) {

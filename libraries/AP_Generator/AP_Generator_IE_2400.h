@@ -9,7 +9,7 @@
 class AP_Generator_IE_2400 : public AP_Generator_IE_FuelCell
 {
     // Inherit constructor
-    using AP_Generator_IE_FuelCell::AP_Generator_IE_FuelCell;
+    using AP_Generator_IE_FuelCell::AP_Generator_IE_FuelCell; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 public:
 

@@ -30,7 +30,7 @@
 
 class AP_ADSB_Sagetech_MXS : public AP_ADSB_Backend {
 public:
-    using AP_ADSB_Backend::AP_ADSB_Backend;
+    using AP_ADSB_Backend::AP_ADSB_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     /**
      * @brief Performs required initialization for this instance

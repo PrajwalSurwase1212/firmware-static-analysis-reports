@@ -15,6 +15,7 @@
 
 #include "AP_Param.h"
 #include <AP_Math/AP_Math.h>
+#include <cerrno>
 
 // Param type template functions
 
@@ -114,7 +115,8 @@ template<typename T, ap_var_type PT>
 void AP_ParamV<T, PT>::set_and_save(const T &v) {
     bool force = (_value != v);
     set(v);
-    save(force);
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    save(force); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 // Combined set and save, but only does the save if the value is

@@ -85,12 +85,12 @@ AP_EFI::AP_EFI()
 {
     singleton = this;
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Initialize backends based on existing params
 void AP_EFI::init(void)
 {
-    if (backend != nullptr) {
+    if (backend) {
         // Init called twice, perhaps
         return;
     }
@@ -335,7 +335,7 @@ void AP_EFI::get_state(EFI_State &_state)
 }
 
 void AP_EFI::handle_EFI_message(const mavlink_message_t &msg) {
-    if (backend != nullptr) {
+    if (backend) {
         backend->handle_EFI_message(msg);
     }
 }

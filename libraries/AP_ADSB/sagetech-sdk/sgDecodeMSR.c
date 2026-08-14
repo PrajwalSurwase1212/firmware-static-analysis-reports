@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "sgUtil.h"
+#include <errno.h>
 
 #define MS_PARAM_TOA (1 << 3)
 #define MS_PARAM_ADSBVER (1 << 2)
@@ -196,7 +197,8 @@ bool sgDecodeMSR(uint8_t *buffer, sg_msr_t *msr)
     if (fields[2] & MS_PARAM_VRATE)
     {
         msr->vrateType = buffer[PBASE + ofs];
-        ofs++;
+        // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+        ofs++; // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
     }
 
     return true;

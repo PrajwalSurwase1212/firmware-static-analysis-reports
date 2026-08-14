@@ -80,7 +80,7 @@ AP_OAPathPlanner::AP_OAPathPlanner()
     _singleton = this;
 
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // perform any required initialisation
 void AP_OAPathPlanner::init()

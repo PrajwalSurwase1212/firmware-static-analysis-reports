@@ -13,7 +13,7 @@ template <class T>
 DigitalBiquadFilter<T>::DigitalBiquadFilter() {
   _delay_element_1 = T();
   _delay_element_2 = T();
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 template <class T>
 T DigitalBiquadFilter<T>::apply(const T &sample, const struct biquad_params &params) {

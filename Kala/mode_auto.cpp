@@ -1238,7 +1238,7 @@ void ModeAuto::nav_attitude_time_run()
 #if AC_PAYLOAD_PLACE_ENABLED
 // auto_payload_place_run - places an object in auto mode
 //      called by auto_run at 100hz or more
-void PayloadPlace::run()
+void PayloadPlace::run() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     const char* prefix_str = "PayloadPlace:";
 
@@ -1325,7 +1325,7 @@ void PayloadPlace::run()
         descent_established_time_ms = now_ms;
         descent_start_altitude_m = pos_control->get_pos_desired_U_m();
         // limiting the decent rate to the limit set in wp_nav is not necessary but done for safety
-        descent_speed_ms = MIN((is_positive(g2.pldp_descent_speed_ms)) ? g2.pldp_descent_speed_ms : abs(g.land_speed_cms) * 0.01, wp_nav->get_default_speed_down_ms());
+        descent_speed_ms = MIN((is_positive(g2.pldp_descent_speed_ms)) ? g2.pldp_descent_speed_ms : abs(g.land_speed_cms) * 0.01, wp_nav->get_default_speed_down_ms()); // coverity[RW.NO_MATCHING_FUNCTION]
         descent_thrust_level = 1.0;
         state = State::Descent;
         FALLTHROUGH;
@@ -1407,7 +1407,7 @@ void PayloadPlace::run()
 
     case State::Delay:
         // If we get here we have finished releasing the gripper
-        if (now_ms - place_start_time_ms < placed_check_duration_ms + g2.pldp_delay_s * 1000.0) {
+        if (now_ms - place_start_time_ms < placed_check_duration_ms + g2.pldp_delay_s * 1000.0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
             break;
         }
         FALLTHROUGH;

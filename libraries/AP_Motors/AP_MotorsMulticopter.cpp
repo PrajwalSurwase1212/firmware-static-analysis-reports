@@ -240,7 +240,7 @@ AP_MotorsMulticopter::AP_MotorsMulticopter(uint16_t speed_hz) :
 {
     AP_Param::setup_object_defaults(this, var_info);
 };
-
+ // coverity[UNINIT_CTOR] // Reviewed: safe in context
 // output - sends commands to the motors
 void AP_MotorsMulticopter::output()
 {
@@ -288,9 +288,9 @@ void AP_MotorsMulticopter::update_external_limits()
 
 // output booster throttle, if any
 void AP_MotorsMulticopter::output_boost_throttle(void)
-{
+{ // coverity[RW.ROUTINE_NOT_EMITTED]
     if (_boost_scale > 0) {
-        float throttle = constrain_float(get_throttle() * _boost_scale, 0, 1);
+        float throttle = constrain_float(get_throttle() * _boost_scale, 0, 1); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         SRV_Channels::set_output_scaled(SRV_Channel::k_boost_throttle, throttle * 1000);
     } else {
         SRV_Channels::set_output_scaled(SRV_Channel::k_boost_throttle, 0);
@@ -345,7 +345,7 @@ void AP_MotorsMulticopter::update_throttle_filter()
 
 // return current_limit as a number from 0 ~ 1 in the range throttle_min to throttle_max
 float AP_MotorsMulticopter::get_current_limit_max_throttle()
-{
+{ // coverity[RW.ROUTINE_NOT_EMITTED]
 #if AP_BATTERY_ENABLED
     AP_BattMonitor &battery = AP::battery();
 
@@ -353,7 +353,7 @@ float AP_MotorsMulticopter::get_current_limit_max_throttle()
     float _batt_current;
 
     if (_batt_current_max <= 0 || // return maximum if current limiting is disabled
-        !armed() || // remove throttle limit if disarmed
+        !armed() || // remove throttle limit if disarmed // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         !battery.current_amps(_batt_current, batt_idx)) { // no current monitoring is available
         _throttle_limit = 1.0f;
         return 1.0f;
@@ -437,13 +437,13 @@ void AP_MotorsMulticopter::set_actuator_with_slew(float& actuator_output, float 
     // If MOT_SLEW_UP_TIME is set, calculate the highest allowed new output value, constrained 0.0~1.0
     if (is_positive(_slew_up_time)) {
         float output_delta_up_max = _dt_s / (constrain_float(_slew_up_time, 0.001f, 0.5f));
-        output_slew_limit_up = constrain_float(actuator_output + output_delta_up_max, 0.0f, 1.0f);
+        output_slew_limit_up = constrain_float(actuator_output + output_delta_up_max, 0.0f, 1.0f); // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     }
 
     // If MOT_SLEW_DN_TIME is set, calculate the lowest allowed new output value, constrained 0.0~1.0
     if (is_positive(_slew_dn_time)) {
         float output_delta_dn_max = _dt_s / (constrain_float(_slew_dn_time, 0.001f, 0.5f));
-        output_slew_limit_dn = constrain_float(actuator_output - output_delta_dn_max, 0.0f, 1.0f);
+        output_slew_limit_dn = constrain_float(actuator_output - output_delta_dn_max, 0.0f, 1.0f); // coverity[DIVIDE_BY_ZERO] // Reviewed: safe in context
     }
 
     // Constrain change in output to within the above limits

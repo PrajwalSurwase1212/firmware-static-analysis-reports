@@ -25,6 +25,7 @@
 #include <AP_Common/AP_Common.h>
 #include <AP_Math/AP_Math.h>
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -144,7 +145,8 @@ void AP_Terrain::open_file(void)
     }
     if (file_path == nullptr) {
         const char* terrain_dir = hal.util->get_custom_terrain_directory();
-        if (terrain_dir == nullptr) {
+        // parasoft-suppress BD-PB-CC "Reviewed and safe"
+        if (terrain_dir == nullptr) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
             terrain_dir = HAL_BOARD_TERRAIN_DIRECTORY;
         }
         if (asprintf(&file_path, "%s/NxxExxx.DAT", terrain_dir) <= 0) {

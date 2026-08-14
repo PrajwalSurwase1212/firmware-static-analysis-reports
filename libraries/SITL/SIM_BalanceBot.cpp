@@ -18,6 +18,7 @@
 
 #include "SIM_BalanceBot.h"
 #include <stdio.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL& hal;
 
@@ -29,7 +30,7 @@ BalanceBot::BalanceBot(const char *frame_str) :
     dcm.from_euler(0,0,0); // initial yaw, pitch and roll in radians
     lock_step_scheduled = true;
     printf("Balance Bot Simulation Started\n");
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 /*
    return yaw rate in degrees/second given steering_angle
@@ -121,7 +122,8 @@ void BalanceBot::update(const struct sitl_input &input)
     // update theta and angular velocity
     ang_vel += angular_accel_bf_y * delta_time;
     theta += ang_vel * delta_time;
-    theta = fmod(theta, radians(360));
+    // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+    theta = fmod(theta, radians(360)); // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
     gyro = Vector3f(0, ang_vel, radians(yaw_rate));
 

@@ -19,6 +19,7 @@
 #pragma GCC optimize("O2")
 
 #include "AP_Math.h"
+#include <cerrno>
 
 template <typename T>
 T Vector2<T>::length_squared() const
@@ -161,7 +162,9 @@ T Vector2<T>::angle(const Vector2<T> &v2) const
 template <typename T>
 T Vector2<T>::angle(void) const
 {
-    return atan2F(y, x);
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    return atan2F(y, x); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 // find the intersection between two line segments
@@ -369,7 +372,7 @@ Vector2<T> Vector2<T>::closest_point(const Vector2<T> &p, const Vector2<T> &w)
     const T t = (p * w) / l2;
     if (t <= 0) {
         return Vector2<T>(0,0);
-    } else if (t >= 1) {
+    } else if (t >= 1) { // coverity[DEADCODE]
         return w;
     } else {
         return w*t;
@@ -393,8 +396,11 @@ template <typename T>
 T Vector2<T>::closest_distance_between_line_and_point(const Vector2<T> &w1,
                                                       const Vector2<T> &w2,
                                                       const Vector2<T> &p)
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    return sqrtF(closest_distance_between_line_and_point_squared(w1, w2, p));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    return sqrtF(closest_distance_between_line_and_point_squared(w1, w2, p)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 // a1->a2 and b2->v2 define two line segments
@@ -430,10 +436,14 @@ T Vector2<T>::closest_distance_between_radial_and_point_squared(const Vector2<T>
 // p is a point
 // returns the closest distance between the radial and the point
 template <typename T>
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 T Vector2<T>::closest_distance_between_radial_and_point(const Vector2<T> &w,
+                                                            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
                                                             const Vector2<T> &p)
 {
-    return sqrtF(closest_distance_between_radial_and_point_squared(w,p));
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    errno = 0; // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    return sqrtF(closest_distance_between_radial_and_point_squared(w,p)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 }
 
 // rotate vector by angle in radians

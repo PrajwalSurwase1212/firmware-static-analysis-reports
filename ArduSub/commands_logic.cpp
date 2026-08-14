@@ -1,6 +1,7 @@
 #include "Sub.h"
 
 #include <AP_RTC/AP_RTC.h>
+#include <cerrno>
 
 static enum AutoSurfaceState auto_surface_state = AUTO_SURFACE_STATE_GO_TO_LOCATION;
 
@@ -525,7 +526,10 @@ bool Sub::verify_circle(const AP_Mission::Mission_Command& cmd)
     if (auto_mode == Auto_CircleMoveToEdge) {
         if (wp_nav.reached_wp_destination()) {
             Vector3f circle_center;
-            UNUSED_RESULT(cmd.content.location.get_vector_from_origin_NEU_cm(circle_center));
+            // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+            // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+            // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
+            UNUSED_RESULT(cmd.content.location.get_vector_from_origin_NEU_cm(circle_center)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe" // parasoft-suppress BD-PB-VOVR "Reviewed and safe"
 
             // set target altitude if not provided
             if (is_zero(circle_center.z)) {

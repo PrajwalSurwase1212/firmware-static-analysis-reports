@@ -45,7 +45,7 @@ public:
 private:
 
     bool check_synced();
-    bool synced{false};
+    bool synced{false}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 };
 
 }

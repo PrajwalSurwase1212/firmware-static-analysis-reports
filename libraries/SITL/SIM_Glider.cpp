@@ -73,7 +73,7 @@ Glider::Glider(const char *frame_str) :
     carriage_state = carriageState::WAITING_FOR_PICKUP;
     AP::sitl()->models.glider_ptr = this;
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 
 // Torque calculation function
@@ -269,7 +269,7 @@ Vector3f Glider::getForce(float inputAileron, float inputElevator, float inputRu
     return ret;
 }
 
-void Glider::calculate_forces(const struct sitl_input &input, Vector3f &rot_accel, Vector3f &body_accel)
+void Glider::calculate_forces(const struct sitl_input &input, Vector3f &rot_accel, Vector3f &body_accel) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     filtered_servo_setup(1, 1100, 1900, model.aileronDeflectionLimitDeg);
     filtered_servo_setup(4, 1100, 1900, model.aileronDeflectionLimitDeg);
@@ -306,7 +306,7 @@ void Glider::calculate_forces(const struct sitl_input &input, Vector3f &rot_acce
         }
     } else if (carriage_state == carriageState::WAITING_FOR_PICKUP) {
         // Don't allow the balloon to drag sideways until the pickup
-        balloon_velocity = Vector3f(0.0f, 0.0f, -balloon_rate * balloon);
+        balloon_velocity = Vector3f(0.0f, 0.0f, -balloon_rate * balloon); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         balloon_position += balloon_velocity * (1.0e-6 * (float)frame_time_us);
     }
 
@@ -394,10 +394,10 @@ bool Glider::on_ground() const
   implement balloon lift
   controlled by SIM_BLN_BRST and SIM_BLN_RATE
  */
-bool Glider::update_balloon(float balloon, Vector3f &force, Vector3f &rot_accel)
+bool Glider::update_balloon(float balloon, Vector3f &force, Vector3f &rot_accel) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // by setting a negative balloon rate we disable the balloon
-    if (balloon_rate < 0) {
+    if (balloon_rate < 0) { // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         carriage_state = carriageState::RELEASED;
     }
     

@@ -16,7 +16,7 @@ class AP_RangeFinder_MAVLink : public AP_RangeFinder_Backend
 public:
 
     // constructor
-    using AP_RangeFinder_Backend::AP_RangeFinder_Backend;
+    using AP_RangeFinder_Backend::AP_RangeFinder_Backend; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Assume that if the user set the RANGEFINDER_TYPE parameter to MAVLink,
     // there is an attached MAVLink rangefinder

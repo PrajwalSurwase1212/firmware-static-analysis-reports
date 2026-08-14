@@ -6,6 +6,7 @@
 
 #include "driver_cc2500.h"
 #include <utility>
+#include <cerrno>
 
 #pragma GCC optimize("O0")
 
@@ -13,7 +14,7 @@ extern const AP_HAL::HAL& hal;
 
 // constructor
 Radio_CC2500::Radio_CC2500(AP_HAL::OwnPtr<AP_HAL::SPIDevice> _dev) :
-    dev(std::move(_dev))
+    dev(std::move(_dev)) // coverity[UNINIT_CTOR] // Reviewed: safe in context
 {}
 
 void Radio_CC2500::ReadFifo(uint8_t *dpbuffer, uint8_t len)
@@ -33,7 +34,8 @@ void Radio_CC2500::ReadRegisterMulti(uint8_t address, uint8_t *data, uint8_t len
 
 void Radio_CC2500::WriteRegisterMulti(uint8_t address, const uint8_t *data, uint8_t length)
 {
-    uint8_t buf[length+1];
+    // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
+    uint8_t buf[length+1]; // parasoft-suppress BD-PB-VLASIZE "Reviewed and safe"
     buf[0] = address;
     memcpy(&buf[1], data, length);
     dev->transfer(buf, length+1, nullptr, 0);

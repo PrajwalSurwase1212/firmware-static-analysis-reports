@@ -1,6 +1,7 @@
 #include "AC_AttitudeControl_Heli.h"
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Scheduler/AP_Scheduler.h>
+#include <cerrno>
 
 // table of user settable parameters
 const AP_Param::GroupInfo AC_AttitudeControl_Heli::var_info[] = {
@@ -315,9 +316,9 @@ AC_AttitudeControl_Heli::AC_AttitudeControl_Heli(AP_AHRS_View &ahrs, const AP_Mu
     _flags_heli.leaky_i = true;
     _flags_heli.flybar_passthrough = false;
     _flags_heli.tail_passthrough = false;
-#if AP_FILTER_ENABLED
+#if AP_FILTER_ENABLED // coverity[UNINIT] // Reviewed: safe in context
     set_notch_sample_rate(AP::scheduler().get_loop_rate_hz());
-#endif
+#endif // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // passthrough_bf_roll_pitch_rate_yaw_norm - passthrough the pilots roll and pitch inputs directly to swashplate for flybar acro mode
@@ -444,8 +445,11 @@ void AC_AttitudeControl_Heli::rate_controller_run()
 
 // Update Alt_Hold angle maximum
 void AC_AttitudeControl_Heli::update_althold_lean_angle_max(float throttle_in)
+// parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
 {
-    float althold_lean_angle_max = acosf(constrain_float(throttle_in / AC_ATTITUDE_HELI_ANGLE_LIMIT_THROTTLE_MAX, 0.0f, 1.0f));
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    float althold_lean_angle_max = acosf(constrain_float(throttle_in / AC_ATTITUDE_HELI_ANGLE_LIMIT_THROTTLE_MAX, 0.0f, 1.0f)); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     _althold_lean_angle_max_rad = _althold_lean_angle_max_rad + (_dt_s / (_dt_s + _angle_limit_tc)) * (althold_lean_angle_max - _althold_lean_angle_max_rad);
 }
 

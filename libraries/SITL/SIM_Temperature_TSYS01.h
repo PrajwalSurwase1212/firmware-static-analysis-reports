@@ -49,7 +49,7 @@ private:
 
     float temperature_for_adc(uint32_t adc) const;
     uint32_t calculate_adc(float temperature) const;
-    uint32_t adc{0};
+    uint32_t adc{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     enum class Command {
         RESET       = 0x1E,

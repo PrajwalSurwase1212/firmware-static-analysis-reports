@@ -30,7 +30,7 @@ private:
     } state = State::WAITING;
 
     bool write_enabled{false};
-    uint32_t xfr_addr{0};
+    uint32_t xfr_addr{0}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     void open_storage_fd();
     int storage_fd = -1;

@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include <cerrno>
 
 
 // Function that will read the radio data, limit servos and trigger a failsafe
@@ -37,7 +38,8 @@ void Copter::init_rc_in()
 #endif  // AP_RC_TRANSMITTER_TUNING_ENABLED
 
     // set default dead zones
-    default_dead_zones();
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    default_dead_zones(); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 
     // initialise throttle_zero flag
     ap.throttle_zero = true;

@@ -42,7 +42,7 @@ AP_BattMonitor_ESC::AP_BattMonitor_ESC(AP_BattMonitor &mon,
 {
     AP_Param::setup_object_defaults(this, var_info);
     _state.var_info = var_info;
-};
+}; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_BattMonitor_ESC::init(void)
 {

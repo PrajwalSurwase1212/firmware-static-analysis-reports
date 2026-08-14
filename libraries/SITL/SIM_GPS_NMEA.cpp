@@ -25,7 +25,7 @@ void GPS_NMEA::nmea_printf(const char *fmt, ...)
     va_start(ap, fmt);
     char *s = nmea_vaprintf(fmt, ap);
     va_end(ap);
-    if (s != nullptr) {
+    if (s) {
         write_to_autopilot((const char*)s, strlen(s));
         free(s);
     }

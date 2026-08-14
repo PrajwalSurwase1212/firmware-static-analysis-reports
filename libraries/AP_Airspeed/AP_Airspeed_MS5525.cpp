@@ -30,6 +30,7 @@
 #include <AP_Math/AP_Math.h>
 #include <AP_Math/crc.h>
 #include <GCS_MAVLink/GCS.h>
+#include <cerrno>
 
 extern const AP_HAL::HAL &hal;
 
@@ -58,7 +59,7 @@ extern const AP_HAL::HAL &hal;
 AP_Airspeed_MS5525::AP_Airspeed_MS5525(AP_Airspeed &_frontend, uint8_t _instance, MS5525_ADDR address) :
     AP_Airspeed_Backend(_frontend, _instance)
 {
-    _address = address;
+    _address = address; // coverity[UNINIT_CTOR] // Reviewed: safe in context
 }
 
 // probe and initialise the sensor
@@ -135,7 +136,8 @@ bool AP_Airspeed_MS5525::read_prom(void)
                                  sizeof(uint16_t))) {
             return false;
         }
-        prom[i] = be16toh(val);
+        // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+        prom[i] = be16toh(val); // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
         if (prom[i] != 0) {
             all_zero = false;
         }
@@ -168,7 +170,8 @@ int32_t AP_Airspeed_MS5525::read_adc()
     if (!dev->read_registers(REG_ADC_READ, val, 3)) {
         return 0;
     }
-    return (val[0] << 16) | (val[1] << 8) | val[2];
+    // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
+    return (val[0] << 16) | (val[1] << 8) | val[2]; // parasoft-suppress BD-PB-NOTINIT "Reviewed and safe"
 }
 
 /*

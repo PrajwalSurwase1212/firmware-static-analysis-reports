@@ -18,7 +18,7 @@ AP_BattMonitor_SMBus_NeoDesign::AP_BattMonitor_SMBus_NeoDesign(AP_BattMonitor &m
     : AP_BattMonitor_SMBus(mon, mon_state, params, AP_BATTMONITOR_SMBUS_BUS_INTERNAL)
 {
     _pec_supported = true;
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 void AP_BattMonitor_SMBus_NeoDesign::timer()
 {

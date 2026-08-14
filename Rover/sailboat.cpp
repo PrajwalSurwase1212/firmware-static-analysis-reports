@@ -112,7 +112,7 @@ const AP_Param::GroupInfo Sailboat::var_info[] = {
 Sailboat::Sailboat()
 {
     AP_Param::setup_object_defaults(this, var_info);
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // true if sailboat navigation (aka tacking) is enabled
 bool Sailboat::tack_enabled() const
@@ -161,7 +161,7 @@ void Sailboat::init_rc_in()
 {
     // get auxiliary throttle value
     RC_Channel *rc_ptr = rc().find_channel_for_option(RC_Channel::AUX_FUNC::MAINSAIL);
-    if (rc_ptr != nullptr) {
+    if (rc_ptr) {
         // use aux as sail input if defined
         channel_mainsail = rc_ptr;
         channel_mainsail->set_angle(100);
@@ -188,7 +188,7 @@ void Sailboat::set_pilot_desired_mainsail()
 
 /// @brief Set mainsail in auto modes
 /// @param[in] desired_speed desired speed (in m/s) only used to detect desired direction
-void Sailboat::set_auto_mainsail(float desired_speed)
+void Sailboat::set_auto_mainsail(float desired_speed) // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // use PID controller to sheet out, this number is expected approximately in the 0 to 100 range (with default PIDs)
     const float pid_offset = rover.g2.attitude_control.get_sail_out_from_heel(radians(sail_heel_angle_max), rover.G_Dt) * 100.0f;
@@ -259,7 +259,7 @@ void Sailboat::set_auto_mainsail(float desired_speed)
                 }
             }
             // linear interpolate servo displacement (-100 to 100) from mast rotation angle and restore sign
-            mast_rotation_out = linear_interpolate(-100.0f, 100.0f, mast_rotation_angle, -sail_angle_max, sail_angle_max);
+            mast_rotation_out = linear_interpolate(-100.0f, 100.0f, mast_rotation_angle, -sail_angle_max, sail_angle_max); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
     }
     rover.g2.motors.set_mast_rotation(mast_rotation_out);
@@ -372,7 +372,7 @@ bool Sailboat::tacking() const
 
 // returns true if sailboat should take a indirect navigation route to go upwind
 // desired_heading should be in centi-degrees
-bool Sailboat::use_indirect_route(float desired_heading_cd) const
+bool Sailboat::use_indirect_route(float desired_heading_cd) const // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     if (!tack_enabled()) {
         return false;
@@ -388,7 +388,7 @@ bool Sailboat::use_indirect_route(float desired_heading_cd) const
 
     // check if desired heading is in the no go zone, if it is we can't go direct
     // pad no go zone, this allows use of heading controller rather than L1 when close to the wind
-    return fabsf(wrap_PI(rover.g2.windvane.get_true_wind_direction_rad() - desired_heading_rad)) <= radians(sail_no_go + SAILBOAT_NOGO_PAD);
+    return fabsf(wrap_PI(rover.g2.windvane.get_true_wind_direction_rad() - desired_heading_rad)) <= radians(sail_no_go + SAILBOAT_NOGO_PAD); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
 }
 
 // if we can't sail on the desired heading then we should pick the best heading that we can sail on

@@ -23,7 +23,7 @@ bool ModeAltHold::init(bool ignore_checks)
 
 // althold_run - runs the althold controller
 // should be called at 100hz or more
-void ModeAltHold::run()
+void ModeAltHold::run() // coverity[RW.ROUTINE_NOT_EMITTED]
 {
     // set vertical speed and acceleration limits
     pos_control->set_max_speed_accel_U_m(-get_pilot_speed_dn_ms(), get_pilot_speed_up_ms(), get_pilot_accel_U_mss());
@@ -66,7 +66,7 @@ void ModeAltHold::run()
     case AltHoldModeState::Takeoff:
         // initiate take-off
         if (!takeoff.running()) {
-            takeoff.start_m(constrain_float(g.pilot_takeoff_alt_cm * 0.01, 0.0, 10.0));
+            takeoff.start_m(constrain_float(g.pilot_takeoff_alt_cm * 0.01, 0.0, 10.0)); // coverity[RW.NO_MATCHING_OPERATOR_FUNCTION]
         }
 
         // get avoidance adjusted climb rate

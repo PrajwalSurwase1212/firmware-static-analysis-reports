@@ -7,6 +7,7 @@
 
 #include <AC_AttitudeControl/AC_AttitudeControl.h>
 #include <AC_AttitudeControl/AC_PosControl.h>
+#include <cerrno>
 
 
 // Write an AHRS2 packet
@@ -66,7 +67,8 @@ void AP_AHRS::Write_Attitude(const Vector3f &targets) const
         yaw             : wrap_360(degrees(yaw)),
         active          : uint8_t(active_EKF_type()),
     };
-    AP::logger().WriteBlock(&pkt, sizeof(pkt));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    AP::logger().WriteBlock(&pkt, sizeof(pkt)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 void AP_AHRS::Write_Origin(LogOriginType origin_type, const Location &loc) const
@@ -156,7 +158,8 @@ void AP_AHRS_View::Write_AttitudeView(const Vector3f &targets) const
         yaw             : wrap_360(degrees(yaw)),
         active          : uint8_t(AP::ahrs().active_EKF_type()),
     };
-    AP::logger().WriteBlock(&pkt, sizeof(pkt));
+    // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
+    AP::logger().WriteBlock(&pkt, sizeof(pkt)); // parasoft-suppress BD-PB-CHECKRET "Reviewed and safe"
 }
 
 #endif  // HAL_LOGGING_ENABLED

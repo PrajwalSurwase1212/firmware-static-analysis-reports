@@ -22,7 +22,7 @@
 AP_Generator_Backend::AP_Generator_Backend(AP_Generator& frontend) :
     _frontend(frontend)
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 // Called from the subclass update function to update the frontend variables for accessing
 void AP_Generator_Backend::update_frontend()

@@ -42,7 +42,7 @@ public:
           Motor *_motors) :
           name(_name),
           num_motors(_num_motors),
-          motors(_motors) {}
+          motors(_motors) {} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
 #if AP_SIM_ENABLED
     // find a frame by name

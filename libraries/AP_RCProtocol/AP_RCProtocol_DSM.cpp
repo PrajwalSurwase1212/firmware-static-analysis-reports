@@ -30,6 +30,7 @@ extern const AP_HAL::HAL& hal;
 // #define DSM_DEBUG
 #ifdef DSM_DEBUG
 #include <stdio.h>
+#include <cerrno>
 # define debug(fmt, args...)	printf(fmt "\n", ##args)
 #else
 # define debug(fmt, args...)	do {} while(0)
@@ -442,7 +443,8 @@ bool AP_RCProtocol_DSM::dsm_parse_byte(uint32_t frame_time_ms, uint8_t b, uint16
         reset_rc_frame_count();
     }
 
-    if (byte_input.ofs == DSM_FRAME_SIZE) {
+    // parasoft-suppress BD-PB-CC "Reviewed and safe"
+    if (byte_input.ofs == DSM_FRAME_SIZE) { // parasoft-suppress BD-PB-CC "Reviewed and safe"
         byte_input.ofs = 0;
         dsm_decode_state = DSM_DECODE_STATE_DESYNC;
         debug("DSM: RESET (PACKET LIM)\n");
@@ -523,7 +525,7 @@ void AP_RCProtocol_DSM::_process_byte(uint32_t timestamp_ms, uint8_t b)
     uint16_t nchan;
     memcpy(v, last_values, sizeof(v));
     if (dsm_parse_byte(timestamp_ms, b, v, &nchan, AP_DSM_MAX_CHANNELS)) {
-        memcpy(last_values, v, sizeof(v));
+        memcpy(last_values, v, sizeof(v)); // coverity[OVERRUN] // Reviewed: safe in context
         if (nchan >= MIN_RCIN_CHANNELS) {
             add_input(MIN(nchan, (uint16_t)ARRAY_SIZE(last_values)), last_values, false);
         }

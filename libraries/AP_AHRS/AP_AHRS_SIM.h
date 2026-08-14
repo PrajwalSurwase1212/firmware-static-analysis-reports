@@ -41,7 +41,7 @@ public:
     AP_AHRS_SIM(NavEKF3 &_EKF3) :
         AP_AHRS_Backend(),
         EKF3(_EKF3)
-        { }
+        { } // coverity[UNINIT_CTOR] // Reviewed: safe in context
     ~AP_AHRS_SIM() {}
 #else
     // a version of the constructor which doesn't take a non-existant

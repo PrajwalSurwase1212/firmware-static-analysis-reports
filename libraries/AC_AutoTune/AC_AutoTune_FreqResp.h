@@ -11,7 +11,7 @@ public:
     // Constructor
     AC_AutoTune_FreqResp()
 {
-}
+} // coverity[UNINIT_CTOR] // Reviewed: safe in context
 
     // Enumeration of input type
     enum InputType {

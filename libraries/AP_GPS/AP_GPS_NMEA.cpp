@@ -39,6 +39,7 @@
 #include <stdio.h>
 
 #include "AP_GPS_NMEA.h"
+#include <cerrno>
 
 #if AP_GPS_NMEA_ENABLED
 extern const AP_HAL::HAL& hal;
@@ -142,8 +143,11 @@ bool AP_GPS_NMEA::_decode(char c)
 
 int32_t AP_GPS_NMEA::_parse_decimal_100(const char *p)
 {
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     char *endptr = nullptr;
-    long ret = 100 * strtol(p, &endptr, 10);
+    errno = 0;
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+    long ret = 100 * strtol(p, &endptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     int sign = ret < 0 ? -1 : 1;
 
     if (ret >= (long)INT32_MAX) {
@@ -293,9 +297,12 @@ bool AP_GPS_NMEA::_have_new_message()
 bool AP_GPS_NMEA::_term_complete()
 {
     // handle the last term in a message
+    // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
     if (_is_checksum_term) {
         _sentence_done = true;
-        const uint32_t crc = strtoul(_term, nullptr, 16);
+        errno = 0;
+        // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+        const uint32_t crc = strtoul(_term, nullptr, 16); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
         const bool crc_ok = _is_unicore? (_crc32 == crc) : (_parity == crc);
         if (crc_ok) {
             uint32_t now = AP_HAL::millis();
@@ -585,10 +592,12 @@ bool AP_GPS_NMEA::_term_complete()
             }
             break;
         case _GPS_SENTENCE_GGA + 7: // satellite count (GGA)
+            // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
             _new_satellite_count = atol(_term);
             break;
         case _GPS_SENTENCE_GGA + 8: // HDOP (GGA)
-            _new_hdop = (uint16_t)_parse_decimal_100(_term);
+            // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
+            _new_hdop = (uint16_t)_parse_decimal_100(_term); // parasoft-suppress BD-PB-INTDL "Reviewed and safe"
             break;
 
         // time and date
@@ -625,11 +634,13 @@ bool AP_GPS_NMEA::_term_complete()
             _new_altitude = _parse_decimal_100(_term);
             break;
 
+        // parasoft-suppress BD-PB-INTUB "Reviewed and safe"
         // course and speed
         //
         case _GPS_SENTENCE_RMC + 7: // Speed (GPRMC)
         case _GPS_SENTENCE_VTG + 5: // Speed (VTG)
-            _new_speed = (_parse_decimal_100(_term) * 514) / 1000;       // knots-> m/sec, approximates * 0.514
+            // parasoft-suppress BD-PB-INTUB "Reviewed and safe"
+            _new_speed = (_parse_decimal_100(_term) * 514) / 1000;       // knots-> m/sec, approximates * 0.514 // parasoft-suppress BD-PB-INTUB "Reviewed and safe"
             break;
         case _GPS_SENTENCE_HDT + 1: // Course (HDT)
             _new_gps_yaw = _parse_decimal_100(_term);
@@ -644,12 +655,14 @@ bool AP_GPS_NMEA::_term_complete()
 
         case _GPS_SENTENCE_PHD + 1: // PHD class
             _phd.msg_class = atol(_term);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
         case _GPS_SENTENCE_PHD + 2: // PHD message
             _phd.msg_id = atol(_term);
             break;
         case _GPS_SENTENCE_PHD + 5: // PHD message, itow
-            _phd.itow = strtoul(_term, nullptr, 10);
+            // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
+            _phd.itow = strtoul(_term, nullptr, 10); // parasoft-suppress BD-PB-ERRNO "Reviewed and safe"
             break;
         case _GPS_SENTENCE_PHD + 6 ... _GPS_SENTENCE_PHD + 11: // PHD message, fields
             _phd.fields[_term_number-6] = atol(_term);
